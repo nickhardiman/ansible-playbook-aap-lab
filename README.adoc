@@ -1,0 +1,14 @@
+= Ansible playbook for turning a PC into a set of Ansible Automation Platform VMs
+
+Ansible helps me build my home lab. 
+This playbook turns a PC running RHEL 9 into a hypervisor running a pile-load (that's the technical term) of Virtual Machines. 
+Each VM runs a set of services that support my home lab. 
+
+Idea is to build the 
+Ansible Automation Platform 2
+Reference Architecture. 
+
+https://access.redhat.com/documentation/en-us/reference_architectures/2021/html-single/deploying_ansible_automation_platform_2.1/index#doc-wrapper
+
+
+Under construction. Sections marked with !!! and ??? are notes to self. 

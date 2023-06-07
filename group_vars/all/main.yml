@@ -1,0 +1,42 @@
+---
+
+# accounts
+user_ansible_password: Password;1
+
+# network
+# MAC addresses are listed here.
+#   https://hardiman.consulting/rhel/9/unsorted/host1-libvirt-network.html
+#
+public_net_short_name: public
+public_libvirt_name:   "net{{ public_net_short_name }}0"
+public_mac_prefix: "52:54:00:03"
+#
+site1_net_short_name: site1
+site1_libvirt_name:   "net{{ site1_net_short_name }}0"
+site1_net_prefix: "192.168.136"
+site1_mac_prefix: "52:54:00:06"
+site1_domain: site1.lab.example.com
+site1_reverse_zone: "136.168.192.in-addr.arpa"
+#
+site2_net_short_name: site2
+site2_libvirt_name:   "net{{ site2_net_short_name }}0"
+site2_net_prefix: "192.168.137"
+site2_mac_prefix: "52:54:00:07"
+site2_domain: site2.lab.example.com
+site2_reverse_zone: "137.168.192.in-addr.arpa"
+#
+# !!! duplicates. defined here and in host_vars
+# to list keys of this dict of dicts in a loop, use: 
+#       loop: "{{ address | list }}"
+address:
+  controlplane-1.site1.example.com:
+    mac: "{{ site1_mac_prefix }}:00:10"
+    ip_last_octet: "10"
+    ipv4: "{{ site1_net_prefix + '.10' }}"
+  controlplane-2.site1.example.com:
+    mac: "{{ site1_mac_prefix }}:00:11"
+    ip_last_octet: "10"
+    ipv4: "{{ site1_net_prefix + '.11' }}"
+
+# !!! TBC
+# https://access.redhat.com/documentation/en-us/reference_architectures/2021/html-single/deploying_ansible_automation_platform_2.1/index#network_requirements

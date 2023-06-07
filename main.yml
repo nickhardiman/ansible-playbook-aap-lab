@@ -1,0 +1,17 @@
+# Build the virtual machine hardware, install OS, and install apps.
+#
+# prerequisites 
+# git, the hypervisor, Ansible user, image storage and virtual network.
+# A bootstrap shell script sets these up.
+# See instructions in the README and machine-hypervisor.sh
+#
+# Each of these playbooks can be run separately. 
+# For machines that need to register with RHSM, use a vault file.
+#   ansible-playbook --vault-pass-file=~/my-vault-pass  machine-repo.yml
+# For machines that use local repos, there is no need to register.
+#   ansible-playbook  machine-git.yml
+#
+#
+- ansible.builtin.import_playbook: aap2-hypervisor.yml
+- ansible.builtin.import_playbook: image-controlplane.site1.example.com.yml
+- ansible.builtin.import_playbook: machine-controlplane-1.site1.example.com.yml
