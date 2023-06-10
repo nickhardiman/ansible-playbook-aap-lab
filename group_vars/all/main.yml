@@ -11,12 +11,11 @@ public_net_short_name: public
 public_libvirt_name:   "net{{ public_net_short_name }}0"
 public_mac_prefix:     "52:54:00:03"
 public_nmcli_name: "bridge-{{ public_net_short_name }}0"
-
 #
 lab_net_short_name: site1
 lab_libvirt_name:   "net{{ lab_net_short_name }}0"
 lab_net_prefix: "192.168.136"
-lab_mac_prefix: "52:54:00:06"
+lab_mac_prefix: "52:54:00:04"
 lab_domain: site1.lab.example.com
 lab_reverse_zone: "136.168.192.in-addr.arpa"
 #
