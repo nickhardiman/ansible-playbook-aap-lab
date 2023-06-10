@@ -14,5 +14,10 @@
 #
 #- ansible.builtin.import_playbook: machine-hypervisor.yml
 #- ansible.builtin.import_playbook: host-network.yml
+
+# ???
+#- ansible.builtin.import_playbook: image-gateway.yml
+#- ansible.builtin.import_playbook: machine-gateway.yml
+
 - ansible.builtin.import_playbook: image-controlplane.site1.example.com.yml
 #- ansible.builtin.import_playbook: machine-controlplane-1.site1.example.com.yml

@@ -8,12 +8,12 @@ user_ansible_password: Password;1
 #   https://hardiman.consulting/rhel/9/unsorted/host1-libvirt-network.html
 #
 public_net_short_name: public
-public_libvirt_name:   "net{{ public_net_short_name }}0"
-public_mac_prefix:     "52:54:00:03"
+public_libvirt_name: "net{{ public_net_short_name }}0"
+public_mac_prefix: "52:54:00:03"
 public_nmcli_name: "bridge-{{ public_net_short_name }}0"
 #
 lab_net_short_name: site1
-lab_libvirt_name:   "net{{ lab_net_short_name }}0"
+lab_libvirt_name: "net{{ lab_net_short_name }}0"
 lab_net_prefix: "192.168.136"
 lab_mac_prefix: "52:54:00:04"
 lab_domain: site1.lab.example.com
@@ -23,11 +23,11 @@ lab_reverse_zone: "136.168.192.in-addr.arpa"
 # to list keys of this dict of dicts in a loop, use: 
 #       loop: "{{ address | list }}"
 address:
-  controlplane-1.site1.example.com:
+  controlplane-1.site1.lab.example.com:
     mac: "{{ lab_mac_prefix }}:00:10"
     ip_last_octet: "10"
     ipv4: "{{ lab_net_prefix + '.10' }}"
-  controlplane-2.site1.example.com:
+  controlplane-2.site1.lab.example.com:
     mac: "{{ lab_mac_prefix }}:00:11"
     ip_last_octet: "10"
     ipv4: "{{ lab_net_prefix + '.11' }}"
