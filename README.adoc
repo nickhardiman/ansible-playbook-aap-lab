@@ -13,15 +13,22 @@ https://access.redhat.com/documentation/en-us/reference_architectures/2021/html-
 
 Under construction. Sections marked with !!! and ??? are notes to self. 
 
+* *controlplane-1*, a control plane node in the Automation Controller cluster
+* *controlplane-2*, a control plane node in the Automation Controller cluster
+* *controlplane-3*, a control plane node in the Automation Controller cluster
+
 ==  requirements 
 
 Various roles and collections. 
 See the cheatsheet below. 
 
-* log into hypervisor
-* download and run this script.
 
-[source,shell]
-....
-curl -o - https://raw.githubusercontent.com/nickhardiman/homelab/main/machine-hypervisor.sh | bash -x
-....
+== the KVM/QEMU hypervisor 
+
+A bootstrap shell script kicks off the install. 
+See instructions in 
+https://github.com/nickhardiman/ansible-playbook-lab/blob/main/machine-hypervisor.sh[machine-hypervisor.sh]
+
+
+== VMs 
+
