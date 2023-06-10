@@ -12,3 +12,16 @@ https://access.redhat.com/documentation/en-us/reference_architectures/2021/html-
 
 
 Under construction. Sections marked with !!! and ??? are notes to self. 
+
+==  requirements 
+
+Various roles and collections. 
+See the cheatsheet below. 
+
+* log into hypervisor
+* download and run this script.
+
+[source,shell]
+....
+curl -o - https://raw.githubusercontent.com/nickhardiman/homelab/main/machine-hypervisor.sh | bash -x
+....

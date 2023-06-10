@@ -1,0 +1,39 @@
+---
+# route traffic to the core network services on another box
+# Requires forwarding enabled on the remote host. 
+# Use the CLI command:
+#   sysctl net.ipv4.ip_forward=1
+# or the ansible.posix.sysctl module (as below).
+
+- name: host network
+  hosts: hypervisor
+  become: yes
+  gather_facts: yes
+  roles: 
+
+    # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_and_managing_networking/configuring-static-routes_configuring-and-managing-networking#proc_configuring-a-static-route-by-using-the-network-rhel-system-role_configuring-static-routes
+    - name: route to host2 where core services are 
+      role: rhel-system-roles.network
+      vars:
+        network_connections:
+          - name: "{{ public_nmcli_name }}"
+          #- name: "{{ public_nmcli_name }}-enp2s0f0"
+            type: bridge
+            autoconnect: yes
+            ip:
+              route:
+                - network: 192.168.135.0
+                  prefix: 24
+                  gateway: 192.168.1.135
+            state: up
+
+  tasks:
+
+    # https://docs.ansible.com/ansible/latest/collections/ansible/posix/sysctl_module.html
+    # Set ip forwarding on in /proc and in the sysctl file and reload if necessary
+    - ansible.posix.sysctl:
+        name: net.ipv4.ip_forward
+        value: '1'
+        sysctl_set: true
+        state: present
+        reload: true

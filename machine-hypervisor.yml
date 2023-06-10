@@ -8,11 +8,6 @@
   - role: nick.platform.libvirt_storage
   - role: nick.platform.libvirt_net_public
   - role: nick.platform.libvirt_net_private
-    vars: 
-      lab_stuff: site1_stuff
-  - role: nick.platform.libvirt_net_private
-    vars: 
-      lab_stuff: site2_stuff
 
 # json_query requires jmespath install
 # see comments in 
