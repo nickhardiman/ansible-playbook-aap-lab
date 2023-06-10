@@ -1,9 +1,17 @@
 ---
 # route traffic to the core network services on another box
-# Requires forwarding enabled on the remote host. 
+# Requires some network shenanigans. 
+# From a Mac workstation, add routing. 
+#   sudo route add -net 192.168.135.0/24 192.168.1.135
+# On the remote host, enable forwarding.
 # Use the CLI command:
-#   sysctl net.ipv4.ip_forward=1
+#   sudo sysctl net.ipv4.ip_forward=1
 # or the ansible.posix.sysctl module (as below).
+# On the AAP2 host, add routing.
+# Use the CLI commands: 
+#   sudo nmcli connection modify bridge-public0 +ipv4.routes "192.168.135.0/24 192.168.1.135"
+#   sudo nmcli con up bridge-public0
+# or use the rhel-system-roles.network role (as below).
 
 - name: host network
   hosts: hypervisor
