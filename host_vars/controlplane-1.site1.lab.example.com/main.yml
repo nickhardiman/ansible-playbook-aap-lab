@@ -32,7 +32,8 @@ net_services:
 # OS
 host: controlplane-1
 fqdn: "{{ host }}.site1.lab.example.com"
-RPMs: {}
+RPMs: 
+  - python3-cryptography
 
 # kickstart
 kickstart_template: "kvm-guest-static.ks.j2"
