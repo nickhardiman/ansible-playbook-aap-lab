@@ -14,7 +14,8 @@
 #
 # !!!
 #- ansible.builtin.import_playbook: machine-hypervisor.yml
-#- ansible.builtin.import_playbook: host-network.yml
+# # breaking public bridge
+# #- ansible.builtin.import_playbook: host-network.yml
 #- ansible.builtin.import_playbook: image-gateway.yml
 #- ansible.builtin.import_playbook: machine-gateway.yml
 

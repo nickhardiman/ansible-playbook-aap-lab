@@ -1,0 +1,38 @@
+---
+# virt-install
+
+# compute 
+# double the default
+cpus: 4
+ram: 8192
+
+# storage
+# default 30GB disk
+
+# network
+nics:
+  -
+    name: enp1s0
+    mac: "{{ lab_mac_prefix }}:00:11"
+    net: "{{ lab_libvirt_name }}"
+    # !!! get rid of this?
+    # used in
+    # ansible_collections/nick/platform/roles/hosts_record/tasks/main.yml
+    # IP from DHCP
+    ip: "{{ lab_net_prefix }}.11"
+
+net_services:
+  - http
+  - https
+  - ssh
+
+# OS
+host: controlplane-2
+fqdn: "{{ host }}.site1.lab.example.com"
+RPMs: 
+  - python3-cryptography
+
+# kickstart
+kickstart_template: "kvm-guest-static.ks.j2"
+
+# accounts

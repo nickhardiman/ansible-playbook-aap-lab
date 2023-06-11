@@ -1,0 +1,83 @@
+---
+
+- name: point OS to DNS
+  hosts: automationcontroller
+  become: yes
+  gather_facts: yes
+  tasks:
+
+    # https://docs.ansible.com/ansible/latest/collections/community/general/nmcli_module.html
+    #
+    # # !!! hardcoded
+    - name: "use id 192.168.135.5 as the DNS server"
+      community.general.nmcli:
+        conn_name: enp1s0
+        type: ethernet
+        dns4:
+        - "192.168.135.5"
+        state: present
+
+    - name: brings up the interface to load change
+      command: 
+        cmd: "nmcli con up enp1s0"
+      register: r_up
+    - debug:
+        var: r_up
+
+
+# tried these variations and broke networking
+#
+  # roles:
+    # # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_and_managing_networking/configuring-static-routes_configuring-and-managing-networking#proc_configuring-a-static-route-by-using-the-network-rhel-system-role_configuring-static-routes
+    # - name: route to host2 where core services are
+    #   role: rhel-system-roles.network
+    #   vars:
+    #     network_connections:
+    #       - name: enp1s0
+    #         type: ethernet
+    #         autoconnect: true
+    #         state: up
+    #         ip:
+    #           address:
+    #             - 192.168.136.10/24
+    #           gateway4: 192.168.136.1
+    #           route:
+    #             - network: 192.168.135.0
+    #               prefix: 24
+    #               gateway: 192.168.1.135
+    #           dns:
+    #             - "192.168.135.5"
+    #           dns_search:
+    #             - "lab.example.com"
+
+  # tasks:
+    # # https://galaxy.ansible.com/linux-system-roles/network
+    # # https://access.redhat.com/solutions/3374751
+    # - name: "use id 192.168.135.5 as the DNS server"
+    #   vars:
+    #     network_connections:
+    #       - name: enp1s0
+    #         state: up
+    #         type: "ethernet"
+    #         ip:
+    #           #gateway4: 192.168.136.1
+    #           dns:
+    #             - "192.168.135.5"
+    #           dns_search:
+    #             - "lab.example.com"
+    #   include_role:
+    #     name: rhel-system-roles.network
+
+    # # https://access.redhat.com/solutions/3374751
+    # - name: "Use id 192.168.135.5 as the DNS server"
+    #   ansible.builtin.include_role:
+    #     name: rhel-system-roles.network
+    #   vars:
+    #     network_state:
+    #       dns-resolver:
+    #         config:
+    #           search:
+    #             - lab.example.com
+    #           server:
+    #             - 192.168.135.5
+

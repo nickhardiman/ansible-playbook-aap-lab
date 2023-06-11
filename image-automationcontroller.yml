@@ -60,6 +60,7 @@
 
   roles:
     - role: nick.platform.managed_node
+    - role: nick.platform.dns_client_of_id
     - name: "tell the new VM the gateway address is {{ lab_net_prefix }}.3"
       role: nick.platform.hosts_record
       # !!! hardcoded

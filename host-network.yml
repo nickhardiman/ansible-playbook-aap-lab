@@ -1,4 +1,6 @@
 ---
+# !!! breaking public bridge. 
+
 # route traffic to the core network services on another box
 # Requires some network shenanigans. 
 # From a Mac workstation, add routing. 
