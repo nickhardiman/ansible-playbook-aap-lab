@@ -20,7 +20,7 @@
     - name: "update /etc/hosts on install host {{ groups['install_host'][0] }}"
       role: nick.platform.hosts_record
       vars:
-        ip_address: "{{ address[inventory_hostname]['ipv4'] }}"
+        ip_address: "{{ nics[0]['ip'] }}"
       delegate_to: "{{ groups['install_host'][0] }}"
     - name: "run machine (it stops after install)"
       role: nick.platform.libvirt_machine_start
@@ -33,7 +33,7 @@
   gather_facts: true
   serial: 1
   vars_files:
-    - vault-rhsm.yml
+    - vault-credentials.yml
   environment:
     http_proxy: http://gateway.lab.example.com:3128
     HTTPS_PROXY: http://gateway.lab.example.com:3128
