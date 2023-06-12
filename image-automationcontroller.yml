@@ -35,7 +35,9 @@
     - name: "update /etc/hosts on install host {{ groups['install_host'][0] }}"
       role: nick.platform.hosts_record
       vars:
-        ip_address: "{{ nics[0]['ip'] }}"
+        h_ip_address: "{{ nics[0]['ip'] }}"
+        h_fqdn: "{{ fqdn }}"
+        h_host: "{{ host }}"
       delegate_to: "{{ groups['install_host'][0] }}"
     - name: "run machine (it stops after install)"
       role: nick.platform.libvirt_machine_start
@@ -65,13 +67,6 @@
   roles:
     - role: nick.platform.managed_node
     - role: nick.platform.dns_client_of_id
-    # - name: "tell the new VM the gateway address is {{ lab_net_prefix }}.3"
-    #   role: nick.platform.hosts_record
-    #   # !!! hardcoded
-    #   vars:
-    #     ip_address: "{{ lab_net_prefix }}.3"
-    #     fqdn: gateway.lab.example.com
-    #     host: gateway
     - role: nick.platform.dns_record
       vars:
         zone_forward_name: "{{ lab_domain_forward }}"

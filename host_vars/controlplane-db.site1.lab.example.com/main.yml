@@ -22,8 +22,6 @@ nics:
     mac: "{{ lab_mac_prefix }}:00:{{ last_octet }}"
     net: "{{ lab_libvirt_name }}"
     # !!! get rid of this?
-    # used in
-    # ansible_collections/nick/platform/roles/hosts_record/tasks/main.yml
     # IP from DHCP
     ip: "{{ lab_net_prefix }}.{{ last_octet }}"
 
@@ -31,6 +29,9 @@ net_services:
   - http
   - https
   - ssh
+
+server_proxy_hostname: gateway.site1.lab.example.com
+server_proxy_port: 3128
 
 # OS
 host: controlplane-db

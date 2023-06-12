@@ -16,8 +16,6 @@ nics:
     mac: "{{ lab_mac_prefix }}:00:11"
     net: "{{ lab_libvirt_name }}"
     # !!! get rid of this?
-    # used in
-    # ansible_collections/nick/platform/roles/hosts_record/tasks/main.yml
     # IP from DHCP
     ip: "{{ lab_net_prefix }}.11"
 
