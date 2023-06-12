@@ -61,13 +61,6 @@
   roles:
     - role: nick.platform.managed_node
     - role: nick.platform.dns_client_of_id
-    # - name: "tell the new VM the gateway address is {{ lab_net_prefix }}.3"
-    #   role: nick.platform.hosts_record
-    #   # !!! hardcoded
-    #   vars:
-    #     ip_address: "{{ lab_net_prefix }}.3"
-    #     fqdn: gateway.lab.example.com
-    #     host: gateway
     - role: nick.platform.dns_record
       vars:
         zone_forward_name: "{{ lab_domain_forward }}"
@@ -81,6 +74,9 @@
         # DNS is fussy about root domain '.'
         record_ptr_value: "{{ inventory_hostname + '.' }}"
     - role: nick.platform.cdn_repo_consumer
+      vars:
+        server_proxy_hostname: gateway.site1.lab.example.com
+        server_proxy_port: 3128
     - role: nick.platform.latest_packages
     - role: nick.platform.server_cert
     - role: nick.platform.smtp_client
@@ -97,9 +93,9 @@
   pre_tasks:
     - name: "Don't overwrite anything"
       ansible.builtin.meta: end_host
-      when: volume_image_file_exists
+      when: volume_base_file_exists
 
   roles:
-    - name: "Copy the volume file and config, then delete the machine"
+    - name: "Copy the volume image file to base file, dump XML config, then delete the machine"
       role: nick.platform.libvirt_machine_image
       delegate_to: "{{ groups['hypervisor'][0] }}"
