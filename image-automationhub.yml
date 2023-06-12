@@ -9,7 +9,7 @@
 # Use a kickstart file to install and configure the OS.
 
 - name: add image facts to hostvars
-  hosts: database
+  hosts: automationhub
   become: true
   gather_facts: false
   roles:
@@ -18,7 +18,7 @@
       delegate_to: "{{ groups['hypervisor'][0] }}"
 
 - name: Kickstart a new machine
-  hosts: database
+  hosts: automationhub
   become: true
   gather_facts: false
   serial: 1
@@ -37,13 +37,22 @@
         h_fqdn: "{{ fqdn }}"
         h_host: "{{ host }}"
       delegate_to: "{{ groups['install_host'][0] }}"
+
+
+- name: Start new server machine
+  hosts: automationhub
+  become: true
+  gather_facts: false
+  serial: 1
+  roles:
     - name: "run machine (it stops after install)"
       role: nick.platform.libvirt_machine_start
       delegate_to: "{{ groups['install_host'][0] }}"
+      when: volume_image_file_exists
 
 
 - name: Configure new server machine
-  hosts: database
+  hosts: automationhub
   become: true
   gather_facts: false
   serial: 1
@@ -84,7 +93,7 @@
 # create $FQDN-base.qcow2 image and $FQDN.xml config.
 # if the $FQDN-base.qcow2 file already exists, this role does not change anything.
 - name: Keep image and config of the new machine
-  hosts: database
+  hosts: automationhub
   become: true
   gather_facts: false
   serial: 1

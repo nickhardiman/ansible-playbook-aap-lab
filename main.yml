@@ -21,5 +21,7 @@
 # - ansible.builtin.import_playbook: machine-automationcontroller.yml
 # - ansible.builtin.import_playbook: image-execution_nodes.yml
 # - ansible.builtin.import_playbook: machine-execution_nodes.yml
-- ansible.builtin.import_playbook: image-database.yml
-- ansible.builtin.import_playbook: machine-database.yml
+# - ansible.builtin.import_playbook: image-database.yml
+# - ansible.builtin.import_playbook: machine-database.yml
+- ansible.builtin.import_playbook: image-automationhub.yml
+- ansible.builtin.import_playbook: machine-automationhub.yml
