@@ -18,7 +18,9 @@ lab_libvirt_name: "net{{ lab_net_short_name }}0"
 lab_net_prefix: "192.168.136"
 lab_mac_prefix: "52:54:00:04"
 lab_domain: site1.lab.example.com
-lab_reverse_zone: "136.168.192.in-addr.arpa"
+# DNS Zone names in IPA Server
+lab_domain_forward: lab.example.com.
+lab_domain_reverse: "136.168.192.in-addr.arpa."
 #
 # !!! duplicates. defined here and in host_vars
 # to list keys of this dict of dicts in a loop, use: 

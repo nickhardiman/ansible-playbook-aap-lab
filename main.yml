@@ -17,6 +17,7 @@
 # - ansible.builtin.import_playbook: host-network.yml
 # - ansible.builtin.import_playbook: image-gateway.yml
 # - ansible.builtin.import_playbook: machine-gateway.yml
-
-- ansible.builtin.import_playbook: image-automationcontroller.yml
-- ansible.builtin.import_playbook: machine-automationcontroller.yml
+# - ansible.builtin.import_playbook: image-automationcontroller.yml
+# - ansible.builtin.import_playbook: machine-automationcontroller.yml
+- ansible.builtin.import_playbook: image-execution_nodes.yml
+- ansible.builtin.import_playbook: machine-execution_nodes.yml

@@ -40,7 +40,7 @@
 #   sudo nmcli con delete brpublic0-enp2s0f0
 #   sudo nmcli con delete brpublic0
 
-- name: host network
+- name: configure routing, forwarding, DNS for host network
   hosts: hypervisor
   become: yes
   gather_facts: yes
@@ -86,20 +86,10 @@
               dhcp4: yes
               auto6: yes
 
-
-# !!! this breaks public bridge. 
-# !!! seems to be all or nothing. can't patch just a few settings. 
-    # # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_and_managing_networking/configuring-static-routes_configuring-and-managing-networking#proc_configuring-a-static-route-by-using-the-network-rhel-system-role_configuring-static-routes
-    # - name: route to host2 where core services are 
-    #   role: rhel-system-roles.network
-    #   vars:
-    #     network_connections:
-    #       - name: "{{ public_nmcli_name }}"
-    #         type: bridge
-    #         autoconnect: yes
-    #         ip:
-    #           route:
-    #             - network: 192.168.135.0
-    #               prefix: 24
-    #               gateway: 192.168.1.135
-    #         state: up
+    # !!! todo
+    # DNS forward zone "lab.example.com." can be used, but
+    # DNS reverse zone "136.168.192.in-addr.arpa." is missing.
+    - name: add DNS reverse zone
+      debug:
+        msg: "!!! not implemented yet"
+    
