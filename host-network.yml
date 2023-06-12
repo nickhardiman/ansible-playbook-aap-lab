@@ -1,5 +1,4 @@
 ---
-# !!! breaking public bridge. 
 
 # route traffic to the core network services on another box
 # Requires some network shenanigans. 
@@ -15,27 +14,37 @@
 #   sudo nmcli con up bridge-public0
 # or use the rhel-system-roles.network role (as below).
 
+# rhel-system-roles.network
+# /usr/share/doc/rhel-system-roles/network/example-bridge_with_vlan-playbook.yml 
+# creates a few things.
+#   brpublic0              linux bridge
+#   bridge-public0          bridge
+#   bridge-public0-enp2s0f0 ethernet
+#
+# CLI equivalents of rhel-system-roles.network
+# These CLI commands do something similar. 
+#   # create a bridge device
+#   nmcli con add ifname brpublic0 type bridge
+#   nmcli con up brpublic0
+#   # connect ethernet port to bridge
+#   nmcli con down enp2s0f0
+#   nmcli con add type bridge-slave ifname enp2s0f0 master brpublic0
+#   nmcli con up brpublic0
+# check
+#   ip -brief link show type bridge
+#   ip route
+#   nmcli con
+#   nmcli device status
+#   sysctl net.ipv4.ip_forward
+# delete                      
+#   sudo nmcli con delete brpublic0-enp2s0f0
+#   sudo nmcli con delete brpublic0
+
 - name: host network
   hosts: hypervisor
   become: yes
   gather_facts: yes
   roles: 
-
-    # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_and_managing_networking/configuring-static-routes_configuring-and-managing-networking#proc_configuring-a-static-route-by-using-the-network-rhel-system-role_configuring-static-routes
-    - name: route to host2 where core services are 
-      role: rhel-system-roles.network
-      vars:
-        network_connections:
-          - name: "{{ public_nmcli_name }}"
-          #- name: "{{ public_nmcli_name }}-enp2s0f0"
-            type: bridge
-            autoconnect: yes
-            ip:
-              route:
-                - network: 192.168.135.0
-                  prefix: 24
-                  gateway: 192.168.1.135
-            state: up
 
   tasks:
 
@@ -47,3 +56,50 @@
         sysctl_set: true
         state: present
         reload: true
+
+    - name: Install RPM package
+      ansible.builtin.dnf:
+        name: rhel-system-roles
+        state: present
+
+    #
+    # change bridge profile, add a route
+    # requires gather_facts to set ansible_python
+    # not convinced this finishes with re-activation "nmcli con up bridge-public0"
+    - name: use rhel-system-role network
+      ansible.builtin.include_role:
+        name: rhel-system-roles.network
+      vars:
+        network_connections:
+          - name: "{{ public_nmcli_name }}"
+            state: up
+            type: bridge
+            interface_name: "{{ public_bridge_name }}"
+            #interface_name defaults to the connection name
+            # !!! this route shouldnt be here
+            # !!! copy to host-network.yml
+            ip:
+              route:
+                - network: 192.168.135.0
+                  prefix: 24
+                  gateway: 192.168.1.135
+              dhcp4: yes
+              auto6: yes
+
+
+# !!! this breaks public bridge. 
+# !!! seems to be all or nothing. can't patch just a few settings. 
+    # # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_and_managing_networking/configuring-static-routes_configuring-and-managing-networking#proc_configuring-a-static-route-by-using-the-network-rhel-system-role_configuring-static-routes
+    # - name: route to host2 where core services are 
+    #   role: rhel-system-roles.network
+    #   vars:
+    #     network_connections:
+    #       - name: "{{ public_nmcli_name }}"
+    #         type: bridge
+    #         autoconnect: yes
+    #         ip:
+    #           route:
+    #             - network: 192.168.135.0
+    #               prefix: 24
+    #               gateway: 192.168.1.135
+    #         state: up
