@@ -46,6 +46,10 @@
         h_fqdn: "{{ fqdn }}"
         h_host: "{{ host }}"
       delegate_to: "{{ groups['install_host'][0] }}"
+  tasks:
+    - name: There is now an image file
+      set_fact:
+        volume_image_file_exists: true
 
 
 - name: Start new server machine
