@@ -12,7 +12,8 @@
 #   ansible-playbook  machine-git.yml
 #
 #
-# !!!
+# !!! lot of duplicate code 
+# !!! commented out
 # - ansible.builtin.import_playbook: machine-hypervisor.yml
 # - ansible.builtin.import_playbook: host-network.yml
 # - ansible.builtin.import_playbook: image-gateway.yml
@@ -25,3 +26,44 @@
  - ansible.builtin.import_playbook: machine-database.yml
 # - ansible.builtin.import_playbook: image-automationhub.yml
 # - ansible.builtin.import_playbook: machine-automationhub.yml
+
+
+# After the machines are ready, AAP install can start. 
+# instructions
+# https://access.redhat.com/documentation/en-us/reference_architectures/2021/html-single/deploying_ansible_automation_platform_2.1/index
+# quite a bit to do 
+# inventory, credentials vault (see files)
+# firewall ports 
+# create NFS share on gateway 
+  # https://www.redhat.com/sysadmin/configure-nfs-linux
+  # systemctl enable --now nfs-server
+  # dnf install nfs-utils
+  # systemctl enable --now rpcbind
+  # mkdir -p /var/nfs/exports/pulp
+  # chown root:ansible_user /var/nfs/exports/pulp 
+  # chmod 775 root:ansible_user /var/nfs/exports/pulp 
+  # echo '/var/nfs/exports/pulp 192.168.0.0/16(rw,no_root_squash)' >> /etc/exports
+  # exportfs -r
+  # firewall-cmd --add-service nfs --permanent
+  # firewall-cmd --add-service nfs
+# create NFS mount on hubs 
+  # sudo mkdir /var/lib/pulp
+  # dnf install nfsv4-client-utils.x86_64
+  # mount -v -t nfs4 192.168.136.3:/var/nfs/exports/pulp /var/lib/pulp
+# ??? add proxy env vars for hubs to download containers
+# ??? add proxy env vars for controller to download manifest
+  # /etc/profile.d/http_proxy.sh 
+#  install controller 
+  #  ANSIBLE_PRIVATE_KEY_FILE=~/.ssh/ansible-key.priv \
+  #  ANSIBLE_REMOTE_USER=ansible_user \
+  #  ANSIBLE_BECOME=True \
+  #  ANSIBLE_HOST_KEY_CHECKING=False \
+  #  ./setup.sh -e @credentials.yml --  \
+  #  --vault-pass-file=~/vault-password.txt
+#  install hub 
+  #  ANSIBLE_PRIVATE_KEY_FILE=~/.ssh/ansible-key.priv \
+  #  ANSIBLE_REMOTE_USER=ansible_user \
+  #  ANSIBLE_BECOME=True \
+  #  ANSIBLE_HOST_KEY_CHECKING=False \
+  #  ./setup.sh -e @credentials_ah.yml --  \
+  #  --vault-pass-file=~/vault-password.txt
