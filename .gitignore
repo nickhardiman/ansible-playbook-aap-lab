@@ -1,4 +1,5 @@
 .ssl
 .DS_Store
-credentials.yml
+credentials_controller.yml
+credentials_hub.yml
 vault-credentials.yml

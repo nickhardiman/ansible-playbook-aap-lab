@@ -28,10 +28,28 @@
 # - ansible.builtin.import_playbook: machine-automationhub.yml
 
 
-# After the machines are ready, AAP install can start. 
-# instructions
+# to do 
+#
+# AAP install 
+# haproxy load balancer on gateway
+  # controlplane.site1.lab.example.com
+  # automationhub.site1.lab.example.com
+# fix ssh from external to gateway.site1.lab.example.com
+# fix https://github.com/nickhardiman/ansible-playbook-lab
+# better image management
+# better code reuse
+# core service integration
+  # DHCP Relay Agent dhcrelay on gateway to ipsal
+  # logs to Elastic 
+  # metrics to Prometheus 
+# README completion
+
+# AAP install 
+#
+# manual instructions
 # https://access.redhat.com/documentation/en-us/reference_architectures/2021/html-single/deploying_ansible_automation_platform_2.1/index
 # quite a bit to do 
+# get install bundle
 # inventory, credentials vault (see files)
 # firewall ports 
 # create NFS share on gateway 
@@ -51,6 +69,7 @@
   # dnf install nfsv4-client-utils.x86_64
   # mount -v -t nfs4 192.168.136.3:/var/nfs/exports/pulp /var/lib/pulp
 # ??? add proxy env vars for hubs to download containers
+# !!! no, maybe login is non-interactive. /etc/environment?
 # ??? add proxy env vars for controller to download manifest
   # /etc/profile.d/http_proxy.sh 
 #  install controller 
@@ -58,12 +77,25 @@
   #  ANSIBLE_REMOTE_USER=ansible_user \
   #  ANSIBLE_BECOME=True \
   #  ANSIBLE_HOST_KEY_CHECKING=False \
-  #  ./setup.sh -e @credentials.yml --  \
+  #  ./setup.sh -e @credentials-controlplane.yml --  \
   #  --vault-pass-file=~/vault-password.txt
 #  install hub 
+# proxy settings are for internet downloads of container images. 
+# Installer doesn't download collections.
   #  ANSIBLE_PRIVATE_KEY_FILE=~/.ssh/ansible-key.priv \
   #  ANSIBLE_REMOTE_USER=ansible_user \
   #  ANSIBLE_BECOME=True \
   #  ANSIBLE_HOST_KEY_CHECKING=False \
-  #  ./setup.sh -e @credentials_ah.yml --  \
-  #  --vault-pass-file=~/vault-password.txt
+  #  ./setup.sh \
+  # -e @credentials_hub.yml \
+  # -e 'http_proxy=http://gateway.site1.lab.example.com:3128' \
+  # -e 'https_proxy=http://gateway.site1.lab.example.com:3128' \
+  # -e 'no_proxy=localhost,127.0.0.1,example.com' \
+  # --  \
+  # --vault-pass-file=~/vault-password.txt
+
+# gateway as development box? 
+  # dnf install ansible-core
+  # this also installs ansible-builder, ansible-runner, container tools, etc.
+  # dnf --enablerepo=ansible-automation-platform-2.3-for-rhel-9-x86_64-rpms install  ansible-navigator
+  # mkdir -p /home/nick/ansible/playbooks/
