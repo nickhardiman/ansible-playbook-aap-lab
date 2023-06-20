@@ -34,6 +34,8 @@
 # haproxy load balancer on gateway
   # controlplane.site1.lab.example.com
   # automationhub.site1.lab.example.com
+# fix missing /etc/fstab nfs mount on hubs
+# fix missing firewall postgresql service on hub db
 # fix ssh from external to gateway.site1.lab.example.com
 # fix https://github.com/nickhardiman/ansible-playbook-lab
 # better image management
