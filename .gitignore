@@ -2,4 +2,4 @@
 .DS_Store
 credentials_controller.yml
 credentials_hub.yml
-vault-credentials.yml
+#vault-credentials.yml
