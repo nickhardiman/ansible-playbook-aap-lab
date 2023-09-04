@@ -83,6 +83,64 @@ manual instructions
 
 quite a bit to do 
 
+=== PC and OS
+
+Start with a machine running RHEL 9.
+A fresh minimal install is fine.
+
+Only tested on a box with one ethernet interface, plugged into the network.
+
+
+=== install dependencies
+
+Script
+https://raw.githubusercontent.com/nickhardiman/ansible-playbook-lab/main/machine-hypervisor.sh[machine-hypervisor.sh]
+sets up everything on a freshly installed host.
+This works with RHEL and Fedora.
+Some things, like that "dnf install" line, won't work on other OSs.
+
+* Log into the hypervisor machine.
+* Download the script.
+
+[source,shell]
+....
+curl -O https://raw.githubusercontent.com/nickhardiman/ansible-playbook-lab/main/machine-hypervisor.sh 
+....
+
+* Read the script and follow the instructions.
+
+
+The script creates a new user named _ansible_user_
+along with a key pair named _ansible-key.priv_ and _ansible-key.pub_
+and sudoers privilege escalation.
+The playbook uses _ansible_user_ to connect to all the machines,
+
+The script also clones the playbook repo and installs dependencies.
+
+
+
+=== add Red Hat Subscription account to the vault
+
+Each new VM will connect to the RHSM (Red Hat Subscription Management) network,
+register, attach a subscription entitlement, and download from
+Red Hat's CDN (Content Delivery Network).
+
+* Sign up for free at https://developers.redhat.com/.
+* Check your account works by logging in at https://access.redhat.com/.
+* Edit the vault file.
+* Enter your Red Hat Subscription Manager account.
+* Encrypt the file.
+
+[source,shell]
+....
+vim vault-credentials.yml
+echo 'my vault password' >  ~/my-vault-pass
+ansible-vault encrypt --vault-pass-file ~/my-vault-pass vault-credentials.yml  
+....
+
+
+=== AAP prereqs
+
 * get install bundle
 * inventory, credentials vault (see files)
 * firewall ports 
@@ -117,6 +175,8 @@ mount -v -t nfs4 192.168.136.3:/var/nfs/exports/pulp /var/lib/pulp
 * ??? add proxy env vars for controller to download manifest
 *     in /etc/profile.d/http_proxy.sh 
 
+
+=== Install AAP
 
 * copy files/credentials-controlplane-plaintext.yml to credentials-controlplane.yml 
 * add sensitive details
