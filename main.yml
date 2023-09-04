@@ -1,32 +1,37 @@
 # Build the virtual machine hardware, install OS, and install apps.
-#
+# Incomplete - 
+# This does not install AAP, that's still manual.
+# See README
+
 # prerequisites 
 # git, the hypervisor, Ansible user, image storage and virtual network.
 # A bootstrap shell script sets these up.
 # See instructions in the README and machine-hypervisor.sh
-#
+
 # Each of these playbooks can be run separately. 
 # For machines that need to register with RHSM, use a vault file.
 #   ansible-playbook --vault-pass-file=~/my-vault-pass  machine-repo.yml
 # For machines that use local repos, there is no need to register.
 #   ansible-playbook  machine-git.yml
-#
-#
+
 # !!! lot of duplicate code 
 # !!! commented out
-# - ansible.builtin.import_playbook: machine-hypervisor.yml
-# - ansible.builtin.import_playbook: host-network.yml
-# - ansible.builtin.import_playbook: image-gateway.yml
-# - ansible.builtin.import_playbook: machine-gateway.yml
-# - ansible.builtin.import_playbook: image-automationcontroller.yml
-# - ansible.builtin.import_playbook: machine-automationcontroller.yml
-# - ansible.builtin.import_playbook: image-execution_nodes.yml
-# - ansible.builtin.import_playbook: machine-execution_nodes.yml
- - ansible.builtin.import_playbook: image-database.yml
- - ansible.builtin.import_playbook: machine-database.yml
-# - ansible.builtin.import_playbook: image-automationhub.yml
-# - ansible.builtin.import_playbook: machine-automationhub.yml
+- ansible.builtin.import_playbook: machine-hypervisor.yml
+- ansible.builtin.import_playbook: host-network.yml
+- ansible.builtin.import_playbook: image-gateway.yml
+- ansible.builtin.import_playbook: machine-gateway.yml
+- ansible.builtin.import_playbook: image-automationcontroller.yml
+- ansible.builtin.import_playbook: machine-automationcontroller.yml
+- ansible.builtin.import_playbook: image-execution_nodes.yml
+- ansible.builtin.import_playbook: machine-execution_nodes.yml
+- ansible.builtin.import_playbook: image-database.yml
+- ansible.builtin.import_playbook: machine-database.yml
+- ansible.builtin.import_playbook: image-automationhub.yml
+- ansible.builtin.import_playbook: machine-automationhub.yml
 
+
+# AAP install 
+# see README
 
 # to do 
 #
@@ -50,56 +55,6 @@
 #   # https://stackoverflow.com/questions/10326096/why-is-stopping-or-restarting-squid3-on-gnu-linux-is-so-slow
 #   shutdown_lifetime 5 seconds
 
-
-# AAP install 
-#
-# manual instructions
-# https://access.redhat.com/documentation/en-us/reference_architectures/2021/html-single/deploying_ansible_automation_platform_2.1/index
-# quite a bit to do 
-# get install bundle
-# inventory, credentials vault (see files)
-# firewall ports 
-# create NFS share on gateway 
-  # https://www.redhat.com/sysadmin/configure-nfs-linux
-  # systemctl enable --now nfs-server
-  # dnf install nfs-utils
-  # systemctl enable --now rpcbind
-  # mkdir -p /var/nfs/exports/pulp
-  # chown root:ansible_user /var/nfs/exports/pulp 
-  # chmod 775 root:ansible_user /var/nfs/exports/pulp 
-  # echo '/var/nfs/exports/pulp 192.168.0.0/16(rw,no_root_squash)' >> /etc/exports
-  # exportfs -r
-  # firewall-cmd --add-service nfs --permanent
-  # firewall-cmd --add-service nfs
-# create NFS mount on hubs 
-  # sudo mkdir /var/lib/pulp
-  # dnf install nfsv4-client-utils.x86_64
-  # mount -v -t nfs4 192.168.136.3:/var/nfs/exports/pulp /var/lib/pulp
-# ??? add proxy env vars for hubs to download containers
-# !!! no, maybe login is non-interactive. /etc/environment?
-# ??? add proxy env vars for controller to download manifest
-  # /etc/profile.d/http_proxy.sh 
-#  install controller 
-  #  ANSIBLE_PRIVATE_KEY_FILE=~/.ssh/ansible-key.priv \
-  #  ANSIBLE_REMOTE_USER=ansible_user \
-  #  ANSIBLE_BECOME=True \
-  #  ANSIBLE_HOST_KEY_CHECKING=False \
-  #  ./setup.sh -e @credentials-controlplane.yml --  \
-  #  --vault-pass-file=~/vault-password.txt
-#  install hub 
-# proxy settings are for internet downloads of container images. 
-# Installer doesn't download collections.
-  #  ANSIBLE_PRIVATE_KEY_FILE=~/.ssh/ansible-key.priv \
-  #  ANSIBLE_REMOTE_USER=ansible_user \
-  #  ANSIBLE_BECOME=True \
-  #  ANSIBLE_HOST_KEY_CHECKING=False \
-  #  ./setup.sh \
-  # -e @credentials_hub.yml \
-  # -e 'http_proxy=http://gateway.site1.lab.example.com:3128' \
-  # -e 'https_proxy=http://gateway.site1.lab.example.com:3128' \
-  # -e 'no_proxy=localhost,127.0.0.1,example.com' \
-  # --  \
-  # --vault-pass-file=~/vault-password.txt
 
 # gateway as development box? 
   # dnf install ansible-core
