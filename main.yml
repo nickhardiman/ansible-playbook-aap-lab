@@ -45,6 +45,11 @@
   # logs to Elastic 
   # metrics to Prometheus 
 # README completion
+# amend squid config 
+# add line to /etc/squid/squid.conf 
+#   # https://stackoverflow.com/questions/10326096/why-is-stopping-or-restarting-squid3-on-gnu-linux-is-so-slow
+#   shutdown_lifetime 5 seconds
+
 
 # AAP install 
 #
