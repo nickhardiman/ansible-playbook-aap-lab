@@ -24,7 +24,6 @@
       delegate_to: "{{ groups['hypervisor'][0] }}"
 
 
-
 # If there already is an image file, don't trash it. 
 - name: Kickstart a new machine
   hosts: gateway
