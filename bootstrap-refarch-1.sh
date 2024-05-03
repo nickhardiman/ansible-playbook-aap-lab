@@ -24,7 +24,16 @@ EOF
      ansible-vault encrypt --vault-pass-file ~/my-vault-pass ~/vault-credentials.yml
 }
 
+passwordless_sudo_for_me () {
+     sudo echo 'nick      ALL=(ALL)       NOPASSWD: ALL' > /etc/sudoers.d/nick
+}
+
+#-------------------------
+# main
+
+passwordless_sudo_for_me
 add_machines_to_hosts
+
 
 mkdir aap-refarch
 cd aap-refarch
