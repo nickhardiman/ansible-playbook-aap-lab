@@ -25,15 +25,21 @@ EOF
 }
 
 passwordless_sudo_for_me () {
-     sudo echo 'nick      ALL=(ALL)       NOPASSWD: ALL' > /etc/sudoers.d/nick
+     sudo echo "$USER      ALL=(ALL)       NOPASSWD: ALL" > /etc/sudoers.d/$USER
+}
+
+better_prompt () {
+     echo "PS1='[\u@\H \W]\$ '" >> ~/.bashrc
 }
 
 #-------------------------
 # main
 
+better_prompt
 passwordless_sudo_for_me
 add_machines_to_hosts
 
+sudo hostnamectl set-hostname host.site1.example.com
 
 mkdir aap-refarch
 cd aap-refarch
