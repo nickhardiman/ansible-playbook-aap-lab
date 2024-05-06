@@ -27,8 +27,8 @@ USER=nick
 # functions
 
 create_working_directory () {
-    mkdir bootstrap-aap-refarch
-    cd bootstrap-aap-refarch
+    mkdir $HOME/bootstrap-aap-refarch
+    cd $HOME/bootstrap-aap-refarch
 }
 
 make_hosts_snippet () {
