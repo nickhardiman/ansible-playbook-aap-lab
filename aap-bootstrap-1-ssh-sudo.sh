@@ -1,5 +1,22 @@
 #!/usr/bin/bash -x
 #-------------------------
+# Set up each hypervisor.
+#
+# Prerequisites
+# 
+# Install 3 PCs with RHEL 9. Minimal is fine. 
+# Set a root password.
+# Create a user with admin privileges (in the wheel group).
+# Register with Red Hat Subscription Management
+# SSH to the first machine.
+# Download this file from Github to your home directory.
+# Edit and change my details to yours.
+# Run the script. Password prompts appear. 
+# Type in your user password
+#
+#-------------------------
+# Description
+#
 # Set up a few authentication and authorization things.
 #
 # * Add key-based SSH login.
@@ -25,10 +42,12 @@
 # $HOME/.ssh/id_rsa.pub
 # $HOME/.ssh/known_hosts
 # changes these remote files 
-# /etc/hosts
+# $HOME/.bashrc
 # $HOME/.ssh/authorized_keys
+# /etc/hosts
 # /etc/sudoers.d/$USER
 #
+#-------------------------
 # Instructions 
 #
 # SSH to the installer host.
@@ -50,10 +69,13 @@
 SITE1_IP=192.168.1.253
 SITE2_IP=192.168.1.162
 SITE3_IP=192.168.1.252
-
+#
 #-------------------------
+# Variables
+#
 WORK_DIR=$HOME/bootstrap-aap-refarch
-
+#
+#-------------------------
 # functions
 
 create_working_directory () {
