@@ -85,7 +85,7 @@ run_playbook() {
     # create machines
     ansible-playbook \
         --vault-pass-file ~/my-vault-pass  \
-    main.yml
+    playbooks/main.yml
 }
 
 #-------------------------
