@@ -47,10 +47,20 @@ reset_hosts () {
     done
 }
 
+rm_ansible_user () {
+    for IP in $SITE1_IP $SITE2_IP $SITE3_IP
+    do
+        ssh $USER@$IP sudo userdel -r ansible_user
+    done
+}
+
+
+
 #-------------------------
 # main
 
 reset_hosts
+rm_ansible_user
 rm_sudoers
 empty_authorized_keys
 empty_known_hosts

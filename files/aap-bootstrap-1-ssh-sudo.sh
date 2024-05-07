@@ -61,19 +61,9 @@
 # Type in your user password on the three hypervisor hosts.
 #
 #-------------------------
-# Edit and change my details to yours.
-
-# host IP addresses
-# Find out what IP addresses your ISP's router assigned to the hosts.
-# Add the IP adresses.
-SITE1_IP=192.168.1.253
-SITE2_IP=192.168.1.162
-SITE3_IP=192.168.1.252
-#
-#-------------------------
 # Variables
 #
-WORK_DIR=$HOME/bootstrap-aap-refarch
+source ./aap-bootstrap.cfg
 #
 #-------------------------
 # functions
@@ -108,7 +98,7 @@ gather_host_ip_keys () {
 # After this, no login password is required. 
 # If typing is annoying, see this blog post for an alternative.
 #   https://www.redhat.com/sysadmin/ssh-automation-sshpass
-distribute_RSA_pubkey () {
+distribute_my_RSA_pubkey () {
     log_this "copy RSA public keys from here to machines for passwordless login"
     for IP in $SITE1_IP $SITE2_IP $SITE3_IP 
     do
@@ -196,7 +186,7 @@ log_this () {
 create_working_directory
 create_RSA_keys_for_user    
 gather_host_ip_keys
-distribute_RSA_pubkey
+distribute_my_RSA_pubkey
 passwordless_sudo
 add_to_hosts_file
 gather_host_name_keys
