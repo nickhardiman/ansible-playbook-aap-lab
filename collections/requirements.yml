@@ -17,13 +17,16 @@ collections:
   - name: community.crypto
 #    version: 2.5.0
   - name: community.general
-  - name: community.grafana
   - name: community.libvirt
   - name: containers.podman
-  
+  # from https://console.redhat.com/api/automation-hub/
+  - name: redhat.satellite
+  - name: redhat.satellite_operations
+  - name: ansible.controller
+# infra.aap_utilities?
+
 # install experiments
 #  - git+https://github.com/myllynen/aap-automation,master
 #  - name: redhat_cop.aap_utilities
 #  - git+https://github.com/nickhardiman/ansible-collection-platform
 #  - git+https://github.com/nickhardiman/ansible-collection-integration
-

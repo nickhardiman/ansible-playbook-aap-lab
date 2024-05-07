@@ -17,13 +17,13 @@
 
 public_net_short_name: public
 public_libvirt_name:   "net{{ public_net_short_name }}0"
-public_mac_prefix:     "52:54:00:20"
+public_mac_prefix:     "52:54:00:22"
 public_nmcli_name:     "bridge-{{ public_net_short_name }}0"
 public_bridge_name:    "br{{ public_net_short_name }}0"
 
-lab_net_short_name:    site1
-lab_net_prefix:        "192.168.21"
-lab_mac_prefix:        "52:54:00:21"
+lab_net_short_name:    site2
+lab_net_prefix:        "192.168.23"
+lab_mac_prefix:        "52:54:00:23"
 lab_libvirt_name:   "net{{ lab_net_short_name }}0"
 lab_nmcli_name: "bridge-{{ lab_net_short_name }}0"
 lab_bridge_name:     "br{{ lab_net_short_name }}0"
@@ -32,4 +32,4 @@ lab_bridge_ip_cidr:    "{{ lab_net_prefix }}.1/24"
 lab_domain:            "{{ lab_net_short_name }}.example.com"
 # DNS Zone names in IPA Server
 lab_domain_forward:    "{{ lab_net_short_name }}.example.com"
-lab_domain_reverse:    "21.168.192.in-addr.arpa."
+lab_domain_reverse:    "23.168.192.in-addr.arpa."

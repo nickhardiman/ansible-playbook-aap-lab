@@ -59,9 +59,13 @@ setup_ansible_user_keys() {
 }
 
 
-install_ansible_core() {
+# add files to 
+# /usr/share/ansible/roles/rhel-system-roles.*/
+# /usr/lib/python3.9/site-packages/ansible/
+# and elsewhere
+install_ansible_packages() {
      log_this "install Ansible"
-     sudo dnf install --assumeyes ansible-core
+     sudo dnf install --assumeyes ansible-core rhel-system-roles
 }
 
 
@@ -220,7 +224,7 @@ else
     setup_local_ansible_user_account
     setup_ansible_user_keys
 fi
-install_ansible_core
+install_ansible_packages
 clone_my_ansible_collections
 clone_my_ansible_playbook
 download_ansible_libraries
