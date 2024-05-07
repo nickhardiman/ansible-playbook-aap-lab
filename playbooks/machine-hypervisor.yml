@@ -45,6 +45,10 @@
         state: started
         enabled: true
 
+    # CLI equivalents of ansible.posix.sysctl and rhel-system-roles.network
+    #   sudo sysctl net.ipv4.ip_forward=1
+    #   sudo nmcli connection modify bridge-public0 +ipv4.routes "192.168.135.0/24 192.168.1.135"
+    #   sudo nmcli con up bridge-public0
     # https://docs.ansible.com/ansible/latest/collections/ansible/posix/sysctl_module.html
     - name: Set ip forwarding on in /proc and in the sysctl file and reload if necessary
       ansible.posix.sysctl:
@@ -60,44 +64,31 @@
         state: present
 
 
-# route traffic to the core network services on another box
-# Requires some network shenanigans.
-# On a Mac workstation, add routing.
-#  see 
-# On the server, enable forwarding and add routes.
-
-# CLI equivalents of ansible.posix.sysct and rhel-system-roles.network
-#   sudo sysctl net.ipv4.ip_forward=1
-#   sudo nmcli connection modify bridge-public0 +ipv4.routes "192.168.135.0/24 192.168.1.135"
-#   sudo nmcli con up bridge-public0
+# route traffic
+# workstation
+# Requires some network shenanigans to connect from workstation to VMs.
+# On a Mac workstation, add routing. See
+#   https://github.com/nickhardiman/ansible-playbook-aap2-refarch/blob/main/files/macos-route-add.sh
+# 
+# lab hosts
+# Each hypervisor in the inventory is treated differently.
+#   https://github.com/nickhardiman/ansible-playbook-aap2-refarch/blob/main/inventory.ini
+#
+# Add a route to the virtual machines on each physical host
+# by changing the bridge profile.
+# requires gather_facts to set ansible_python
+# not convinced this finishes with re-activation "nmcli con up bridge-public0"
+# nework identifiers are described in 
+#   https://github.com/nickhardiman/ansible-playbook-aap2-refarch/blob/main/group_vars/site1/main.yml
+# rhel-system-roles.network example in
+#   https://github.com/linux-system-roles/network/blob/main/examples/route_table_support.yml
 
 - name: Configure routing and forwarding for host network
-  hosts: hypervisor
+  hosts: hypervisor_site1
   become: true
   gather_facts: true
   roles:
-
-  tasks:
-
-
-
-    # Add a route to the virtual machines on host1
-    # by changing the bridge profile.
-    # requires gather_facts to set ansible_python
-    # not convinced this finishes with re-activation "nmcli con up bridge-public0"
-    # nework identifiers
-    #
-    # nework identifiers
-    # 10 - source public 
-    # 11 - source private network is hosted by 192.168.1.135
-    # 12 - build public 
-    # 13 - build private network is hosted by 192.168.1.98
-    # 14 - supply public 
-    # 15 - supply private network is hosted by 192.168.1.195
-    #
-    - name: Use rhel-system-role network
-      ansible.builtin.include_role:
-        name: rhel-system-roles.network
+    - role: rhel-system-roles.network
       vars:
         network_connections:
           - name: "{{ public_nmcli_name }}"
@@ -107,21 +98,32 @@
             # interface_name defaults to the connection name
             ip:
               route:
-                - network: 192.168.11.0
-                  prefix: 24
-                  gateway: 192.168.1.135
-                # - network: 192.168.13.0
+                # - network: 192.168.21.0
                 #   prefix: 24
-                #   gateway: 192.168.1.98
-                - network: 192.168.15.0
+                #   gateway: 192.168.1.253
+                - network: 192.168.23.0
                   prefix: 24
-                  gateway: 192.168.1.195
+                  gateway: 192.168.1.162
+                - network: 192.168.25.0
+                  prefix: 24
+                  gateway: 192.168.1.252
               dhcp4: true
               auto6: true
 
+  tasks:
+  
     # check
     # still connected to Internet? 
-    # ip route list
-    # ping 8.8.8.8
-    # host www.google.com
-    # curl --fail https://www.redhat.com/
+    - name: Run shell commands to check routing
+      ansible.builtin.shell:
+        cmd: {{ item }}
+      loop:
+        - ip route list
+        - ping -c 1 8.8.8.8
+        - host www.google.com
+        - curl --fail https://www.redhat.com/
+      register: r_route_check
+
+    - name: Display results
+      ansible.builtin.debug:
+        var: r_route_check

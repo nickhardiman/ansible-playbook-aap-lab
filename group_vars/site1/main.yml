@@ -1,9 +1,9 @@
 # network
 # Names and addresses are partially set in variables below.
 # A full list is here.
-#   https://github.com/nickhardiman/ansible-playbook-source/tree/main
+#   https://github.com/nickhardiman/ansible-playbook-aap2-refarch/tree/main
 # For the remaining parts of these names and addresses, see each host's vars file eg.
-#   host_vars/gateway.source.example.com/main.yml
+#   host_vars/gateway.site1.example.com/main.yml
 # Note the suffix "." on domain names.
 #
 # nework identifiers
@@ -33,7 +33,3 @@ lab_domain: "{{ lab_source_domain }}"
 # DNS Zone names in IPA Server
 lab_domain_forward: "{{ lab_source_domain_forward }}"
 lab_domain_reverse: "{{ lab_source_domain_reverse }}"
-
-# !!! place this in the vault 
-# replace the many values in nick.platform roles with "{{ default_password }}"
-default_password: 'Password;1'
