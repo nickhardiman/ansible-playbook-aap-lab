@@ -38,6 +38,7 @@ restrict_ssh_auth () {
     done
 }
 
+
 # Connect to Red Hat Subscription Management
 # Connect to Red Hat Insights
 # Activate the Remote Host Configuration daemon
@@ -45,23 +46,21 @@ restrict_ssh_auth () {
 register_with_RH () {
     for NAME in host.site1.example.com host.site2.example.com host.site3.example.com
     do
-        log_this "Register $NAME with Red Hat. Use Simple Content Access, no need to attach a subscription."
-        ssh $USER@$NAME sudo subscription-manager unregister
-        sleep 5
-        # ssh $USER@$NAME sudo subscription-manager register --username=$RHSM_USER --password=$RHSM_PASSWORD
-        ssh $USER@$NAME sudo /usr/bin/rhc connect  --username=$RHSM_USER --password=$RHSM_PASSWORD
+        log_this "check if $NAME is already registered with RHSM"
+        ssh $USER@$NAME sudo subscription-manager status
+        RET_RHSM=$?
+        if [ $RET_RHSM -eq 1 ]
+        then
+            log_this "Register $NAME with Red Hat. Use Simple Content Access, no need to attach a subscription."
+            ssh $USER@$NAME << EOF 
+                sudo rhc disconnect
+                sleep 5
+                sudo rhc connect --username=$RHSM_USER --password=$RHSM_PASSWORD
+EOF
+        fi
     done
 }
 
-register_with_insights () {
-    for NAME in host.site1.example.com host.site2.example.com host.site3.example.com
-    do
-        log_this "Register $NAME with Red Hat. Use Simple Content Access, no need to attach a subscription."
-        ssh $USER@$NAME sudo subscription-manager unregister
-        sleep 5
-        ssh $USER@$NAME sudo subscription-manager register --username=$RHSM_USER --password=$RHSM_PASSWORD
-    done
-}
 
 # !!! reboot breaks flow
 update_packages () {

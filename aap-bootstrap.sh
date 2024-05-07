@@ -14,6 +14,45 @@
 #-------------------------
 # Description
 #
+# Configure 3 RHEL machines as an Ansible Automation Platform cluster with supporting services.
+# 3 hosts make up the AAP home lab
+#
+#   installer
+#   |
+#   +- host.site1.example.com
+#   +- host.site2.example.com
+#   +- host.site3.example.com
+# 
+# This script and the ones it calls do a whole heap of unsafe things, 
+# so this is for home lab dev use only.
+#
+# Set up a few authentication and authorization things.
+# * Add key-based SSH login.
+# * Add passwordless sudo.
+# * Display FQDN in the prompt. By default, all three say "[nick@host ~]$ ".
+# 
+# Use environment variables
+# A few env vars are used here.
+# For me, the values are:
+#   HOME=/home/nick
+#   USER=nick
+#
+# Change files.
+# $HOME/bootstrap-aap-refarch/
+# $HOME/.ssh/id_rsa.pub
+# $HOME/.ssh/known_hosts
+# changes these remote files 
+# $HOME/.bashrc
+# $HOME/.ssh/authorized_keys
+# /etc/hosts
+# /etc/sudoers.d/$USER
+#
+# Install applications.
+# * Ansible on the installer host
+# * KVM hypervisor on the three site hosts
+# * AAP on site1 and site2 hosts
+# * supporting services on site3
+#
 #-------------------------
 # Instructions
 #
@@ -34,16 +73,40 @@
 #-------------------------
 # functions
 #
+
+log_this () {
+    echo
+    echo -n $(date)
+    echo "  $1"
+}
+
+run_playbook() {
+    cd ~/ansible/playbooks/aap-refarch/
+    # create machines
+    ansible-playbook \
+        --vault-pass-file ~/my-vault-pass  \
+    main.yml
+}
+
 #-------------------------
 # main
 #
 for FILE in aap-bootstrap-1-ssh-sudo.sh aap-bootstrap-2-os.sh aap-bootstrap-3-ansible.sh
 do
-    curl -O https://raw.githubusercontent.com/nickhardiman/ansible-playbook-aap2-refarch/main/$FILE
+    log_this "download $FILE from Github"
+    curl -O https://raw.githubusercontent.com/nickhardiman/ansible-playbook-aap2-refarch/main/files/$FILE
 done
 
 
 for FILE in aap-bootstrap-1-ssh-sudo.sh aap-bootstrap-2-os.sh aap-bootstrap-3-ansible.sh
 do
+    log_this "run $FILE"
     bash ./$FILE
 done
+
+log_this "setup done"
+
+
+
+
+

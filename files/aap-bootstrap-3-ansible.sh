@@ -137,6 +137,7 @@ rhsm_password: "$RHSM_PASSWORD"
 ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_TOKEN: $ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_TOKEN
 OFFLINE_TOKEN: $OFFLINE_TOKEN
 USER_ANSIBLE_PUBLIC_KEY: $USER_ANSIBLE_PUBLIC_KEY
+default_password: 'Password;1'
 EOF
      # Encrypt the new file. 
      echo 'my vault password' >  ~/my-vault-pass
@@ -166,9 +167,10 @@ EOF
 # !!! has known_hosts copy removed the need for this option?
 #             -o StrictHostKeyChecking=no \
 check_ansible_user() {
-    log_this "Log in with key-based authentication and run the ID command as root"
+    log_this "check ansible_user account"
     for NAME in host.site1.example.com host.site2.example.com host.site3.example.com
     do
+        log_this "log into $NAME with key-based authentication and run the ID command as root"
         ssh \
             -i $HOME/.ssh/ansible-key.priv \
             ansible_user@$NAME  \
@@ -182,9 +184,9 @@ check_ansible_user() {
 }
 
 setup_ansible_user_sudo() {
-    log_this "Allow passwordless sudo."
     for NAME in host.site1.example.com host.site2.example.com host.site3.example.com
     do
+        log_this "allow passwordless sudo for ansible_user on $NAME"
         ssh $USER@$NAME "echo 'ansible_user      ALL=(ALL)       NOPASSWD: ALL' | sudo tee /etc/sudoers.d/ansible_user"
     done
 }

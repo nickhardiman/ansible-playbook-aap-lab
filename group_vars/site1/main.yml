@@ -1,0 +1,39 @@
+# network
+# Names and addresses are partially set in variables below.
+# A full list is here.
+#   https://github.com/nickhardiman/ansible-playbook-source/tree/main
+# For the remaining parts of these names and addresses, see each host's vars file eg.
+#   host_vars/gateway.source.example.com/main.yml
+# Note the suffix "." on domain names.
+#
+# nework identifiers
+# 20 - site1 public 
+# 21 - site1 private 
+# 22 - site2 public 
+# 23 - site2 private 
+# 24 - site3 public 
+# 25 - site3 private 
+
+
+public_net_short_name: public
+public_libvirt_name:   "net{{ public_net_short_name }}0"
+public_mac_prefix:     "52:54:00:20"
+public_nmcli_name:     "bridge-{{ public_net_short_name }}0"
+public_bridge_name:    "br{{ public_net_short_name }}0"
+
+lab_net_short_name: "{{ lab_source_net_short_name }}"
+lab_net_prefix: "{{ lab_source_net_prefix }}"
+lab_mac_prefix: "{{ lab_source_mac_prefix }}"
+lab_libvirt_name:   "net{{ lab_net_short_name }}0"
+lab_nmcli_name: "bridge-{{ lab_net_short_name }}0"
+lab_bridge_name:     "br{{ lab_net_short_name }}0"
+lab_bridge_mac:        "{{ lab_mac_prefix }}:00:01"
+lab_bridge_ip_cidr:    "{{ lab_net_prefix }}.1/24"
+lab_domain: "{{ lab_source_domain }}"
+# DNS Zone names in IPA Server
+lab_domain_forward: "{{ lab_source_domain_forward }}"
+lab_domain_reverse: "{{ lab_source_domain_reverse }}"
+
+# !!! place this in the vault 
+# replace the many values in nick.platform roles with "{{ default_password }}"
+default_password: 'Password;1'
