@@ -63,6 +63,10 @@ setup_ansible_user_keys() {
 # /usr/share/ansible/roles/rhel-system-roles.*/
 # /usr/lib/python3.9/site-packages/ansible/
 # and elsewhere
+#
+# !!! how about 
+# dnf --enablerepo=ansible-automation-platform-2.4-for-rhel-9-x86_64-rpms install ansible-lint
+#
 install_ansible_packages() {
      log_this "install Ansible"
      sudo dnf install --assumeyes ansible-core rhel-system-roles

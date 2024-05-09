@@ -1,2 +1,4 @@
 ---
-- ansible.builtin.import_playbook: machine-hypervisor.yml
+# - ansible.builtin.import_playbook: machine-hypervisor.yml
+
+- ansible.builtin.import_playbook: vm-kickstart.yml

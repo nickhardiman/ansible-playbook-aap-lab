@@ -1,0 +1,30 @@
+---
+# Create a new virtual machine using libvirt.
+# Install and configure the OS using a kickstart file.
+
+# create a few variables like "volume_image_file_exists"
+- name: Add image facts to hostvars
+  hosts: hypervisor
+  become: true
+  gather_facts: false
+  roles:
+    - name: "check for existing images"
+      role: nick.platform.libvirt_image_facts
+
+
+  # tasks:
+  #   - fail:
+
+
+# If there already is an image file, don't trash it. 
+- name: Kickstart a new machine
+  hosts: hypervisor
+  become: true
+  gather_facts: false
+  vars_files:
+    - ~/vault-credentials.yml
+  roles:
+    - name: "kickstart VMs on hypervisor {{ inventory_hostname }}"
+      role: nick.platform.libvirt_machine_kickstart
+
+
