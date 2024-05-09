@@ -126,22 +126,26 @@ EOF
      ansible-vault encrypt --vault-pass-file ~/my-vault-pass ~/vault-credentials.yml
 }
 
-# !!! this is multiline and requires clever indenting
+# !!! private keys are multiline and requires indenting before adding to YAML file.
 # USER_ANSIBLE_PRIVATE_KEY: $USER_ANSIBLE_PRIVATE_KEY
 # this loses multiline
 # CA_PRIVATE_KEY: $CA_PRIVATE_KEY
 add_secrets_to_vault () {
      USER_ANSIBLE_PUBLIC_KEY=$(<$HOME/.ssh/ansible-key.pub)
-     USER_ANSIBLE_PRIVATE_KEY=$(<$HOME/.ssh/ansible-key.priv)
-     # CA_PRIVATE_KEY=$(sudo cat /etc/pki/tls/private/$CA_FQDN-key.pem)
+     USER_ANSIBLE_PRIVATE_KEY_INDENTED=$(cat $HOME/.ssh/id_rsa | sed 's/^/    /')
+     CA_PRIVATE_KEY_INDENTED=$(sudo cat /etc/pki/tls/private/$CA_FQDN-key.pem | sed 's/^/    /')
      ansible-vault decrypt --vault-pass-file ~/my-vault-pass ~/vault-credentials.yml
      cat << EOF >>  ~/vault-credentials.yml
 rhsm_user: "$RHSM_USER"
 rhsm_password: "$RHSM_PASSWORD"
-ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_TOKEN: $ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_TOKEN
-OFFLINE_TOKEN: $OFFLINE_TOKEN
-USER_ANSIBLE_PUBLIC_KEY: $USER_ANSIBLE_PUBLIC_KEY
 default_password: 'Password;1'
+ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_TOKEN: $ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_TOKEN
+jwt_red_hat_api: $OFFLINE_TOKEN
+USER_ANSIBLE_PUBLIC_KEY: $USER_ANSIBLE_PUBLIC_KEY
+USER_ANSIBLE_PRIVATE_KEY: |
+$USER_ANSIBLE_PRIVATE_KEY_INDENTED
+CA_PRIVATE_KEY_INDENTED: |
+$CA_PRIVATE_KEY_INDENTED
 EOF
      # Encrypt the new file. 
      echo 'my vault password' >  ~/my-vault-pass

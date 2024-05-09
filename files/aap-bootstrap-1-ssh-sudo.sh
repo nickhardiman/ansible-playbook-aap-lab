@@ -78,7 +78,7 @@ create_working_directory () {
 create_RSA_keys_for_user () {
     log_this "generate RSA keys for me"
      ssh-keygen -f $HOME/.ssh/id_rsa -q -N ""
-     cp $HOME/.ssh/id_rsa.pub $HOME/.ssh/authorized_keys 
+    cat $HOME/.ssh/id_rsa.pub | tee -a $HOME/.ssh/authorized_keys 
 }
 
 gather_host_ip_keys () {

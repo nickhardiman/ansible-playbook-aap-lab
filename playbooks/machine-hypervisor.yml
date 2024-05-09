@@ -9,21 +9,27 @@
   hosts: hypervisor
   become: true
   gather_facts: true
+  vars_files:
+    - ~/vault-credentials.yml
   roles:
     - role: nick.platform.libvirt_host
     - role: nick.platform.libvirt_storage
     - role: nick.platform.libvirt_net_public
     - role: nick.platform.libvirt_net_private
-    # download RHEL 9.2 DVD ISO
+    # download RHEL 9.4 DVD ISO
+    # For instructions on finding checksum and URL, see  
+    https://github.com/nickhardiman/ansible-collection-platform/blob/main/roles/iso_rhel_download/tasks/main.yml
     - role: nick.platform.iso_rhel_download
       vars: 
-        checksum_sha256: a18bf014e2cb5b6b9cee3ea09ccfd7bc2a84e68e09487bb119a98aa0e3563ac2
-        download_href: 'https://api.access.redhat.com/management/v1/images/a18bf014e2cb5b6b9cee3ea09ccfd7bc2a84e68e09487bb119a98aa0e3563ac2/download'
-    # also get RHEL 8.8 DVD ISO
+        checksum_sha256: '17b013f605e6b85affd37431b533b6904541f8b889179ae3f99e1e480dd4ae38'
+        download_href: 'https://api.access.redhat.com/management/v1/images/17b013f605e6b85affd37431b533b6904541f8b889179ae3f99e1e480dd4ae38/download'
+    # RHEL 8.9 DVD ISO
     - role: nick.platform.iso_rhel_download
       vars: 
-        checksum_sha256: 517abcc67ee3b7212f57e180f5d30be3e8269e7a99e127a3399b7935c7e00a09
-        download_href: 'https://api.access.redhat.com/management/v1/images/517abcc67ee3b7212f57e180f5d30be3e8269e7a99e127a3399b7935c7e00a09/download'
+        checksum_sha256: '65da7744b9e41ba064627762fd7378c66b77008ec8ab026f1c8c2cf72a86a92b'
+        download_href: 'https://api.access.redhat.com/management/v1/images/65da7744b9e41ba064627762fd7378c66b77008ec8ab026f1c8c2cf72a86a92b/download'
+    # RHEL 7.9 DVD ISO and earlier
+    # download from https://access.redhat.com/downloads/content/rhel 
 
   tasks:
 
