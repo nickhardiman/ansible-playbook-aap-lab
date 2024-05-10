@@ -13,24 +13,24 @@
 
 # network
 nics:
-- 
-  name: enp1s0
-  mac: "{{ public_mac_prefix }}:00:03"
-  net: "{{ public_libvirt_name }}"
-  # IP comes from the public network's DHCP service
-  # eg. 192.168.1.234
-- 
-  name: enp2s0
-  mac: "{{ lab_mac_prefix }}:00:03"
-  net: "{{ lab_libvirt_name }}"
-  # IP is static
-  ip: "{{ lab_net_prefix }}.3"
+  -
+    name: enp1s0
+    mac: "{{ public_mac_prefix }}:00:03"
+    net: "{{ public_libvirt_name }}"
+    # IP comes from the public network's DHCP service
+    # eg. 192.168.1.234
+  -
+    name: enp2s0
+    mac: "{{ lab_mac_prefix }}:00:03"
+    net: "{{ lab_libvirt_name }}"
+    # IP is static
+    ip: "{{ lab_net_prefix }}.3"
 
 net_services:
-- dns
-- http
-- https
-- ssh
+  - dns
+  - http
+  - https
+  - ssh
 
 # OS
 host: gateway
@@ -44,4 +44,4 @@ RPMs:
 # kickstart
 # !!! poor separation
 #   https://github.com/nickhardiman/ansible-collection-platform/blob/main/roles/libvirt_machine_kickstart/templates/gateway.lab.example.com.ks.j2
-kickstart_template: "gateway.lab.example.com.ks.j2"
+kickstart_template: "gateway.ks.j2"

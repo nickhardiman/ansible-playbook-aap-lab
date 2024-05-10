@@ -4,16 +4,6 @@
 # default variables and their values are listed here. 
 #   https://github.com/nickhardiman/libvirt-guest/blob/main/defaults/main.yml
 
-# compute 
-# double the default
-# half what is recommended by 
-# https://access.redhat.com/documentation/en-us/reference_architectures/2021/html-single/deploying_ansible_automation_platform_2.1/index#node_requirements
-cpus: 4
-ram: 8192
-
-# storage
-# default 30GB disk
-
 # network
 last_octet: 20
 nics:
@@ -26,20 +16,18 @@ nics:
     ip: "{{ lab_net_prefix }}.{{ last_octet }}"
 
 net_services:
+  - cockpit
   - http
   - https
   - ssh
 
-server_proxy_hostname: gateway.site1.lab.example.com
-server_proxy_port: 3128
 
 # OS
 host: automationhub-db
-fqdn: "{{ host }}.site1.lab.example.com"
-RPMs: 
-  - python3-cryptography
+fqdn: "{{ host }}.{{ lab_domain }}"
+# extra RPM packages to add to the install list in
+# https://github.com/nickhardiman/ansible-collection-aap2-refarch/blob/main/roles/libvirt_machine_kickstart/templates/kvm-guest-nic-static.ks.j2
+RPMs: []
 
 # kickstart
-kickstart_template: "kvm-guest-static.ks.j2"
-
-# accounts
+kickstart_template: "kvm-guest-nic-static.ks.j2"

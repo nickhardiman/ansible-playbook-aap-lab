@@ -20,7 +20,7 @@ source ./aap-bootstrap.cfg
 #
 does_ansible_user_exist() {
      ansible_user_exists=false
-     id ansible_user
+     id $USER_ANSIBLE_NAME
      res_id=$?
      if [ $res_id -eq 0 ]
      then
@@ -29,26 +29,26 @@ does_ansible_user_exist() {
 }
 
 
-# Create the ansible_user account (not using --system). 
+# Create the $USER_ANSIBLE_NAME account (not using --system). 
 setup_local_ansible_user_account() {
     log_this "add an Ansible user account"
-     sudo useradd ansible_user
+     sudo useradd $USER_ANSIBLE_NAME
 }
 
 
 setup_ansible_user_keys() {
-    log_this "Create a new keypair. Put keys in /home/ansible_user/.ssh/ and keep copies in /home/nick/.ssh/"
-    ssh-keygen -f ./ansible-key -C "ansible_user@installer" -q -N ""
+    log_this "Create a new keypair. Put keys in /home/$USER_ANSIBLE_NAME/.ssh/ and keep copies in /home/nick/.ssh/"
+    ssh-keygen -f ./ansible-key -C "$USER_ANSIBLE_NAME@installer" -q -N ""
     mv ansible-key  ansible-key.priv
-    # Copy the keys to ansible_user's SSH config directory. 
-    sudo mkdir                               /home/ansible_user/.ssh
-    sudo chmod 0700                          /home/ansible_user/.ssh
-    sudo cp ansible-key.priv                 /home/ansible_user/.ssh/id_rsa
-    sudo chmod 0600                          /home/ansible_user/.ssh/id_rsa
-    sudo cp ansible-key.pub                  /home/ansible_user/.ssh/id_rsa.pub
-    sudo cp $HOME/.ssh/known_hosts           /home/ansible_user/.ssh/known_hosts
-    sudo chmod 0600                          /home/ansible_user/.ssh/known_hosts
-    sudo chown -R ansible_user:ansible_user  /home/ansible_user/.ssh
+    # Copy the keys to $USER_ANSIBLE_NAME's SSH config directory. 
+    sudo mkdir                               /home/$USER_ANSIBLE_NAME/.ssh
+    sudo chmod 0700                          /home/$USER_ANSIBLE_NAME/.ssh
+    sudo cp ansible-key.priv                 /home/$USER_ANSIBLE_NAME/.ssh/id_rsa
+    sudo chmod 0600                          /home/$USER_ANSIBLE_NAME/.ssh/id_rsa
+    sudo cp ansible-key.pub                  /home/$USER_ANSIBLE_NAME/.ssh/id_rsa.pub
+    sudo cp $HOME/.ssh/known_hosts           /home/$USER_ANSIBLE_NAME/.ssh/known_hosts
+    sudo chmod 0600                          /home/$USER_ANSIBLE_NAME/.ssh/known_hosts
+    sudo chown -R $USER_ANSIBLE_NAME:$USER_ANSIBLE_NAME  /home/$USER_ANSIBLE_NAME/.ssh
     # Keep a spare set of keys handy. 
     # This location is set in ansible.cfg. 
     # private_key_file = /home/nick/.ssh/ansible-key.priv
@@ -149,6 +149,7 @@ user_admin_name:         "$USER"
 user_admin_public_key:    $USER_ADMIN_PUBLIC_KEY
 user_admin_private_key: |
 $USER_ADMIN_PRIVATE_KEY_INDENTED
+user_ansible_name:        $USER_ANSIBLE_NAME
 user_ansible_public_key:  $USER_ANSIBLE_PUBLIC_KEY
 user_ansible_private_key: |
 $USER_ANSIBLE_PRIVATE_KEY_INDENTED
@@ -170,14 +171,14 @@ distribute_ansible_user_RSA_pubkey() {
      # user_ansible_public_key: |
      #   ssh-rsa AAA...YO0= pubkey for ansible
      # 
-    log_this "copy ansible_user RSA public key from here to machines for passwordless login"
+    log_this "copy $USER_ANSIBLE_NAME RSA public key from here to machines for passwordless login"
     for NAME in host.site1.example.com host.site2.example.com host.site3.example.com
     do
         ssh $USER@$NAME << EOF
-            sudo --user=ansible_user mkdir /home/ansible_user/.ssh
-            sudo --user=ansible_user chmod 0700 /home/ansible_user/.ssh
-            sudo --user=ansible_user touch /home/ansible_user/.ssh/authorized_keys
-            sudo grep -qxF "$USER_ANSIBLE_PUBLIC_KEY" /home/ansible_user/.ssh/authorized_keys || echo "$USER_ANSIBLE_PUBLIC_KEY" | sudo tee -a /home/ansible_user/.ssh/authorized_keys
+            sudo --user=$USER_ANSIBLE_NAME mkdir /home/$USER_ANSIBLE_NAME/.ssh
+            sudo --user=$USER_ANSIBLE_NAME chmod 0700 /home/$USER_ANSIBLE_NAME/.ssh
+            sudo --user=$USER_ANSIBLE_NAME touch /home/$USER_ANSIBLE_NAME/.ssh/authorized_keys
+            sudo grep -qxF "$USER_ANSIBLE_PUBLIC_KEY" /home/$USER_ANSIBLE_NAME/.ssh/authorized_keys || echo "$USER_ANSIBLE_PUBLIC_KEY" | sudo tee -a /home/$USER_ANSIBLE_NAME/.ssh/authorized_keys
 EOF
     done
 }
@@ -185,17 +186,17 @@ EOF
 # !!! has known_hosts copy removed the need for this option?
 #             -o StrictHostKeyChecking=no \
 check_ansible_user() {
-    log_this "check ansible_user account"
+    log_this "check $USER_ANSIBLE_NAME account"
     for NAME in host.site1.example.com host.site2.example.com host.site3.example.com
     do
         log_this "log into $NAME with key-based authentication and run the ID command as root"
         ssh \
             -i $HOME/.ssh/ansible-key.priv \
-            ansible_user@$NAME  \
+            $USER_ANSIBLE_NAME@$NAME  \
             sudo id
         res_ssh=$?
         if [ $res_ssh -ne 0 ]; then 
-            echo "error: can't SSH and sudo with ansible_user"
+            echo "error: can't SSH and sudo with $USER_ANSIBLE_NAME"
             exit $res_ssh
         fi
     done
@@ -204,8 +205,8 @@ check_ansible_user() {
 setup_ansible_user_sudo() {
     for NAME in host.site1.example.com host.site2.example.com host.site3.example.com
     do
-        log_this "allow passwordless sudo for ansible_user on $NAME"
-        ssh $USER@$NAME "echo 'ansible_user      ALL=(ALL)       NOPASSWD: ALL' | sudo tee /etc/sudoers.d/ansible_user"
+        log_this "allow passwordless sudo for $USER_ANSIBLE_NAME on $NAME"
+        ssh $USER@$NAME "echo '$USER_ANSIBLE_NAME      ALL=(ALL)       NOPASSWD: ALL' | sudo tee /etc/sudoers.d/$USER_ANSIBLE_NAME"
     done
 }
 
@@ -213,7 +214,7 @@ setup_remote_ansible_user_accounts () {
     log_this "add an Ansible user account to each host"
     for NAME in host.site1.example.com host.site2.example.com host.site3.example.com
     do
-        ssh $USER@$NAME "sudo useradd ansible_user"
+        ssh $USER@$NAME "sudo useradd $USER_ANSIBLE_NAME"
     done
      
 }

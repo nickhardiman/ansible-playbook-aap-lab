@@ -14,7 +14,6 @@
 # 24 - site3 public 
 # 25 - site3 private 
 
-
 public_net_short_name: public
 public_libvirt_name:   "net{{ public_net_short_name }}0"
 public_mac_prefix:     "52:54:00:24"
@@ -33,3 +32,20 @@ lab_domain:            "{{ lab_net_short_name }}.example.com"
 # DNS Zone names in IPA Server
 lab_domain_forward:    "{{ lab_net_short_name }}.example.com"
 lab_domain_reverse:    "25.168.192.in-addr.arpa."
+
+
+# compute 
+# double the default
+# half what is recommended by 
+# https://access.redhat.com/documentation/en-us/reference_architectures/2021/html-single/deploying_ansible_automation_platform_2.1/index#node_requirements
+cpus: 4
+ram: 8192
+
+# storage
+# default 30GB disk
+
+# OS
+# RHSM registration. see
+# https://github.com/nickhardiman/ansible-collection-aap2-refarch/blob/main/roles/cdn_repo_consumer/tasks/main.yml
+server_proxy_hostname: "gateway.{{ lab_domain }}"
+server_proxy_port: 3128

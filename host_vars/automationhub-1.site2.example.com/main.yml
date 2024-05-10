@@ -4,13 +4,8 @@
 # default variables and their values are listed here. 
 #   https://github.com/nickhardiman/libvirt-guest/blob/main/defaults/main.yml
 
-# compute 
-
-# storage
-# default 30GB disk
-
 # network
-last_octet: 18
+last_octet: 17
 nics:
   -
     name: enp1s0
@@ -21,20 +16,18 @@ nics:
     ip: "{{ lab_net_prefix }}.{{ last_octet }}"
 
 net_services:
+  - cockpit
   - http
   - https
   - ssh
 
-server_proxy_hostname: gateway.site1.lab.example.com
-server_proxy_port: 3128
 
 # OS
-host: automationhub-2
-fqdn: "{{ host }}.site1.lab.example.com"
-RPMs: 
-  - python3-cryptography
+host: automationhub-1
+fqdn: "{{ host }}.{{ lab_domain }}"
+# extra RPM packages to add to the install list in
+# https://github.com/nickhardiman/ansible-collection-aap2-refarch/blob/main/roles/libvirt_machine_kickstart/templates/kvm-guest-nic-static.ks.j2
+RPMs: []
 
 # kickstart
-kickstart_template: "kvm-guest-static.ks.j2"
-
-# accounts
+kickstart_template: "kvm-guest-nic-static.ks.j2"
