@@ -16,20 +16,20 @@
     - role: nick.platform.libvirt_storage
     - role: nick.platform.libvirt_net_public
     - role: nick.platform.libvirt_net_private
-    # download RHEL 9.4 DVD ISO
-    # For instructions on finding checksum and URL, see  
-    https://github.com/nickhardiman/ansible-collection-platform/blob/main/roles/iso_rhel_download/tasks/main.yml
+    # download Red Hat Enterprise Linux 9.4 Binary DVD
+    # For instructions on finding checksum and URL, 
+    # see  https://github.com/nickhardiman/ansible-collection-aap2-refarch/tree/main/roles/iso_rhel_download
     - role: nick.platform.iso_rhel_download
       vars: 
-        checksum_sha256: '17b013f605e6b85affd37431b533b6904541f8b889179ae3f99e1e480dd4ae38'
-        download_href: 'https://api.access.redhat.com/management/v1/images/17b013f605e6b85affd37431b533b6904541f8b889179ae3f99e1e480dd4ae38/download'
-    # RHEL 8.9 DVD ISO
+        checksum_sha256: '398561d7b66f1a4bf23664f4aa8f2cfbb3641aa2f01a320068e86bd1fc0e9076'
+        download_href: 'https://api.access.redhat.com/management/v1/images/398561d7b66f1a4bf23664f4aa8f2cfbb3641aa2f01a320068e86bd1fc0e9076/download'
+    # download Red Hat Enterprise Linux 8.9 Binary DVD
     - role: nick.platform.iso_rhel_download
       vars: 
-        checksum_sha256: '65da7744b9e41ba064627762fd7378c66b77008ec8ab026f1c8c2cf72a86a92b'
-        download_href: 'https://api.access.redhat.com/management/v1/images/65da7744b9e41ba064627762fd7378c66b77008ec8ab026f1c8c2cf72a86a92b/download'
-    # RHEL 7.9 DVD ISO and earlier
-    # download from https://access.redhat.com/downloads/content/rhel 
+        checksum_sha256: 'c4fd0632ce15a7d56e1d174176456943bd48306f9d35bcecbcb0a1dc49088e23'
+        download_href: 'https://api.access.redhat.com/management/v1/images/c4fd0632ce15a7d56e1d174176456943bd48306f9d35bcecbcb0a1dc49088e23/download'
+    # download RHEL 7.9 DVD ISO and earlier
+    # see https://access.redhat.com/downloads/content/rhel 
 
   tasks:
 

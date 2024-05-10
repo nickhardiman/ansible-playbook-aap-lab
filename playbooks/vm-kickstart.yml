@@ -11,11 +11,6 @@
     - name: "check for existing images"
       role: nick.platform.libvirt_image_facts
 
-
-  # tasks:
-  #   - fail:
-
-
 # If there already is an image file, don't trash it. 
 - name: Kickstart a new machine
   hosts: hypervisor

@@ -135,20 +135,26 @@ EOF
 # this loses multiline
 # CA_PRIVATE_KEY: $CA_PRIVATE_KEY
 add_secrets_to_vault () {
+     USER_ADMIN_PUBLIC_KEY=$(<$HOME/.ssh/id_rsa.pub)
+     USER_ADMIN_PRIVATE_KEY_INDENTED=$(cat $HOME/.ssh/id_rsa | sed 's/^/    /')
      USER_ANSIBLE_PUBLIC_KEY=$(<$HOME/.ssh/ansible-key.pub)
-     USER_ANSIBLE_PRIVATE_KEY_INDENTED=$(cat $HOME/.ssh/id_rsa | sed 's/^/    /')
+     USER_ANSIBLE_PRIVATE_KEY_INDENTED=$(cat $HOME/.ssh/ansible-key.priv | sed 's/^/    /')
      CA_PRIVATE_KEY_INDENTED=$(sudo cat /etc/pki/tls/private/$CA_FQDN-key.pem | sed 's/^/    /')
      ansible-vault decrypt --vault-pass-file ~/my-vault-pass ~/vault-credentials.yml
      cat << EOF >>  ~/vault-credentials.yml
-rhsm_user: "$RHSM_USER"
-rhsm_password: "$RHSM_PASSWORD"
-default_password: 'Password;1'
-ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_TOKEN: $ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_TOKEN
-jwt_red_hat_api: $OFFLINE_TOKEN
-USER_ANSIBLE_PUBLIC_KEY: $USER_ANSIBLE_PUBLIC_KEY
-USER_ANSIBLE_PRIVATE_KEY: |
+rhsm_user:               "$RHSM_USER"
+rhsm_password:           "$RHSM_PASSWORD"
+default_password:        "$DEFAULT_PASSWORD"
+user_admin_name:         "$USER"
+user_admin_public_key:    $USER_ADMIN_PUBLIC_KEY
+user_admin_private_key: |
+$USER_ADMIN_PRIVATE_KEY_INDENTED
+user_ansible_public_key:  $USER_ANSIBLE_PUBLIC_KEY
+user_ansible_private_key: |
 $USER_ANSIBLE_PRIVATE_KEY_INDENTED
-CA_PRIVATE_KEY_INDENTED: |
+ansible_galaxy_server_automation_hub_token: $ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_TOKEN
+jwt_red_hat_api: $OFFLINE_TOKEN
+ca_private_key_indented: |
 $CA_PRIVATE_KEY_INDENTED
 EOF
      # Encrypt the new file. 
