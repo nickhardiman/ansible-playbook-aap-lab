@@ -19,43 +19,12 @@
   vars_files:
     - ~/vault-credentials.yml
   roles:
+  tasks:
     - name: "kickstart VMs on hypervisor {{ inventory_hostname }}"
-      role: nick.platform.libvirt_machine_kickstart
-
-
-- name: Find and start new server machine
-  hosts: hypervisor
-  become: true
-  gather_facts: false
-  # serial: 1
-  roles:
-
-    - name: "update /etc/hosts on install host {{ groups['install_host'][0] }}"
-      role: nick.platform.hosts_record
-      vars:
-        h_ip_address: "{{ hostvars[fqdn]['nics'][0]['ip'] }}"
-        h_fqdn: "{{ fqdn }}"
-        h_host: "{{ hostvars[fqdn]['host'] }}"
-      loop: "{{ groups['vm'] }}"
+      ansible.builtin.include_role: 
+        name: nick.platform.libvirt_machine_kickstart
+      loop: "{{ groups[hostvars[inventory_hostname]['vm_group']] }}"
       loop_control:
         loop_var: fqdn
-      when: host != "gateway"
 
-    - name: "update /etc/hosts on install host {{ groups['install_host'][0] }}"
-      role: nick.platform.hosts_record
-      vars:
-        h_ip_address: "{{ hostvars[fqdn]['nics'][1]['ip'] }}"
-        h_fqdn: "{{ fqdn }}"
-        h_host: "{{ hostvars[fqdn]['host'] }}"
-      loop: "{{ groups['vm'] }}"
-      loop_control:
-        loop_var: fqdn
-      when: host == "gateway"
-
-    - name: "run machine (it stops after install)"
-      role: nick.platform.libvirt_machine_start
-      when: hostvars[fqdn]['volume_image_file_exists']
-      loop: "{{ groups[ hostvars[inventory_hostname]['vm_group'] ] }}"
-      loop_control:
-        loop_var: fqdn
 

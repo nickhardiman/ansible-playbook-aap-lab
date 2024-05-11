@@ -77,6 +77,27 @@ update_packages () {
     done
 }
 
+install_troubleshooting_packages () {
+    for NAME in host.site1.example.com host.site2.example.com host.site3.example.com
+    do
+        log_this "install troubleshooting RPM packages on $NAME"
+        sudo dnf -y install \
+            bash-completion \
+            bind-utils \
+            cockpit \
+            lsof \
+            mlocate \
+            nmap \
+            nmap-ncat \
+            vim \
+            tcpdump \
+            telnet \
+            tmux \
+            tree
+    done
+}
+
+
 download_host_scripts () {
     log_this "download each machine bash script"
     for NAME in host.site1.example.com host.site2.example.com host.site3.example.com
@@ -174,5 +195,6 @@ setup_ca_certificate
 restrict_ssh_auth
 register_with_RH
 update_packages
+install_troubleshooting_packages
 # distribute_host_scripts
 

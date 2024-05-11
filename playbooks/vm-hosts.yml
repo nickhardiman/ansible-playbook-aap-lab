@@ -1,0 +1,111 @@
+# Record gateway VM names and addresses in /etc/hosts
+# Gateways are special PITA because we don't have control over whatever it is assigning the IP address.
+# It's probably a DHCP server on a multi-function router installed by an ISP.
+# Luckily we know the MAC address.
+# Use tricks with nmap and arp to discover each gateway IP adddresses.
+# Create entries in /etc/hosts like these.
+#   192.168.1.83   gateway-site1.home   gateway
+#   192.168.1.239   gateway-site2.home   gateway
+#   192.168.1.151   gateway-site3.home   gateway
+# We need these because Ansible can't SSH to the private lab interface.
+# SSH works for all the other VMs by sneakily going via the public interface,
+# but the confused routing prevents that on  these multi-interface gateway VMs.
+#
+# It's a good idea to do more admin.
+# * Fix these IP addresses in the DHCP server, so they won't change in future.
+# * Add these entries to /etc/hosts on the workstation.
+
+- name: Record gateway's home lab name and address in /etc/hosts
+  hosts: hypervisor
+  become: true
+  gather_facts: false
+  tasks:
+
+    - name: Hosts where we want the home nic (network interface card) name and address
+      ansible.builtin.set_fact:
+        hosts_with_two_nics:
+          - gateway.site1.example.com
+          - gateway.site2.example.com
+          - gateway.site3.example.com
+
+    - name: Discover IP addresses assigned by DHCP on the home network 
+      ansible.builtin.debug:
+        msg: "Scan 192.168.1.0/2 and look for MAC address {{ public_mac_prefix }}:00:03"
+
+    - name: "Use nmap to list of IPv4 and MAC addresses. Use arp for a simpler list."
+      ansible.builtin.shell:
+        cmd: "nmap -sT 192.168.1.0/24 -p 9090 >/var/tmp/nmap.txt && arp -an >/var/tmp/arp.txt"
+      register: r_scan
+      changed_when: false
+
+    - name: "Look for gateway's MAC address in the arp list"
+      ansible.builtin.shell:
+        cmd: "grep {{ public_mac_prefix }}:00:03 /var/tmp/arp.txt | awk '{print $2}' | sed 's/[()]//g'"
+      register: r_arp
+      changed_when: false
+
+    - name: Record IP as gateway's host fact
+      ansible.builtin.set_fact:
+        ipv4_for_nic0: "{{ r_arp.stdout }}"
+      delegate_to: "gateway.{{ lab_domain }}"
+      delegate_facts: true
+
+    - name: Display IP
+      ansible.builtin.debug:
+        var: hostvars['gateway.' + lab_domain ]['ipv4_for_nic0']
+
+    - name: Backup already taken?
+      ansible.builtin.stat:
+        path: /var/tmp/hosts
+        get_checksum: false
+      register: r_hosts_backup
+
+    - name: Backup /etc/hosts
+      ansible.builtin.copy:
+        src: /etc/hosts
+        dest: /var/tmp/hosts
+      when: not r_hosts_backup.stat.exists
+
+    # add all gateway addresses to every hypervisor hosts file
+    - name: "Update /etc/hosts for gateway first nic"
+      ansible.builtin.include_role:
+        name: nick.platform.hosts_record
+      vars:
+        h_ip_address: "{{ hostvars[item]['ipv4_for_nic0'] }}"
+        h_fqdn: "{{ hostvars[item]['host'] + '-' + hostvars[item]['lab_net_short_name'] + '.home' }}"
+        h_host: "{{ hostvars[item]['host'] }}"
+      loop: "{{ hosts_with_two_nics | sort }}"
+
+    - name: "Update /etc/hosts for gateway second nic"
+      ansible.builtin.include_role:
+        name: nick.platform.hosts_record
+      vars:
+        h_ip_address: "{{ hostvars[item]['nics'][1]['ip'] }}"
+        h_fqdn: "{{ item }}"
+        h_host: "{{ hostvars[item]['host'] }}"
+      loop: "{{ hosts_with_two_nics | sort }}"
+
+
+- name: Record all other VM names and addresses in /etc/hosts
+  hosts: hypervisor
+  become: true
+  gather_facts: false
+  tasks:
+
+    - name: Hosts where we want the first nic name and address
+      ansible.builtin.set_fact:
+        hosts_with_one_nic: "{{ groups['vm'] | difference(hosts_with_two_nics) }}"
+
+    - name: Display hosts with one nic
+      ansible.builtin.debug:
+        verbosity: 1
+        var: hosts_with_one_nic
+
+    - name: "Update /etc/hosts for all the single-nic VMs"
+      ansible.builtin.include_role:
+        name: nick.platform.hosts_record
+      vars:
+        h_ip_address: "{{ hostvars[item]['nics'][0]['ip'] }}"
+        h_fqdn: "{{ item }}"
+        h_host: "{{ hostvars[item]['host'] }}"
+      loop: "{{ hosts_with_one_nic | sort }}"

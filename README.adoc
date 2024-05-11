@@ -39,6 +39,20 @@ See instructions in
 https://github.com/nickhardiman/ansible-playbook-lab/blob/main/machine-hypervisor.sh[machine-hypervisor.sh]
 
 
+== virtual network
+
+Each machine has two networks. 
+One is for public access from elsewhere in the network. 
+The other is private, for all the VMs.
+
+* 192.168.20.0/24 - public network on the site1 PC
+* 192.168.21.0/24 - private network on the site1 PC
+* 192.168.22.0/24 - public network on the site2 PC
+* 192.168.23.0/24 - private network on the site2 PC
+* 192.168.24.0/24 - public network on the site3 PC
+* 192.168.25.0/24 - private network on the site3 PC
+
+
 == VMs 
 
 
