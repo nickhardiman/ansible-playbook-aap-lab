@@ -164,15 +164,24 @@ setup_ca_certificate () {
     sudo cp ./$CA_FQDN-cert.pem /etc/pki/ca-trust/source/anchors/
     sudo cp  ./$CA_FQDN-key.pem /etc/pki/tls/private/
     sudo update-ca-trust
+}
+
+distribute_ca_certificate () {
     # !!! copy CA certificate from installer host to all host and VM trust stores. 
     #  * ca.source.example.com-cert.pem
     for NAME in host.site1.example.com host.site2.example.com host.site3.example.com
     do
-        scp ./$CA_FQDN-cert.pem $USER@$NAME:$WORK_DIR
-        ssh $USER@$NAME sudo cp $WORK_DIR/$CA_FQDN-cert.pem /etc/pki/ca-trust/source/anchors/
-        ssh $USER@$NAME sudo update-ca-trust
+        scp ./$CA_FQDN-cert.pem $USER@$NAME:$WORK_DIR/$CA_FQDN-cert.pem
+        scp ./$CA_FQDN-key.pem  $USER@$NAME:$WORK_DIR/$CA_FQDN-key.pem
+        ssh $USER@$NAME  << EOF 
+            sudo cp $WORK_DIR/$CA_FQDN-cert.pem /etc/pki/ca-trust/source/anchors/
+            sudo cp $WORK_DIR/$CA_FQDN-key.pem /etc/pki/tls/private/
+            sudo chmod 0700  /etc/pki/tls/private/$CA_FQDN-key.pem
+            sudo update-ca-trust
+EOF
     done
 }
+
 
 log_this () {
     echo
@@ -192,6 +201,7 @@ setup_ca_certificate
 # download_host_scripts
 #
 # on site hosts
+distribute_ca_certificate
 restrict_ssh_auth
 register_with_RH
 update_packages

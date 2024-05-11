@@ -1,0 +1,57 @@
+---
+# The "gateway" machine has two interfaces, one on the home network and one on the new libvirt network.
+# First nic gets an IPv4 address from DHCP.
+# Second interface is assigned a static IP address.
+# Messy routing means we can only get to the gateways via the home network.
+# !!! figure out private route problem 
+
+# !!! broken until I can figure out a way of using gateway_lab instead of gateway_home.
+# - name: Add image facts to hostvars
+#   hosts: hypervisor
+#   become: true
+#   gather_facts: false
+#   roles:
+#     - name: "check for existing images"
+#       role: nick.platform.libvirt_image_facts
+
+
+# If there is no base file, assume configuration didn't complete and 
+# we are good to go again.
+- name: Configure new server machine
+  hosts: gateway_home
+  become: true
+  gather_facts: false
+  serial: 1
+  vars_files:
+    - ~/vault-credentials.yml
+
+  # !!! broken until I can figure out a way of using gateway_lab instead of gateway_home.
+  # pre_tasks:
+  #   - name: "If base image exists, stop here"
+  #     ansible.builtin.meta: end_host
+  #     when: hostvars[ inventory_hostname ]['volume_base_file_exists']
+  #   - ansible.builtin.setup:
+
+  roles:
+    - role: nick.platform.managed_node
+    - role: nick.platform.cdn_repo_consumer
+    - role: nick.platform.latest_packages
+    - role: nick.platform.server_cert
+    - role: nick.platform.smtp_client
+    - role: nick.platform.squid_proxy
+    - role: nick.platform.dns_forwarder
+    - role: nick.platform.cockpit_server
+    - role: nick.platform.insights_client
+    - role: nick.platform.haproxy
+    # !!! add time_server?
+    # https://hardiman.consulting/rhel/9/time/chrony.html
+
+# smoke tests 
+# !!! add tests
+# squid
+#   curl -O -L "https://www.redhat.com/index.html" -x "gateway.lab.example.com:3128"
+# dns
+#   dig @192.168.11.3 dns.lab.example.com
+#   dig @192.168.134.5 192.168.134.5
+#   dig @192.168.134.5 www.google.com
+#   dig @192.168.134.5 142.250.179.22

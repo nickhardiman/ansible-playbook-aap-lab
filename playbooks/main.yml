@@ -4,3 +4,5 @@
 - ansible.builtin.import_playbook: vm-kickstart.yml
 - ansible.builtin.import_playbook: vm-hosts.yml
 - ansible.builtin.import_playbook: vm-start.yml
+
+- ansible.builtin.import_playbook: roles-gateway_home.yml

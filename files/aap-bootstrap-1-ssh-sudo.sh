@@ -68,8 +68,7 @@ source ./aap-bootstrap.cfg
 #-------------------------
 # functions
 
-create_working_directory () {
-    WORK_DIR=$HOME/bootstrap-aap-refarch
+create_installer_working_directory () {
     log_this "create a working directory $WORK_DIR"
     mkdir $WORK_DIR
     cd $WORK_DIR
@@ -174,6 +173,15 @@ better_prompt () {
     done
 }
 
+create_remote_working_directories () {
+    for NAME in host.site1.example.com host.site2.example.com host.site3.example.com
+    do
+        log_this "create a working directory $WORK_DIR on $NAME"
+        ssh $USER@$NAME mkdir -p $WORK_DIR
+    done
+}
+
+
 log_this () {
     echo
     echo -n $(date)
@@ -183,12 +191,15 @@ log_this () {
 #-------------------------
 # main
 
-create_working_directory
-create_RSA_keys_for_user    
+# on installer
+create_local_working_directory
+create_RSA_keys_for_user  
+# on lab hosts
 gather_host_ip_keys
 distribute_my_RSA_pubkey
 passwordless_sudo
 add_to_hosts_file
 gather_host_name_keys
+create_remote_working_directories
 set_hostname
 better_prompt

@@ -28,6 +28,11 @@ fqdn: "{{ host }}.{{ lab_domain }}"
 # extra RPM packages to add to the install list in
 # https://github.com/nickhardiman/ansible-collection-aap2-refarch/blob/main/roles/libvirt_machine_kickstart/templates/kvm-guest-nic-static.ks.j2
 RPMs: []
+#
+# RHSM registration. see
+# https://github.com/nickhardiman/ansible-collection-aap2-refarch/blob/main/roles/cdn_repo_consumer/tasks/main.yml
+server_proxy_hostname: "gateway.{{ lab_domain }}"
+server_proxy_port: 3128
 
 # kickstart
 kickstart_template: "kvm-guest-nic-static.ks.j2"

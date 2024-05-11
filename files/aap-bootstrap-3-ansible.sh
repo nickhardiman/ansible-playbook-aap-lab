@@ -155,7 +155,8 @@ user_ansible_private_key: |
 $USER_ANSIBLE_PRIVATE_KEY_INDENTED
 ansible_galaxy_server_automation_hub_token: $ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_TOKEN
 jwt_red_hat_api: $OFFLINE_TOKEN
-ca_private_key_indented: |
+ca_fqdn: $CA_FQDN
+ca_private_key: |
 $CA_PRIVATE_KEY_INDENTED
 EOF
      # Encrypt the new file. 
