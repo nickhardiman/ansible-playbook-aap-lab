@@ -11,3 +11,6 @@
 # !!! todo
 # - ansible.builtin.import_playbook: vm-to-template.yml
 # - ansible.builtin.import_playbook: template-to-vm.yml
+
+- ansible.builtin.import_playbook: app-aap-install.yml
+- ansible.builtin.import_playbook: app-aap-configure.yml
