@@ -28,5 +28,6 @@ collections:
 # install experiments
 #  - git+https://github.com/myllynen/aap-automation,master
 #  - name: redhat_cop.aap_utilities
-#  - git+https://github.com/nickhardiman/ansible-collection-platform
+#  !!! ansible-collection-aap2-refarch is a temporary copy of ansible-collection-platform
+#  - git+https://github.com/nickhardiman/ansible-collection-aap2-refarch
 #  - git+https://github.com/nickhardiman/ansible-collection-integration

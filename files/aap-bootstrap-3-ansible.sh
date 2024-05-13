@@ -73,18 +73,23 @@ install_ansible_packages() {
 }
 
 
+# I'm not using ansible-galaxy because I make frequent changes.
+# Check out the directive in ansible.cfg in some playbooks.
+# If the repo has already been cloned, git exits with this error message. 
+#   fatal: destination path 'libvirt-host' already exists and is not an empty directory.
+#
 clone_my_ansible_collections() {
-     log_this "get my libvirt, OS and app roles, all bundled into a couple collections"
-     # I'm not using ansible-galaxy because I make frequent changes.
-     # Check out the directive in ansible.cfg in some playbooks.
-     mkdir -p $HOME/ansible/collections/ansible_collections/nick/
-     pushd    $HOME/ansible/collections/ansible_collections/nick/
-     # If the repo has already been cloned, git exits with this error message. 
-     #   fatal: destination path 'libvirt-host' already exists and is not an empty directory.
-     # !!! not uploaded
-     git clone https://github.com/nickhardiman/ansible-collection-platform.git platform
-     git clone https://github.com/nickhardiman/ansible-collection-app.git      app
-     popd
+    log_this "get my libvirt, OS and app roles, all bundled into a couple collections"
+    mkdir -p $HOME/ansible/collections/ansible_collections/nick/
+    pushd    $HOME/ansible/collections/ansible_collections/nick/
+    # !!! when finished, move to requirements.yml 
+    #   - git+https://github.com/nickhardiman/ansible-collection-aap2-refarch
+    # !!! hacked copy of ansible-collection-platform
+    # ansible-collection-aap2-refarch is a temporary copy of ansible-collection-platform
+    # git clone https://github.com/nickhardiman/ansible-collection-platform.git platform
+    git clone https://github.com/nickhardiman/ansible-collection-aap2-refarch.git platform
+    git clone https://github.com/nickhardiman/ansible-collection-app.git      app
+    popd
 }
 
 
@@ -167,11 +172,6 @@ EOF
 
 distribute_ansible_user_RSA_pubkey() {
      USER_ANSIBLE_PUBLIC_KEY=$(<$HOME/.ssh/ansible-key.pub)
-     # !!! change this Public key. 
-     # https://github.com/nickhardiman/ansible-collection-platform/blob/main/roles/libvirt_machine_kickstart/defaults/main.yml#L91
-     # user_ansible_public_key: |
-     #   ssh-rsa AAA...YO0= pubkey for ansible
-     # 
     log_this "copy $USER_ANSIBLE_NAME RSA public key from here to machines for passwordless login"
     for NAME in host.site1.example.com host.site2.example.com host.site3.example.com
     do
