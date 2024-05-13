@@ -7,3 +7,7 @@
 
 - ansible.builtin.import_playbook: roles-gateway_home.yml
 - ansible.builtin.import_playbook: roles-vm.yml
+
+# !!! todo
+# - ansible.builtin.import_playbook: vm-to-template.yml
+# - ansible.builtin.import_playbook: template-to-vm.yml

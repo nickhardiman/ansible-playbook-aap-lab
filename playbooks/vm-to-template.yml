@@ -1,0 +1,37 @@
+---
+# !!! conversion of VM image to VM image template is missing 
+# see virt-sysprep here:
+# 11.2. Creating virtual machine templates
+# https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/configuring_and_managing_virtualization/index#assembly_creating-virtual-machine-templates_cloning-virtual-machines
+# makes a copy of the image file
+# does not clean up for a template
+# !!! convert from
+#   hosts: "{{ host_to_image }}"
+# to
+#   hosts: hypervisor
+
+# Create virtual machine template
+# checks 
+# virsh vol-list images
+# see TASK [nick.platform.libvirt_machine_image : list libvirt's volumes]
+# create $FQDN-base.qcow2 image and $FQDN.xml config.
+# if the $FQDN-base.qcow2 file already exists, this role does not change anything.
+ 
+- name: Stop and copy new server machine
+  hosts: hypervisor
+  become: true
+  gather_facts: false
+  # roles:
+  #   - name: "check for existing images"
+  #     role: nick.platform.libvirt_image_facts
+  tasks:
+
+    # gateway routing isn't sorted yet so it can't respond to a ping.
+    - name: Run machine (it stops after install)
+      ansible.builtin.include_role:
+        name: nick.platform.libvirt_machine_image
+      vars:
+        wait_for_ping: false
+      loop: "{{ groups[my_vms] }}"
+      loop_control:
+        loop_var: fqdn
