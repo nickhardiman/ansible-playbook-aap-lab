@@ -5,8 +5,9 @@
 - ansible.builtin.import_playbook: vm-hosts.yml
 - ansible.builtin.import_playbook: vm-start.yml
 
-- ansible.builtin.import_playbook: roles-gateway_home.yml
-- ansible.builtin.import_playbook: roles-vm.yml
+- ansible.builtin.import_playbook: configure-gateways.yml
+- ansible.builtin.import_playbook: configure-vms.yml
+- ansible.builtin.import_playbook: configure-nfs.yml
 
 # !!! todo
 # - ansible.builtin.import_playbook: vm-to-template.yml

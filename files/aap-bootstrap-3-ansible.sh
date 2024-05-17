@@ -163,6 +163,7 @@ jwt_red_hat_api: $OFFLINE_TOKEN
 ca_fqdn: $CA_FQDN
 ca_private_key: |
 $CA_PRIVATE_KEY_INDENTED
+work_dir: $WORK_DIR
 EOF
      # Encrypt the new file. 
      echo 'my vault password' >  ~/my-vault-pass

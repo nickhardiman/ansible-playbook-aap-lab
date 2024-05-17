@@ -9,7 +9,7 @@
 # This is the only host with ansible_user SSH private key.
 
 - name: Check access
-  hosts: install_host:aapcontrol:aaphub
+  hosts: install_host:automationcontroller:automationhub
   gather_facts: false
   become: true
   tasks:
@@ -17,7 +17,7 @@
       ansible.builtin.ping:
 
 - name: Copy server certs to localhost
-  hosts: aapcontrol:aaphub
+  hosts: automationcontroller:automationhub
   gather_facts: false
   become: true
   tasks:
@@ -27,13 +27,13 @@
     - name: Fetch server certificates for install
       ansible.builtin.fetch:
         src: "/etc/pki/tls/certs/{{ inventory_hostname }}.pem"
-        dest: "/var/tmp/"
+        dest: "{{ work_dir }}"
         flat: true
 
     - name: Fetch server keys for install
       ansible.builtin.fetch:
         src: "/etc/pki/tls/private/{{ inventory_hostname }}.key"
-        dest: "/var/tmp/"
+        dest: "{{ work_dir }}"
         flat: true
 
 
@@ -43,8 +43,6 @@
   become: true
   vars_files:
     - ~/vault-credentials.yml
-  vars:
-    default_password: Password;1
 
   tasks:
 
@@ -66,7 +64,7 @@
 
     - name: Before launching setup.sh, check automation controller status
       ansible.builtin.uri:
-        url: "https://{{ groups['aapcontrol'][0] }}/ui/"
+        url: "https://automationhub-1.{{ lab_domain }}/ui/"
         method: GET
         validate_certs: false
       register: r_controller_info
@@ -88,20 +86,22 @@
     # only run if the controller is not running, or
     # if the installer package has been updated
     # options
-    # lower RAM. Hub doesn't have enough to pass preflight check.
+    # Use this if Hub doesn't have enough RAM to pass preflight check.
     # also consider -e ignore_preflight_errors=True
-    #   cmd:  ./setup.sh -e required_ram=3072
+    #    cmd:  ./setup.sh -e required_ram=3072
     # Use this to print debug information.
-    #   cmd:  ./setup.sh -- -vvv
+    #    cmd:  ./setup.sh -- -vvv
+    # Use this when behind a proxy.
+    #    cmd: >
+    #      ./setup.sh
+    #      --
+    #      --extra-vars "http_proxy=http://gateway.{{ lab_domain }}:3128"
+    #      --extra-vars "https_proxy=http://gateway.{{ lab_domain }}:3128"
+    #      --extra-vars no_proxy=localhost,127.0.0.1,example.com
     - name: Run setup.sh for controller
       ansible.builtin.shell:
         cmd: >
           ./setup.sh
-          -e required_ram=3072
-          --
-          --extra-vars http_proxy=http://gateway.build.example.com:3128
-          --extra-vars https_proxy=http://gateway.build.example.com:3128
-          --extra-vars no_proxy=localhost,127.0.0.1,example.com
         chdir: /opt/ansible-automation-platform/installer
       environment:
         ANSIBLE_BECOME: True
