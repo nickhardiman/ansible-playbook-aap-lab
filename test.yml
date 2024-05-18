@@ -1,18 +1,22 @@
-- name: Configure NFS server on gateway
-  hosts: ~gateway.site[12].home
+- name: Configure AAP server certificate
+  hosts: install_host
   become: true
   gather_facts: false
   vars_files:
     - ~/vault-credentials.yml
-  tasks:
-    - name: Load data
-      ansible.builtin.slurp:
-        src: /proc/fs/nfsd/versions
-      register: r_slurp
-    - name: Decode data and store as fact
-      ansible.builtin.set_fact:
-        nfs_versions: "{{ r_slurp.content | ansible.builtin.b64decode }}"
-    - name: Display
-      ansible.builtin.debug:
-        msg: "/proc/fs/nfsd/versions: {{ r_slurp.content | ansible.builtin.b64decode }}"
+    
+  roles:
+    - role: nick.platform.server_cert
+      vars:
+        server_cn: no-san.site1.example.com
+
+    - role: nick.platform.server_cert
+      vars:
+        server_cn: controlplane.site1.example.com
+        subject_alt_name:
+          - DNS:controlplane-1.site1.example.com
+          - DNS:controlplane-2.site1.example.com
+          - DNS:controlplane-3.site1.example.com
+# check with
+# openssl x509 -in /etc/pki/tls/certs/controlplane.site1.example.com.pem -ext subjectAltName  -noout
 

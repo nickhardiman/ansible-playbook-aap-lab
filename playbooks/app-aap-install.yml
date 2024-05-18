@@ -9,32 +9,12 @@
 # This is the only host with ansible_user SSH private key.
 
 - name: Check access
-  hosts: install_host:automationcontroller:automationhub
+  hosts: install_host:automationcontroller:automationhub:execution_node
   gather_facts: false
   become: true
   tasks:
     - name: Ping
       ansible.builtin.ping:
-
-- name: Copy server certs to localhost
-  hosts: automationcontroller:automationhub
-  gather_facts: false
-  become: true
-  tasks:
-
-    # !!! sensitive
-    # use a temporary directory and delete afterwards
-    - name: Fetch server certificates for install
-      ansible.builtin.fetch:
-        src: "/etc/pki/tls/certs/{{ inventory_hostname }}.pem"
-        dest: "{{ work_dir }}"
-        flat: true
-
-    - name: Fetch server keys for install
-      ansible.builtin.fetch:
-        src: "/etc/pki/tls/private/{{ inventory_hostname }}.key"
-        dest: "{{ work_dir }}"
-        flat: true
 
 
 - name: AAP install
@@ -43,22 +23,85 @@
   become: true
   vars_files:
     - ~/vault-credentials.yml
+  # roles:
+  #   # Create 4 new certs
+  #   # controlplane.site1.example.com is installed on all controllers in site1.
+  #   # haproxy uses DNS name controlplane.site1.example.com and uses TLS pass-through.
+  #   # Same for controlplane.site2.example.com, automationhub.site1.example.com, and automationhub.site2.example.com
+  #   # Role places keys in /etc/pki/tls/private/ and certs in /etc/pki/tls/certs/
+  #   - role: nick.platform.server_cert
+  #     vars:
+  #       server_cn: controlplane.site1.example.com
+  #       subject_alt_name:
+  #         - DNS:controlplane-1.site1.example.com
+  #         - DNS:controlplane-2.site1.example.com
+  #         - DNS:controlplane-3.site1.example.com
+  #   - role: nick.platform.server_cert
+  #     vars:
+  #       server_cn: controlplane.site2.example.com
+  #       subject_alt_name:
+  #         - DNS:controlplane-1.site2.example.com
+  #         - DNS:controlplane-2.site2.example.com
+  #         - DNS:controlplane-3.site2.example.com
+  #   - role: nick.platform.server_cert
+  #     vars:
+  #       server_cn: automationhub.site1.example.com
+  #       subject_alt_name:
+  #         - DNS:automationhub-1.site1.example.com
+  #         - DNS:automationhub-2.site1.example.com
+  #         - DNS:automationhub-3.site1.example.com
+  #   - role: nick.platform.server_cert
+  #     vars:
+  #       server_cn: automationhub.site2.example.com
+  #       subject_alt_name:
+  #         - DNS:automationhub-1.site2.example.com
+  #         - DNS:automationhub-2.site2.example.com
+  #         - DNS:automationhub-3.site2.example.com
 
   tasks:
 
-    # create /opt/ansible-automation-platform/installer/
-    - name: Install Ansible Automation Platform installer package
-      ansible.builtin.dnf:
-        name: ansible-automation-platform-installer
-        enablerepo: ansible-automation-platform-2.4-for-rhel-9-x86_64-rpms
-        state: present
-      register: r_installer_package
+    # # create /opt/ansible-automation-platform/installer/
+    # - name: Install Ansible Automation Platform installer package to create /opt/ansible-automation-platform/installer/
+    #   ansible.builtin.dnf:
+    #     name: ansible-automation-platform-installer
+    #     enablerepo: ansible-automation-platform-2.4-for-rhel-9-x86_64-rpms
+    #     state: present
+    #   register: r_installer_package
 
-    # !!! sensitive 
+
+
+    - ansible.builtin.shell:
+        cmd: /usr/bin/id && /usr/bin/hostname
+      register: r_id
+    - ansible.builtin.debug:
+        var: r_id
+
+
+    - name: Copy keys to installer directory
+      ansible.builtin.copy:
+        src: "/etc/pki/tls/private/{{ item }}.key"
+        dest: "/opt/ansible-automation-platform/installer/{{ item }}.key"
+      loop:
+        - controlplane.site1.example.com
+        - controlplane.site2.example.com
+        - automationhub.site1.example.com
+        - automationhub.site2.example.com
+
+    - name: Copy certs to installer directory
+      ansible.builtin.copy:
+        src: "/etc/pki/tls/certs/{{ item }}.pem"
+        dest: "/opt/ansible-automation-platform/installer/{{ item }}.pem"
+      loop:
+        - controlplane.site1.example.com
+        - controlplane.site2.example.com
+        - automationhub.site1.example.com
+        - automationhub.site2.example.com
+
+    # !!! plain text file containing sensitive info
     # move passwords to vault
     - name: Configure inventory file
       ansible.builtin.template:
-        src: inventory-install-controller-and-hub.ini.j2
+        src: inventory-install.ini.j2
         dest: /opt/ansible-automation-platform/installer/inventory
         mode: '0644'
 
@@ -82,6 +125,13 @@
         owner: ansible_user
         mode: '0644'
         state: touch
+
+
+
+    - fail:
+
+
+
 
     # only run if the controller is not running, or
     # if the installer package has been updated
