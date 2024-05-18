@@ -68,7 +68,20 @@
     #     state: present
     #   register: r_installer_package
 
+    - name: Ansible user and admins can use the installer directory
+      ansible.builtin.file:
+        path: /opt/ansible-automation-platform/installer
+        owner: "{{ user_ansible_name }}"
+        group: wheel
+        mode: '2770'
+        state: touch
 
+    - name: Let ansible user write to setup.log
+      ansible.builtin.file:
+        path: /opt/ansible-automation-platform/installer/setup.log
+        owner: "{{ user_ansible_name }}"
+        mode: '0644'
+        state: touch
 
     - ansible.builtin.shell:
         cmd: /usr/bin/id && /usr/bin/hostname
@@ -80,7 +93,10 @@
     - name: Copy keys to installer directory
       ansible.builtin.copy:
         src: "/etc/pki/tls/private/{{ item }}.key"
+        remote_src: true
         dest: "/opt/ansible-automation-platform/installer/{{ item }}.key"
+        owner: "{{ user_ansible_name }}"
+        mode: '0440'
       loop:
         - controlplane.site1.example.com
         - controlplane.site2.example.com
@@ -90,7 +106,9 @@
     - name: Copy certs to installer directory
       ansible.builtin.copy:
         src: "/etc/pki/tls/certs/{{ item }}.pem"
+        remote_src: true
         dest: "/opt/ansible-automation-platform/installer/{{ item }}.pem"
+        owner: "{{ user_ansible_name }}"
       loop:
         - controlplane.site1.example.com
         - controlplane.site2.example.com
@@ -119,12 +137,7 @@
           - Open a second terminal and run this command.
           - sudo tail -f /opt/ansible-automation-platform/installer/setup.log
 
-    - name: Let ansible_user write to setup.log
-      ansible.builtin.file:
-        path: /opt/ansible-automation-platform/installer/setup.log
-        owner: ansible_user
-        mode: '0644'
-        state: touch
+
 
 
 
