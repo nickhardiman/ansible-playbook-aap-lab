@@ -15,43 +15,38 @@
 #       role: nick.platform.libvirt_image_facts
 
 
-# If there is no base file, assume configuration didn't complete and 
-# we are good to go again.
-- name: Configure NFS server on gateway
-  # These three are all equivalent.
-  # List, regex or, regex character class
-  # hosts: gateway-site1.home:gateway-site2.home
-  # hosts: ~gateway-site(1|2).home
-  hosts: ~gateway.site[12].home
+# # If there is no base file, assume configuration didn't complete and 
+# # we are good to go again.
+# - name: Configure NFS server on gateway
+#   # These three are all equivalent.
+#   # List, regex or, regex character class
+#   # hosts: gateway-site1.home:gateway-site2.home
+#   # hosts: ~gateway-site(1|2).home
+#   hosts: ~gateway.site[12].home
+#   become: true
+#   gather_facts: false
+#   vars_files:
+#     - ~/vault-credentials.yml
+
+#   # !!! broken until I can figure out a way of using gateway_lab instead of gateway_home.
+#   # pre_tasks:
+#   #   - name: "If base image exists, stop here"
+#   #     ansible.builtin.meta: end_host
+#   #     when: hostvars[ inventory_hostname ]['volume_base_file_exists']
+#   #   - ansible.builtin.setup:
+
+#   roles:
+#     - role: nick.platform.system_user
+#     - role: nick.platform.nfs_server
+
+
+- name: Configure NFS clients on hubs
+  hosts: automationhub
   become: true
   gather_facts: false
   vars_files:
     - ~/vault-credentials.yml
 
-  # !!! broken until I can figure out a way of using gateway_lab instead of gateway_home.
-  # pre_tasks:
-  #   - name: "If base image exists, stop here"
-  #     ansible.builtin.meta: end_host
-  #     when: hostvars[ inventory_hostname ]['volume_base_file_exists']
-  #   - ansible.builtin.setup:
-
-  pre_tasks:
-
-  - name: Create pulp group
-    ansible.builtin.group:
-      name: pulp
-      gid: 984
-      system: true
-      state: present
-
-  - name: Create pulp user
-    ansible.builtin.user:
-      name: pulp
-      uid: 984
-      group: pulp
-      system: true
-      state: present
-
   roles:
-    - role: nick.platform.nfs_server
-
+    - role: nick.platform.system_user
+    - role: nick.platform.nfs_client

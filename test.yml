@@ -1,0 +1,18 @@
+- name: Configure NFS server on gateway
+  hosts: ~gateway.site[12].home
+  become: true
+  gather_facts: false
+  vars_files:
+    - ~/vault-credentials.yml
+  tasks:
+    - name: Load data
+      ansible.builtin.slurp:
+        src: /proc/fs/nfsd/versions
+      register: r_slurp
+    - name: Decode data and store as fact
+      ansible.builtin.set_fact:
+        nfs_versions: "{{ r_slurp.content | ansible.builtin.b64decode }}"
+    - name: Display
+      ansible.builtin.debug:
+        msg: "/proc/fs/nfsd/versions: {{ r_slurp.content | ansible.builtin.b64decode }}"
+
