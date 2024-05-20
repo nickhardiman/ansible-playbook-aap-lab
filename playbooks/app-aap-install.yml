@@ -60,13 +60,13 @@
 
   tasks:
 
-    # # create /opt/ansible-automation-platform/installer/
-    # - name: Install Ansible Automation Platform installer package to create /opt/ansible-automation-platform/installer/
-    #   ansible.builtin.dnf:
-    #     name: ansible-automation-platform-installer
-    #     enablerepo: ansible-automation-platform-2.4-for-rhel-9-x86_64-rpms
-    #     state: present
-    #   register: r_installer_package
+    # create /opt/ansible-automation-platform/installer/
+    - name: Install Ansible Automation Platform installer package to create /opt/ansible-automation-platform/installer/
+      ansible.builtin.dnf:
+        name: ansible-automation-platform-installer
+        enablerepo: ansible-automation-platform-2.4-for-rhel-9-x86_64-rpms
+        state: present
+      register: r_installer_package
 
     - name: Ansible user and admins can use the installer directory
       ansible.builtin.file:
@@ -119,32 +119,22 @@
     # move passwords to vault
     - name: Configure inventory file
       ansible.builtin.template:
-        src: inventory-install.ini.j2
+        src: inventory-install-site1.ini.j2
         dest: /opt/ansible-automation-platform/installer/inventory
         mode: '0644'
 
     - name: Before launching setup.sh, check automation controller status
       ansible.builtin.uri:
-        url: "https://automationhub-1.{{ lab_domain }}/ui/"
+        url: "https://controlplane-1.site1.example.com/ui/"
         method: GET
         validate_certs: false
       register: r_controller_info
       failed_when: false
-
-    - name: Helpful hint
-      ansible.builtin.debug:
-        msg:
-          - Open a second terminal and run this command.
-          - sudo tail -f /opt/ansible-automation-platform/installer/setup.log
-
-
-
-
-
-    - fail:
-
-
-
+      # ignore_errors: true
+    # - name: Fail if controller is already running
+    #   ansible.builtin.fail:
+    #     msg: "Controller is already running at https://controlplane-1.site1.example.com/ui/"
+    #   when: not r_controller_info['failed']
 
     # only run if the controller is not running, or
     # if the installer package has been updated
@@ -158,13 +148,17 @@
     #    cmd: >
     #      ./setup.sh
     #      --
-    #      --extra-vars "http_proxy=http://gateway.{{ lab_domain }}:3128"
+    #      --extra-vars  "http_proxy=http://gateway.{{ lab_domain }}:3128"
     #      --extra-vars "https_proxy=http://gateway.{{ lab_domain }}:3128"
     #      --extra-vars no_proxy=localhost,127.0.0.1,example.com
     - name: Run setup.sh for controller
       ansible.builtin.shell:
         cmd: >
           ./setup.sh
+          --
+          --extra-vars  "http_proxy=http://gateway.site1.example.com:3128"
+          --extra-vars "https_proxy=http://gateway.site1.example.com:3128"
+          --extra-vars no_proxy=localhost,127.0.0.1,example.com
         chdir: /opt/ansible-automation-platform/installer
       environment:
         ANSIBLE_BECOME: True

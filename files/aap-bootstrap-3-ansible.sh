@@ -164,6 +164,9 @@ ca_fqdn: $CA_FQDN
 ca_private_key: |
 $CA_PRIVATE_KEY_INDENTED
 work_dir: $WORK_DIR
+site1_ip: $SITE1_IP
+site2_ip: $SITE2_IP
+site3_ip: $SITE3_IP
 EOF
      # Encrypt the new file. 
      echo 'my vault password' >  ~/my-vault-pass

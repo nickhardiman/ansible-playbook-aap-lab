@@ -103,6 +103,9 @@
             # interface_name defaults to the connection name
             ip:
               route:
+              # !!! hardcoded IP addresses
+              # replace gateway with site1_ip, site2_ip and site3_ip from vars_file
+              # replace network with hostvars['host.site1.example.com']['lab_net_prefix'] from group_vars files
                 # - network: 192.168.21.0
                 #   prefix: 24
                 #   gateway: 192.168.1.253
