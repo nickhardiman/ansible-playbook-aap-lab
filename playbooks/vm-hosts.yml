@@ -25,13 +25,6 @@
       ansible.builtin.debug:
         msg: Gateways must be up for this to work.
 
-    - name: Hosts where we want the home nic (network interface card) name and address
-      ansible.builtin.set_fact:
-        hosts_with_two_nics:
-          - gateway.site1.example.com
-          - gateway.site2.example.com
-          - gateway.site3.example.com
-
     - name: Discover IP addresses assigned by DHCP on the home network
       ansible.builtin.debug:
         msg: "Scan {{ home_network }} and look for MAC address {{ public_mac_prefix }}:00:03"
@@ -119,54 +112,76 @@
         h_host: "{{ hostvars[item]['host'] }}"
       loop: "{{ hosts_with_one_nic | sort }}"
 
-    - name: "Update /etc/hosts for controlplane load balancer internal address"
+
+# !!! brain failure. Use loops, like above.
+- name: Record AAP load balancer names and addresses in /etc/hosts
+  hosts: hypervisor
+  become: true
+  gather_facts: false
+  vars_files:
+    - ~/vault-credentials.yml
+  tasks:
+
+    - name: "Update /etc/hosts for controlplane load balancer internal address on site1"
       ansible.builtin.include_role:
         name: nick.platform.hosts_record
       vars:
-        h_ip_address: "{{ lab_net_prefix }}.3"
-        h_fqdn: "controlplane.{{ lab_domain }}"
+        h_ip_address: "{{ hostvars['gateway.site1.example.com']['nics'][1]['ip'] }}"
+        h_fqdn: "controlplane.site1.example.com"
         h_host: controlplane
 
-    - name: "Update /etc/hosts for automationhub load balancer internal address"
+    - name: "Update /etc/hosts for automationhub load balancer internal address on site1"
       ansible.builtin.include_role:
         name: nick.platform.hosts_record
       vars:
-        h_ip_address: "{{ lab_net_prefix }}.3"
-        h_fqdn: "automationhub.{{ lab_domain }}"
+        h_ip_address: "{{ hostvars['gateway.site1.example.com']['nics'][1]['ip'] }}"
+        h_fqdn: "automationhub.site1.example.com"
+        h_host: automationhub
+
+    - name: "Update /etc/hosts for controlplane load balancer internal address on site2"
+      ansible.builtin.include_role:
+        name: nick.platform.hosts_record
+      vars:
+        h_ip_address: "{{ hostvars['gateway.site2.example.com']['nics'][1]['ip'] }}"
+        h_fqdn: "controlplane.site2.example.com"
+        h_host: controlplane
+
+    - name: "Update /etc/hosts for automationhub load balancer internal address on site2"
+      ansible.builtin.include_role:
+        name: nick.platform.hosts_record
+      vars:
+        h_ip_address: "{{ hostvars['gateway.site2.example.com']['nics'][1]['ip'] }}"
+        h_fqdn: "automationhub.site2.example.com"
         h_host: automationhub
 
     - name: "Update /etc/hosts for controlplane load balancer external address on site1"
       ansible.builtin.include_role:
         name: nick.platform.hosts_record
       vars:
-        h_ip_address: "{{ site1_ip }}"
-        h_fqdn: "controlplane.{{ home_domain }}"
-        h_host: controlplane
-      when: hostvars[inventory_hostname]['lab_net_short_name'] == 'site1'
-
+        h_ip_address: "{{ hostvars['gateway.site1.example.com']['ipv4_for_nic0'] }}"
+        h_fqdn: "controlplane-site1.{{ home_domain }}"
+        h_host: controlplane-site1
+  
     - name: "Update /etc/hosts for automationhub load balancer external address on site1"
       ansible.builtin.include_role:
         name: nick.platform.hosts_record
       vars:
-        h_ip_address: "{{ site1_ip }}"
-        h_fqdn: "automationhub.{{ home_domain }}"
-        h_host: automationhub
-      when: hostvars[inventory_hostname]['lab_net_short_name'] == 'site1'
+        h_ip_address: "{{ hostvars['gateway.site1.example.com']['ipv4_for_nic0'] }}"
+        h_fqdn: "automationhub-site1.{{ home_domain }}"
+        h_host: automationhub-site1
 
     - name: "Update /etc/hosts for controlplane load balancer external address on site2"
       ansible.builtin.include_role:
         name: nick.platform.hosts_record
       vars:
-        h_ip_address: "{{ site2_ip }}"
-        h_fqdn: "controlplane.{{ home_domain }}"
-        h_host: controlplane
-      when: hostvars[inventory_hostname]['lab_net_short_name'] == 'site2'
+        h_ip_address: "{{ hostvars['gateway.site2.example.com']['ipv4_for_nic0'] }}"
+        h_fqdn: "controlplane-site2.{{ home_domain }}"
+        h_host: controlplane-site2
 
     - name: "Update /etc/hosts for automationhub load balancer external address on site2"
       ansible.builtin.include_role:
         name: nick.platform.hosts_record
       vars:
-        h_ip_address: "{{ site2_ip }}"
-        h_fqdn: "automationhub.{{ home_domain }}"
-        h_host: automationhub
-      when: hostvars[inventory_hostname]['lab_net_short_name'] == 'site2'
+        h_ip_address: "{{ hostvars['gateway.site2.example.com']['ipv4_for_nic0'] }}"
+        h_fqdn: "automationhub-site2.{{ home_domain }}"
+        h_host: automationhub-site2

@@ -21,7 +21,7 @@
   hosts: gateway_home
   become: true
   gather_facts: false
-  serial: 1
+  # serial: 1
   vars_files:
     - ~/vault-credentials.yml
 
@@ -33,17 +33,19 @@
   #   - ansible.builtin.setup:
 
   roles:
-    - role: nick.platform.managed_node
-    - role: nick.platform.hosts_file
-    - role: nick.platform.cdn_repo_consumer
-    - role: nick.platform.latest_packages
-    - role: nick.platform.server_cert
-    - role: nick.platform.smtp_client
-    - role: nick.platform.squid_proxy
-    - role: nick.platform.dns_forwarder
-    - role: nick.platform.cockpit_server
-    - role: nick.platform.insights_client
+    # - role: nick.platform.managed_node
+    # - role: nick.platform.hosts_file
+    # - role: nick.platform.cdn_repo_consumer
+    # - role: nick.platform.latest_packages
+    # - role: nick.platform.server_cert
+    # - role: nick.platform.smtp_client
+    # - role: nick.platform.squid_proxy
+    # - role: nick.platform.dns_forwarder
+    # - role: nick.platform.cockpit_server
+    # - role: nick.platform.insights_client
     - role: nick.platform.haproxy
+      vars:
+        haproxy_config_file_template: haproxy-sni-tcp-aap-refarch.cfg.j2
     # !!! add time_server?
     # https://hardiman.consulting/rhel/9/time/chrony.html
 
