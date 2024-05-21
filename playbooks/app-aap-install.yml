@@ -23,43 +23,47 @@
   become: true
   vars_files:
     - ~/vault-credentials.yml
-  # roles:
-  #   # Create 4 new certs
-  #   # controlplane.site1.example.com is installed on all controllers in site1.
-  #   # haproxy uses DNS name controlplane.site1.example.com and uses TLS pass-through.
-  #   # Same for controlplane.site2.example.com, automationhub.site1.example.com, and automationhub.site2.example.com
-  #   # Role places keys in /etc/pki/tls/private/ and certs in /etc/pki/tls/certs/
-  #   - role: nick.platform.server_cert
-  #     vars:
-  #       server_cn: controlplane.site1.example.com
-  #       subject_alt_name:
-  #         - DNS:controlplane-1.site1.example.com
-  #         - DNS:controlplane-2.site1.example.com
-  #         - DNS:controlplane-3.site1.example.com
-  #   - role: nick.platform.server_cert
-  #     vars:
-  #       server_cn: controlplane.site2.example.com
-  #       subject_alt_name:
-  #         - DNS:controlplane-1.site2.example.com
-  #         - DNS:controlplane-2.site2.example.com
-  #         - DNS:controlplane-3.site2.example.com
-  #   - role: nick.platform.server_cert
-  #     vars:
-  #       server_cn: automationhub.site1.example.com
-  #       subject_alt_name:
-  #         - DNS:automationhub-1.site1.example.com
-  #         - DNS:automationhub-2.site1.example.com
-  #         - DNS:automationhub-3.site1.example.com
-  #   - role: nick.platform.server_cert
-  #     vars:
-  #       server_cn: automationhub.site2.example.com
-  #       subject_alt_name:
-  #         - DNS:automationhub-1.site2.example.com
-  #         - DNS:automationhub-2.site2.example.com
-  #         - DNS:automationhub-3.site2.example.com
+  roles:
+    # Create 4 new certs
+    # controlplane.site1.example.com is installed on all controllers in site1.
+    # haproxy uses DNS name controlplane.site1.example.com and uses TLS pass-through.
+    # Same for controlplane.site2.example.com, automationhub.site1.example.com, and automationhub.site2.example.com
+    # Role places keys in /etc/pki/tls/private/ and certs in /etc/pki/tls/certs/
+    - role: nick.platform.server_cert
+      vars:
+        server_cn: controlplane.site1.example.com
+        subject_alt_name:
+          - DNS:controlplane.site1.example.com
+          - DNS:controlplane-1.site1.example.com
+          - DNS:controlplane-2.site1.example.com
+          - DNS:controlplane-3.site1.example.com
+    - role: nick.platform.server_cert
+      vars:
+        server_cn: controlplane.site2.example.com
+        subject_alt_name:
+          - DNS:controlplane.site2.example.com
+          - DNS:controlplane-1.site2.example.com
+          - DNS:controlplane-2.site2.example.com
+          - DNS:controlplane-3.site2.example.com
+    - role: nick.platform.server_cert
+      vars:
+        server_cn: automationhub.site1.example.com
+        subject_alt_name:
+          - DNS:automationhub.site1.example.com
+          - DNS:automationhub-1.site1.example.com
+          - DNS:automationhub-2.site1.example.com
+          - DNS:automationhub-3.site1.example.com
+    - role: nick.platform.server_cert
+      vars:
+        server_cn: automationhub.site2.example.com
+        subject_alt_name:
+          - DNS:automationhub.site2.example.com
+          - DNS:automationhub-1.site2.example.com
+          - DNS:automationhub-2.site2.example.com
+          - DNS:automationhub-3.site2.example.com
 
   tasks:
-
+    
     # create /opt/ansible-automation-platform/installer/
     - name: Install Ansible Automation Platform installer package to create /opt/ansible-automation-platform/installer/
       ansible.builtin.dnf:
@@ -76,11 +80,12 @@
         mode: '2770'
         state: touch
 
-    - name: Let ansible user write to setup.log
+    - name: Let ansible user and admins write to setup.log
       ansible.builtin.file:
         path: /opt/ansible-automation-platform/installer/setup.log
         owner: "{{ user_ansible_name }}"
-        mode: '0644'
+        group: wheel
+        mode: '0664'
         state: touch
 
     - ansible.builtin.shell:
@@ -89,13 +94,13 @@
     - ansible.builtin.debug:
         var: r_id
 
-
     - name: Copy keys to installer directory
       ansible.builtin.copy:
         src: "/etc/pki/tls/private/{{ item }}.key"
         remote_src: true
         dest: "/opt/ansible-automation-platform/installer/{{ item }}.key"
         owner: "{{ user_ansible_name }}"
+        group: wheel
         mode: '0440'
       loop:
         - controlplane.site1.example.com
@@ -109,6 +114,8 @@
         remote_src: true
         dest: "/opt/ansible-automation-platform/installer/{{ item }}.pem"
         owner: "{{ user_ansible_name }}"
+        group: wheel
+        mode: '0444'
       loop:
         - controlplane.site1.example.com
         - controlplane.site2.example.com

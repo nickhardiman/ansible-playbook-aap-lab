@@ -21,7 +21,7 @@
   # https://github.com/theforeman/foreman-ansible-modules/issues/1473
   - name: Upload manifest to automation controller
     ansible.controller.license:
-      controller_host: "https://{{ groups['aapcontrol'][0] }}"
+      controller_host: "https://{{ groups['automationcontroller'][0] }}"
       controller_username: admin
       controller_password: "{{ admin_password }}"
       manifest: /var/tmp/aap2-manifest.zip

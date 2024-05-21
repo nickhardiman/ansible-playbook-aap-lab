@@ -167,7 +167,7 @@ setup_ca_certificate () {
 }
 
 distribute_ca_certificate () {
-    # !!! copy CA certificate from installer host to all host and VM trust stores. 
+    # !!! copy CA certificate from installer host to all hypervisor host and VM trust stores. 
     #  * ca.source.example.com-cert.pem
     for NAME in host.site1.example.com host.site2.example.com host.site3.example.com
     do

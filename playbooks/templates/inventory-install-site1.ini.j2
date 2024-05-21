@@ -23,6 +23,7 @@ controlplane-3.site1.example.com
 node_type=control
 peers=execution_nodes
 #
+# One, and only one, database host may be specified.
 [database]
 controlplane-db.site1.example.com
 
@@ -42,6 +43,9 @@ executionnode-1.site1.example.com peers=executionnode-2.site1.example.com
 executionnode-2.site1.example.com
 
 [automationhub]
+automationhub-1.site1.example.com
+automationhub-2.site1.example.com
+automationhub-3.site1.example.com
 
 [automationedacontroller]
 
@@ -113,7 +117,9 @@ receptor_listener_port=27199
 # Handled by Ansible Vault
 automationhub_admin_password='{{ default_password }}'
 #
-automationhub_pg_host=automationhub-db.site1.example.com
+# !!! split the install in two to enable different DBs for controller and hub
+automationhub_pg_host=controlplane-db.site1.example.com
+# automationhub_pg_host=automationhub-db.site1.example.com
 automationhub_pg_port=5432
 
 automationhub_pg_database=automationhub
@@ -128,7 +134,7 @@ automationhub_pg_sslmode='prefer'
 # The main automation hub URL that clients will connect to (e.g. https://<load balancer host>).
 # If not specified, the first node in the [automationhub] group will be used when needed.
 #
-automationhub_main_url=automationhub.site1.example.com
+automationhub_main_url=https://automationhub.site1.example.com
 
 # By default when one uploads collections to Automation Hub
 # an admin needs to approve it before it is made available
