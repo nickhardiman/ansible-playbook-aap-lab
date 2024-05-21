@@ -1,0 +1,15 @@
+---
+# create_organization_using_module.yml
+- name: Create Organization
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Create Organization
+      ansible.controller.organization:
+        name: Satellite
+        controller_host: controlplane.site1.example.com
+        controller_username: admin
+        controller_password: 'h&olk8uU'
+        # validate_certs: false
+...

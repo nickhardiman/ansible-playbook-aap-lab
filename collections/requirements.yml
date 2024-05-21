@@ -23,6 +23,7 @@ collections:
   - name: redhat.satellite
   - name: redhat.satellite_operations
   - name: ansible.controller
+  - name: infra.controller_configuration
 # infra.aap_utilities?
 
 # install experiments

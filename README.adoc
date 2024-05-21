@@ -207,7 +207,7 @@ ANSIBLE_HOST_KEY_CHECKING=False \
   --vault-pass-file=~/vault-password.txt
 ....
 
-* copy files/credentials-hub-plaintext.yml, add sensitive details, encrypt
+* !!! copy files/credentials-hub-plaintext.yml, add sensitive details, encrypt
 *  Install hub. 
  proxy settings are for internet downloads of container images. 
  Installer doesn't download collections.

@@ -94,7 +94,7 @@ run_playbook() {
 for FILE in aap-bootstrap-1-ssh-sudo.sh aap-bootstrap-2-os.sh aap-bootstrap-3-ansible.sh
 do
     log_this "download $FILE from Github"
-    curl -O https://raw.githubusercontent.com/nickhardiman/ansible-playbook-aap2-refarch/main/files/$FILE
+    curl -O https://raw.githubusercontent.com/nickhardiman/ansible-playbook-aap2-refarch/main/scripts/$FILE
 done
 
 
