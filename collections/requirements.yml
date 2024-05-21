@@ -19,10 +19,11 @@ collections:
   - name: community.general
   - name: community.libvirt
   - name: containers.podman
-  # from https://console.redhat.com/api/automation-hub/
+# from https://console.redhat.com/api/automation-hub/
   - name: redhat.satellite
   - name: redhat.satellite_operations
   - name: ansible.controller
+    # https://github.com/redhat-cop/controller_configuration
   - name: infra.controller_configuration
 # infra.aap_utilities?
 
