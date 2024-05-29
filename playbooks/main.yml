@@ -2,7 +2,9 @@
 - ansible.builtin.import_playbook: machine-hypervisor.yml
 
 - ansible.builtin.import_playbook: vm-kickstart.yml
-- ansible.builtin.import_playbook: vm-hosts.yml
+- ansible.builtin.import_playbook: etc-hosts-gateways.yml
+- ansible.builtin.import_playbook: etc-hosts-other-vms.yml
+- ansible.builtin.import_playbook: etc-hosts-load-balancers.yml
 - ansible.builtin.import_playbook: vm-start.yml
 
 - ansible.builtin.import_playbook: configure-gateways.yml
