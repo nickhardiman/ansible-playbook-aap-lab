@@ -19,21 +19,25 @@
     # reference
     # https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/red_hat_ansible_automation_platform_operations_guide/assembly-configuring-proxy-support#doc-wrapper
     #
-    - name: Add HTTP_X_FORWARDED_FOR to the REMOTE_HOST_HEADERS field
+    - name: Change 'Settings' eg. Add HTTP_X_FORWARDED_FOR to the REMOTE_HOST_HEADERS field
       role: infra.controller_configuration.settings
     
 
+- name: Make AAP play nice with a reverse proxy
+  hosts: automationcontroller_site1
+  gather_facts: true
+  become: true
+  vars_files:
+    - ~/vault-credentials.yml
+
   tasks:
 
-    - fail:
-
+    - name: Include vars from controller_configs directory
+      ansible.builtin.include_vars:
+        dir: app-aap-configure-vars
+        ignore_files: [controller_config.yml.template]
+        extensions: ["yml"]
     
-    - name: Restart AAP?
-      ansible.builtin.debug:
-        msg: '!!! systemctl restart automation-controller'
-    - name: Enable sticky sessions
-      ansible.builtin.debug:
-        msg: '!!! nick.platform.haproxy'
     - name: Add lines to /etc/tower/conf.d/custom.py
       vars:
         xff_config: |
@@ -42,3 +46,9 @@
       ansible.builtin.copy:
         content: "{{ xff_config }}"
         dest: /etc/tower/conf.d/custom.py
+
+    - name: Restart AAP controller? Is this necessary?
+      ansible.builtin.systemd_service:
+        name: automation-controller.service
+        state: restarted
+        enabled: true

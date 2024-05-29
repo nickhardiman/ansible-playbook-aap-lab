@@ -1,0 +1,54 @@
+all:
+  children:
+    hypervisor:
+      hosts:
+        host.site1.example.com:
+          home_domain: home
+          home_network: 192.168.1.0/24
+          vm_group: vm_site1
+    site1:
+      children:
+        vm_site1:
+          hosts:
+            misc-rhel8.site1.example.com:
+              RPMs: []
+              cpus: 4
+              disk_size: 30
+              fqdn: '{{ host }}.{{ lab_domain }}'
+              home_domain: home
+              home_network: 192.168.1.0/24
+              host: misc-rhel8
+              install_iso: /var/lib/libvirt/images/rhel-8.10-x86_64-dvd.iso
+              kickstart_template: kvm-guest-nic-static.ks.j2
+              lab_bridge_ip_cidr: '{{ lab_net_prefix }}.1/24'
+              lab_bridge_mac: '{{ lab_mac_prefix }}:00:01'
+              lab_bridge_name: br{{ lab_net_short_name }}0
+              lab_domain: '{{ lab_net_short_name }}.example.com'
+              lab_domain_forward: '{{ lab_net_short_name }}.example.com'
+              lab_domain_reverse: 21.168.192.in-addr.arpa.
+              lab_libvirt_name: net{{ lab_net_short_name }}0
+              lab_mac_prefix: '52:54:00:21'
+              lab_net_prefix: 192.168.21
+              lab_net_short_name: site1
+              lab_nmcli_name: bridge-{{ lab_net_short_name }}0
+              last_octet: 21
+              net_services:
+              - cockpit
+              - http
+              - https
+              - ssh
+              nics:
+              - ip: '{{ lab_net_prefix }}.{{ last_octet }}'
+                mac: '{{ lab_mac_prefix }}:00:{{ last_octet }}'
+                name: enp1s0
+                net: '{{ lab_libvirt_name }}'
+              os_variant: rhel8.10
+              public_bridge_name: br{{ public_net_short_name }}0
+              public_libvirt_name: net{{ public_net_short_name }}0
+              public_mac_prefix: '52:54:00:20'
+              public_net_short_name: public
+              public_nmcli_name: bridge-{{ public_net_short_name }}0
+              ram: 8192
+              server_proxy_hostname: gateway.{{ lab_domain }}
+              server_proxy_port: 3128
+    ungrouped: {}
