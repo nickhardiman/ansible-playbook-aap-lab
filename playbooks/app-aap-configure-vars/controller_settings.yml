@@ -4,11 +4,14 @@
 controller_settings:
   settings:
     # Add HTTP_X_FORWARDED_FOR to the REMOTE_HOST_HEADERS field
-    REMOTE_HOST_HEADERS: '["HTTP_X_FORWARDED_FOR", "REMOTE_ADDR", "REMOTE_HOST"]'
-    AWX_TASK_ENV: |
-      '{
-      "no_proxy": "localhost,127.0.0.1,example.com",
-      "HTTP_PROXY": "http://gateway.site1.example.com:3128",
-      "HTTPS_PROXY": "http://gateway.site1.example.com:3128"
-      }'
+    REMOTE_HOST_HEADERS: 
+      - HTTP_X_FORWARDED_FOR
+      - REMOTE_ADDR
+      - REMOTE_HOST
+    # Add extra environment variables for the proxy to each execution container.
+    AWX_TASK_ENV:
+      no_proxy: "localhost,127.0.0.1,example.com"
+      HTTP_PROXY: "http://gateway.site1.example.com:3128"
+      HTTPS_PROXY: "http://gateway.site1.example.com:3128"
+    # Add text to the bottom of the login page.
     CUSTOM_LOGIN_INFO: "home lab"
