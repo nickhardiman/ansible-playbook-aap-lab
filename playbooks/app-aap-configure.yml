@@ -4,24 +4,53 @@
   become: true
   vars_files:
     - ~/vault-credentials.yml
-  vars:
-    default_password: Password;1
-    admin_password: "{{ default_password }}"
+
+  pre_tasks:
+
+    - name: Include vars from controller_configs directory
+      ansible.builtin.include_vars:
+        dir: app-aap-configure-vars
+        ignore_files: [controller_config.yml.template]
+        extensions: ["yml"]
 
   tasks:
 
-  - name: Get manifest from Red Hat Customer Portal
-    redhat.satellite.redhat_manifest:
-      uuid: "eb6a627a-4ebc-4cd0-9abd-754621d54535"
-      username: "{{ rhsm_user }}"
-      password: "{{ rhsm_password }}"
-      path: /var/tmp/aap2-manifest.zip
+    - name: Get manifest from Red Hat Customer Portal
+      redhat.satellite.redhat_manifest:
+        uuid: "eb6a627a-4ebc-4cd0-9abd-754621d54535"
+        username: "{{ rhsm_user }}"
+        password: "{{ rhsm_password }}"
+        path: "{{ work_dir }}/aap2-manifest.zip"
 
-  # Update to use "manifest_download is changed" in when once working
-  # https://github.com/theforeman/foreman-ansible-modules/issues/1473
-  - name: Upload manifest to automation controller
-    ansible.controller.license:
-      controller_host: "https://{{ groups['automationcontroller'][0] }}"
-      controller_username: admin
-      controller_password: "{{ admin_password }}"
-      manifest: /var/tmp/aap2-manifest.zip
+    # !!! Update to use "manifest_download is changed" in when once working
+    # https://github.com/theforeman/foreman-ansible-modules/issues/1473
+    # !!! or swap to 
+    # https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/license/
+    - name: Upload manifest to automation controller
+      ansible.controller.license:
+        controller_host: "{{ controller_hostname }}"
+        controller_username: "{{ controller_username }}"
+        controller_password: "{{ controller_password }}"
+        manifest: "{{ work_dir }}/aap2-manifest.zip"
+
+
+    # https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/red_hat_ansible_automation_platform_operations_guide/assembly-configuring-proxy-support#doc-wrapper
+    #
+    - name: Add HTTP_X_FORWARDED_FOR to the REMOTE_HOST_HEADERS field
+      ansible.builtin.debug:
+        msg: '!!! infra.controller_configuration.???'
+    #
+    - name: Restart AAP?
+      ansible.builtin.debug:
+        msg: '!!! systemctl restart automation-controller'
+    - name: Enable sticky sessions
+      ansible.builtin.debug:
+        msg: '!!! nick.platform.haproxy'
+    - name: Add lines to /etc/tower/conf.d/custom.py
+      vars:
+        xff_config: |
+          USE_X_FORWARDED_PORT = True
+          USE_X_FORWARDED_HOST = True
+      ansible.builtin.copy:
+        content: "{{ xff_config }}"
+        dest: /etc/tower/conf.d/custom.py

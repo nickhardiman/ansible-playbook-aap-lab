@@ -20,9 +20,10 @@ source ./aap-bootstrap.cfg
 #-------------------------
 # functions
 
-     # Enable nested virtualization? 
-     # In /etc/modprobe.d/kvm.conf 
-     # options kvm_amd nested=1
+# Enable nested virtualization? 
+# In /etc/modprobe.d/kvm.conf 
+# options kvm_amd nested=1
+
 
 # SSH - extra security
 # Use key pairs only, disable password login
@@ -77,6 +78,7 @@ update_packages () {
     done
 }
 
+
 install_troubleshooting_packages () {
     for NAME in host.site1.example.com host.site2.example.com host.site3.example.com
     do
@@ -106,6 +108,7 @@ download_host_scripts () {
     done
 }
 
+
 distribute_host_scripts () {
     for NAME in host.site1.example.com host.site2.example.com host.site3.example.com
     do
@@ -113,6 +116,7 @@ distribute_host_scripts () {
         scp aap-bootstrap-$NAME.sh $USER@$NAME:$WORK_DIR
     done
 }
+
 
 setup_git () {
     log_this "install and configure git"
@@ -165,6 +169,7 @@ setup_ca_certificate () {
     sudo cp  ./$CA_FQDN-key.pem /etc/pki/tls/private/
     sudo update-ca-trust
 }
+
 
 distribute_ca_certificate () {
     # !!! copy CA certificate from installer host to all hypervisor host and VM trust stores. 

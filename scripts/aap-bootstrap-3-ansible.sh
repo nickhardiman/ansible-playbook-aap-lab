@@ -59,13 +59,22 @@ setup_ansible_user_keys() {
 }
 
 
-# add files to 
-# /usr/share/ansible/roles/rhel-system-roles.*/
-# /usr/lib/python3.9/site-packages/ansible/
-# and elsewhere
+# These RPMs add files to 
+#   /usr/share/ansible/roles/rhel-system-roles.*/
+#   /usr/lib/python3.9/site-packages/ansible/
+# and elsewhere.
 #
-# !!! how about 
-# dnf --enablerepo=ansible-automation-platform-2.4-for-rhel-9-x86_64-rpms install ansible-lint
+# !!! how about installing the CLI tool "awx"?
+# reference
+#   https://docs.ansible.com/automation-controller/latest/html/controllercli/index.html
+# install
+#   sudo dnf --enablerepo=ansible-automation-platform-2.4-for-rhel-9-x86_64-rpms  install automation-controller-cli
+#
+# !!! how about ansible-lint and other tools?
+# reference
+#   https://github.com/nickhardiman/articles-ansible/blob/main/modules/use-ansible-tools/pages/index.adoc
+# install
+#   dnf --enablerepo=ansible-automation-platform-2.4-for-rhel-9-x86_64-rpms install ansible-lint
 #
 install_ansible_packages() {
      log_this "install Ansible"
