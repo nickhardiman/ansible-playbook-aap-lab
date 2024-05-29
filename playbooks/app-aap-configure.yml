@@ -1,19 +1,17 @@
-- name: AAP install
+- name: Download manifest from Red Hat and upload to AAP
   hosts: install_host
   gather_facts: true
   become: true
   vars_files:
     - ~/vault-credentials.yml
 
-  pre_tasks:
+  tasks:
 
     - name: Include vars from controller_configs directory
       ansible.builtin.include_vars:
         dir: app-aap-configure-vars
         ignore_files: [controller_config.yml.template]
         extensions: ["yml"]
-
-  tasks:
 
     - name: Get manifest from Red Hat Customer Portal
       redhat.satellite.redhat_manifest:
@@ -34,12 +32,35 @@
         manifest: "{{ work_dir }}/aap2-manifest.zip"
 
 
+- name: Make AAP play nice with a reverse proxy
+  hosts: install_host
+  gather_facts: true
+  become: true
+  vars_files:
+    - ~/vault-credentials.yml
+
+  pre_tasks:
+
+    - name: Include vars from controller_configs directory
+      ansible.builtin.include_vars:
+        dir: app-aap-configure-vars
+        ignore_files: [controller_config.yml.template]
+        extensions: ["yml"]
+
+  roles:
+  
+    # reference
     # https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/red_hat_ansible_automation_platform_operations_guide/assembly-configuring-proxy-support#doc-wrapper
     #
     - name: Add HTTP_X_FORWARDED_FOR to the REMOTE_HOST_HEADERS field
-      ansible.builtin.debug:
-        msg: '!!! infra.controller_configuration.???'
-    #
+      role: infra.controller_configuration.settings
+    
+
+  tasks:
+
+    - fail:
+
+    
     - name: Restart AAP?
       ansible.builtin.debug:
         msg: '!!! systemctl restart automation-controller'
