@@ -1,0 +1,24 @@
+---
+# reference
+# https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/organizations/
+
+- name: Add organizations, users and teams to controller
+  hosts: install_host
+  gather_facts: true
+  become: true
+  vars_files:
+    - ~/vault-credentials.yml
+
+  pre_tasks:
+
+    - name: Include vars from controller_configs directory
+      ansible.builtin.include_vars:
+        dir: aap-configure-vars
+        ignore_files: [controller_config.yml.template]
+        extensions: ["yml"]
+
+  roles:
+    - infra.controller_configuration.organizations
+    - infra.controller_configuration.users
+    - infra.controller_configuration.teams
+    - infra.controller_configuration.roles

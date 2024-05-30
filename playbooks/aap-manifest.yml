@@ -9,7 +9,7 @@
 
     - name: Include vars from controller_configs directory
       ansible.builtin.include_vars:
-        dir: app-aap-configure-vars
+        dir: aap-configure-vars
         ignore_files: [controller_config.yml.template]
         extensions: ["yml"]
 

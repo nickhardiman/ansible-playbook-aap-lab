@@ -13,7 +13,9 @@
 
 - ansible.builtin.import_playbook: aap-install.yml
 - ansible.builtin.import_playbook: aap-manifest.yml
-- ansible.builtin.import_playbook: aap-proxy.yml
+- ansible.builtin.import_playbook: aap-controller-proxy.yml
+- ansible.builtin.import_playbook: aap-controller-access.yml
+- ansible.builtin.import_playbook: aap-hub-access.yml
 
 # !!! todo
 # - ansible.builtin.import_playbook: vm-to-template.yml
