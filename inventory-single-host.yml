@@ -16,6 +16,9 @@ all:
               disk_size: 30
               home_domain: home
               home_network: 192.168.1.0/24
+              install_iso: /var/lib/libvirt/images/rhel-9.4-x86_64-dvd.iso
+              kickstart_path: /var/tmp
+              kickstart_template: kvm-guest-nic-static.ks.j2
               lab_bridge_ip_cidr: '{{ lab_net_prefix }}.1/24'
               lab_bridge_mac: '{{ lab_mac_prefix }}:00:01'
               lab_bridge_name: br{{ lab_net_short_name }}0
@@ -27,11 +30,15 @@ all:
               lab_net_prefix: 192.168.21
               lab_net_short_name: site1
               lab_nmcli_name: bridge-{{ lab_net_short_name }}0
+              lv_root: 13312
+              lv_var: 13312
+              os_variant: rhel9.4
               public_bridge_name: br{{ public_net_short_name }}0
               public_libvirt_name: net{{ public_net_short_name }}0
               public_mac_prefix: '52:54:00:20'
               public_net_short_name: public
               public_nmcli_name: bridge-{{ public_net_short_name }}0
+              pv_size: 28672
               ram: 8192
               vm_group: vm_site1
         vm_site1:
@@ -45,6 +52,7 @@ all:
               home_network: 192.168.1.0/24
               host: misc-rhel8
               install_iso: /var/lib/libvirt/images/rhel-8.10-x86_64-dvd.iso
+              kickstart_path: /var/tmp
               kickstart_template: kvm-guest-nic-static.ks.j2
               lab_bridge_ip_cidr: '{{ lab_net_prefix }}.1/24'
               lab_bridge_mac: '{{ lab_mac_prefix }}:00:01'
@@ -58,6 +66,8 @@ all:
               lab_net_short_name: site1
               lab_nmcli_name: bridge-{{ lab_net_short_name }}0
               last_octet: 21
+              lv_root: 13312
+              lv_var: 13312
               net_services:
               - cockpit
               - http
@@ -74,6 +84,7 @@ all:
               public_mac_prefix: '52:54:00:20'
               public_net_short_name: public
               public_nmcli_name: bridge-{{ public_net_short_name }}0
+              pv_size: 28672
               ram: 8192
               server_proxy_hostname: gateway.{{ lab_domain }}
               server_proxy_port: 3128

@@ -131,57 +131,6 @@ download_ansible_libraries() {
     ansible-galaxy role install -r roles/requirements.yml 
 }
 
-create_vault () {
-     # Create a new vault file.
-     echo "$VAULT_PASSWORD" > $HOME/my-vault-pass
-     echo <<EOF> $HOME/vault-credentials.yml
-# secrets, tokens, user names, passwords, keys 
-# Whatever data you don't want to leak, stick it in a vault. 
-# The bootstrap script makes a copy of this file, adds credentials, and encrypts it. 
-#   https://github.com/nickhardiman/ansible-playbook-core/blob/main/bootstrap.sh
-# 
-EOF
-     ansible-vault encrypt --vault-pass-file ~/my-vault-pass ~/vault-credentials.yml
-}
-
-# !!! private keys are multiline and requires indenting before adding to YAML file.
-# USER_ANSIBLE_PRIVATE_KEY: $USER_ANSIBLE_PRIVATE_KEY
-# this loses multiline
-# CA_PRIVATE_KEY: $CA_PRIVATE_KEY
-add_secrets_to_vault () {
-     USER_ADMIN_PUBLIC_KEY=$(<$HOME/.ssh/id_rsa.pub)
-     USER_ADMIN_PRIVATE_KEY_INDENTED=$(cat $HOME/.ssh/id_rsa | sed 's/^/    /')
-     USER_ANSIBLE_PUBLIC_KEY=$(<$HOME/.ssh/ansible-key.pub)
-     USER_ANSIBLE_PRIVATE_KEY_INDENTED=$(cat $HOME/.ssh/ansible-key.priv | sed 's/^/    /')
-     CA_PRIVATE_KEY_INDENTED=$(sudo cat /etc/pki/tls/private/$CA_FQDN-key.pem | sed 's/^/    /')
-     ansible-vault decrypt --vault-pass-file ~/my-vault-pass ~/vault-credentials.yml
-     cat << EOF >>  ~/vault-credentials.yml
-rhsm_user:               "$RHSM_USER"
-rhsm_password:           "$RHSM_PASSWORD"
-default_password:        "$DEFAULT_PASSWORD"
-user_admin_name:         "$USER"
-user_admin_public_key:    $USER_ADMIN_PUBLIC_KEY
-user_admin_private_key: |
-$USER_ADMIN_PRIVATE_KEY_INDENTED
-user_ansible_name:        $USER_ANSIBLE_NAME
-user_ansible_public_key:  $USER_ANSIBLE_PUBLIC_KEY
-user_ansible_private_key: |
-$USER_ANSIBLE_PRIVATE_KEY_INDENTED
-ansible_galaxy_server_automation_hub_token: $ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_TOKEN
-jwt_red_hat_api: $OFFLINE_TOKEN
-ca_fqdn: $CA_FQDN
-ca_private_key: |
-$CA_PRIVATE_KEY_INDENTED
-work_dir: $WORK_DIR
-site1_ip: "$SITE1_IP"
-site2_ip: "$SITE2_IP"
-site3_ip: "$SITE3_IP"
-EOF
-     # Encrypt the new file. 
-     echo 'my vault password' >  ~/my-vault-pass
-     ansible-vault encrypt --vault-pass-file ~/my-vault-pass ~/vault-credentials.yml
-}
-
 
 distribute_ansible_user_RSA_pubkey() {
      USER_ANSIBLE_PUBLIC_KEY=$(<$HOME/.ssh/ansible-key.pub)
@@ -197,41 +146,6 @@ EOF
     done
 }
 
-# !!! has known_hosts copy removed the need for this option?
-#             -o StrictHostKeyChecking=no \
-check_ansible_user() {
-    log_this "check $USER_ANSIBLE_NAME account"
-    for NAME in host.site1.example.com host.site2.example.com host.site3.example.com
-    do
-        log_this "log into $NAME with key-based authentication and run the ID command as root"
-        ssh \
-            -i $HOME/.ssh/ansible-key.priv \
-            $USER_ANSIBLE_NAME@$NAME  \
-            sudo id
-        res_ssh=$?
-        if [ $res_ssh -ne 0 ]; then 
-            echo "error: can't SSH and sudo with $USER_ANSIBLE_NAME"
-            exit $res_ssh
-        fi
-    done
-}
-
-setup_ansible_user_sudo() {
-    for NAME in host.site1.example.com host.site2.example.com host.site3.example.com
-    do
-        log_this "allow passwordless sudo for $USER_ANSIBLE_NAME on $NAME"
-        ssh $USER@$NAME "echo '$USER_ANSIBLE_NAME      ALL=(ALL)       NOPASSWD: ALL' | sudo tee /etc/sudoers.d/$USER_ANSIBLE_NAME"
-    done
-}
-
-setup_remote_ansible_user_accounts () {
-    log_this "add an Ansible user account to each host"
-    for NAME in host.site1.example.com host.site2.example.com host.site3.example.com
-    do
-        ssh $USER@$NAME "sudo useradd $USER_ANSIBLE_NAME"
-    done
-     
-}
 
 log_this () {
     echo
@@ -243,7 +157,6 @@ log_this () {
 #-------------------------
 # main
 
-# on the installer host
 cd $WORK_DIR || exit 1
 does_ansible_user_exist
 if $ansible_user_exists 
@@ -257,10 +170,3 @@ install_ansible_packages
 clone_my_ansible_collections
 clone_my_ansible_playbook
 download_ansible_libraries
-create_vault
-add_secrets_to_vault
-# on site hosts
-setup_remote_ansible_user_accounts
-distribute_ansible_user_RSA_pubkey
-setup_ansible_user_sudo
-check_ansible_user
