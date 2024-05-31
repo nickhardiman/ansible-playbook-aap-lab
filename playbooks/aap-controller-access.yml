@@ -1,6 +1,15 @@
 ---
 # reference
 # https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/organizations/
+# run 
+#   ansible-playbook   --vault-pass-file ~/my-vault-pass  playbooks/aap-controller-access.yml 
+# debug
+#   ansible-playbook \
+#     --vault-pass-file ~/my-vault-pass  \
+#     --extra-vars='controller_configuration_group_secure_logging=false' \
+#     --extra-vars='controller_configuration_users_secure_logging=false' \
+#     --verbose \
+#     playbooks/aap-controller-access.yml 
 
 - name: Add organizations, users and teams to controller
   hosts: install_host
@@ -13,7 +22,7 @@
 
     - name: Include vars from controller_configs directory
       ansible.builtin.include_vars:
-        dir: aap-configure-vars
+        dir: aap-vars
         ignore_files: [controller_config.yml.template]
         extensions: ["yml"]
 

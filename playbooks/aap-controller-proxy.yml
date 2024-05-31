@@ -10,7 +10,7 @@
 
     - name: Include vars from controller_configs directory
       ansible.builtin.include_vars:
-        dir: aap-configure-vars
+        dir: aap-vars
         ignore_files: [controller_config.yml.template]
         extensions: ["yml"]
 
@@ -34,7 +34,7 @@
 
     - name: Include vars from controller_configs directory
       ansible.builtin.include_vars:
-        dir: aap-configure-vars
+        dir: aap-vars
         ignore_files: [controller_config.yml.template]
         extensions: ["yml"]
     

@@ -12,6 +12,7 @@
 ah_host: automationhub.site1.example.com
 ah_username: admin
 ah_password: '{{ default_password }}'
+
 # testing
 # ah_username: nick
 # ah_validate_certs: false
