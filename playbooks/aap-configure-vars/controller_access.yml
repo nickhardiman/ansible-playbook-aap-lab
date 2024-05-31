@@ -1,13 +1,22 @@
 ---
 # vars file for AAP controller
 
+# see "Organization Data Structure" here.
+# https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/organizations/
 controller_organizations:
   - name: org1
     description: Organization 1
+    galaxy_credentials:
+      - Ansible Galaxy
   - name: org2
     description: Organization 2
+    galaxy_credentials:
+      - Ansible Galaxy
   - name: org3
     description: Organization 3
+    galaxy_credentials:
+      - Ansible Galaxy
+
 controller_user_accounts:
   - user: joe_123
     is_superuser: false
