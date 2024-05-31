@@ -1,0 +1,53 @@
+---
+# vars file for AAP controller
+
+
+# https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/inventories/
+controller_inventories:
+  - name: o1inv1
+    description: inventory for org1
+    organization: org1
+    variables:
+      inventory_var: inventory_value
+    state: present
+  - name: o2inv1
+    description: inventory for org2
+    organization: org2
+  - name: o3inv1
+    description: inventory for org3
+    organization: org3
+
+# https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/hosts/
+controller_hosts:
+  - name: o1host1
+    inventory: o1inv1
+    variables:
+      hosts_var: some_val
+      ansible_connection: local
+    enabled: true
+    state: present
+  - name: o1host2
+    inventory: o1inv1
+  - name: o1host3
+    inventory: o1inv1
+  - name: o2host1
+    inventory: o2inv1
+  - name: o3host1
+    inventory: o3inv1
+
+# https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/groups/
+controller_groups:
+  - name: o1group1
+    inventory: o1inv1
+    variables:
+      groups_variable: group_val
+    hosts:
+      - o1host1
+      - o1host2
+    children:
+      - o1group1_child
+    state: present
+  - name: o1group1_child
+    inventory: o1inv1
+    hosts:
+      - o1host3
