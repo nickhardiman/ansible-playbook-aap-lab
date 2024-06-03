@@ -5,3 +5,7 @@
 controller_hostname: controlplane.site1.example.com
 controller_username: admin
 controller_password: '{{ default_password }}'
+
+# testing
+# controller_configuration_groups_secure_logging: false
+# controller_configuration_users_secure_logging: false

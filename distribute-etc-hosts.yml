@@ -1,0 +1,10 @@
+- name: Configure new server machine
+  hosts: vm
+  become: true
+  gather_facts: false
+  vars_files:
+    - ~/vault-credentials.yml
+  #
+  roles:
+    - role: nick.platform.hosts_file
+

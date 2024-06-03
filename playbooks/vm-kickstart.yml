@@ -2,6 +2,17 @@
 # Create a new virtual machine using libvirt.
 # Install and configure the OS using a kickstart file.
 
+# !!! create a single VM 
+# is not overriding role defaults with host vars. 
+# they have to be supplied on the CLI like this.
+# ansible-playbook       \
+#  --vault-pass-file ~/my-vault-pass  \
+#  -v \
+#  --inventory ./inventory-single-host.yml \
+#  --extra-vars='install_iso=/var/lib/libvirt/images/rhel-8.10-x86_64-dvd.iso'  \
+#  --extra-vars='os_variant=rhel8.10'  \
+#  playbooks/vm-kickstart.yml
+
 # create a few variables like "volume_image_file_exists"
 - name: Add image facts to hostvars
   hosts: hypervisor

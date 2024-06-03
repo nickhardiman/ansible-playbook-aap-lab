@@ -91,22 +91,29 @@ run_playbook() {
 #-------------------------
 # main
 #
-for FILE in aap-bootstrap-1-ssh-sudo.sh aap-bootstrap-2-os.sh aap-bootstrap-3-ansible.sh
+for FILE in \
+  aap-bootstrap-1-ssh-sudo.sh \
+  aap-bootstrap-2-os.sh \
+  aap-bootstrap-3-ansible-control.sh \
+  aap-bootstrap-4-ansible-vault.sh \
+  aap-bootstrap-5-ansible-managed.sh \
 do
     log_this "download $FILE from Github"
     curl -O https://raw.githubusercontent.com/nickhardiman/ansible-playbook-aap2-refarch/main/scripts/$FILE
 done
 
 
-for FILE in aap-bootstrap-1-ssh-sudo.sh aap-bootstrap-2-os.sh aap-bootstrap-3-ansible.sh
+for FILE in \
+  aap-bootstrap-1-ssh-sudo.sh \
+  aap-bootstrap-2-os.sh \
+  aap-bootstrap-3-ansible-control.sh \
+  aap-bootstrap-4-ansible-vault.sh \
+  aap-bootstrap-5-ansible-managed.sh \
 do
     log_this "run $FILE"
     bash ./$FILE
 done
 
+# run_playbook
+
 log_this "setup done"
-
-
-
-
-

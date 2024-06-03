@@ -1,0 +1,53 @@
+---
+# reference
+# open source upstream version
+# https://docs.ansible.com/ansible/latest/collections/awx/awx/import_module.html  
+# Red Hat's enterprise-ready downstream version
+# https://console.redhat.com/ansible/automation-hub/repo/published/ansible/controller/content/module/import/
+
+# This CLI command does the same thing.
+#   awx \
+#     --conf.host https://controlplane.site1.example.com \
+#     --conf.username admin \
+#     --conf.password 'Password;1' \
+#     --conf.insecure \
+#     --conf.format yaml  \
+#     import  \
+#     --inventory \
+#   < /var/tmp/inventories.yml
+
+
+- name: Import objects from controller to file
+  hosts: install_host
+  vars_files:
+    - ~/vault-credentials.yml
+
+  tasks:
+
+    - name: Include vars from controller_configs directory
+      ansible.builtin.include_vars:
+        dir: aap-vars
+        ignore_files: [controller_config.yml.template]
+        extensions: ["yml"]
+
+    - name: Read objects from file
+      ansible.builtin.set_fact:
+        file_content: "{{ lookup('ansible.builtin.file', '/var/tmp/inventories.yml') | from_yaml() }}"
+
+    - name: Display objects to import 
+      ansible.builtin.debug:
+        var: file_content
+
+    - name: "Import objects from file /var/tmp/inventories.yml to {{ controller_hostname }}"
+      ansible.controller.import:
+        assets: "{{ file_content }}"
+        controller_host: "{{ controller_hostname }}"
+        controller_username: "{{ controller_username }}"
+        controller_password: "{{ controller_password }}"
+      register: r_import_results
+
+    - name: Display import result 
+      ansible.builtin.debug:
+        var: r_import_results
+
+...

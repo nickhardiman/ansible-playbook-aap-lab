@@ -1,0 +1,27 @@
+---
+- name: Record all other VM names and addresses in /etc/hosts (ignore gateways)
+  hosts: hypervisor
+  become: true
+  gather_facts: false
+  vars_files:
+    - ~/vault-credentials.yml
+  tasks:
+
+    # remove gateways from the VM list
+    - name: Remove gateways from the VM list
+      ansible.builtin.set_fact:
+        hosts_with_one_nic: "{{ groups['vm'] | difference(groups['gateway_lab']) | difference(groups['gateway_home']) }}"
+
+    - name: Display hosts with one nic
+      ansible.builtin.debug:
+        verbosity: 1
+        var: hosts_with_one_nic
+
+    - name: "Update /etc/hosts for all the single-nic VMs"
+      ansible.builtin.include_role:
+        name: nick.platform.hosts_record
+      vars:
+        h_ip_address: "{{ hostvars[item]['nics'][0]['ip'] }}"
+        h_fqdn: "{{ item }}"
+        h_host: "{{ hostvars[item]['host'] }}"
+      loop: "{{ hosts_with_one_nic | sort }}"

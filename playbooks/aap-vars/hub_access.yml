@@ -1,0 +1,50 @@
+---
+# vars file for AAP Private Automation Hub
+
+# https://galaxy.ansible.com/ui/repo/published/infra/ah_configuration/content/role/group/
+# error using perms 
+ah_groups:
+  - name: Joes
+    state: present
+    # perms:   <-- error
+    #   - add_user
+    #   - change_user
+  - name: group1
+    state: present
+
+
+# https://galaxy.ansible.com/ui/repo/published/infra/ah_configuration/content/role/role/
+ah_roles:
+  - name: role_group1
+    description: My test
+    perms:
+      - add_user
+      - change_user
+      - delete_user
+      - view_user
+
+
+# https://galaxy.ansible.com/ui/repo/published/infra/ah_configuration/content/role/group_roles/
+ah_group_roles:
+  - state: present
+    groups:
+      - group1
+    role_list:
+      - roles:
+          - role_group1
+
+
+# https://galaxy.ansible.com/ui/repo/published/infra/ah_configuration/content/role/user/
+# error using password 
+#
+ah_users:
+  - username: user1
+    groups:
+      - group1
+    append: true
+    first_name: User
+    last_name: One
+    email: user1@example.com
+    is_superuser: true
+    # password: p4ssword  <-- error
+    state: present

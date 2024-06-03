@@ -51,12 +51,39 @@ automationhub-3.site1.example.com
 
 
 # Single Sign-On
+# 
+# https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html-single/installing_and_configuring_central_authentication_for_the_ansible_automation_platform/index#proc-aap-configure-centralauth
+
+# !!! requires RHEL 8 host 
+# [sso] nodes must be run on a RHEL 8 x86_64 node.
+#
+# !!! requires AD host
+# add a win server box in site3
+# add user federation to keycloak
+# see book "demystifying ansible automation platform" chapter 4 "configuring settings and authentication", configuring the RH-SSO server SAML
+#
+# !!! requires keycloak changes for hub.
+# add superuser
+# https://access.redhat.com/solutions/6989591
+# add redirect URI
+# redirect URI  is set to 
+# https://automationhub.site1.example.com/*
+# not
+# https://automationhub-site1.home/*
+# see
+# https://misc-rhel8.site1.example.com:8443/ > Clients > automation-hub > Valid Redirect URIs
+#
+# !!! requires linking controller to keycloak
+# see book "demystifying ansible automation platform" chapter 4 "configuring settings and authentication", Integrating the Automation controller with RH-SSO
+
 # If sso_redirect_host is set, that will be used for application to connect to
 # SSO for authentication. This must be reachable from client machines.
 #
 # ssohost.example sso_redirect_host=<host/ip>
 #
 [sso]
+# !!! repurposed machine. Rename to misc
+misc-rhel8.site1.example.com
 
 
 [all:vars]
@@ -266,10 +293,12 @@ automationhub_ssl_key=/opt/ansible-automation-platform/installer/automationhub.s
 
 # The default install will deploy SSO with sso_use_https=True
 # Keystore password is required for https enabled SSO
-sso_keystore_password=''
+# Handled by Ansible Vault
+sso_keystore_password='{{ default_password }}'
 
 # Single-Sign-On configuration
-sso_console_admin_password=''
+# Handled by Ansible Vault
+sso_console_admin_password='{{ default_password }}'
 
 # Hostname used for access to RH SSO server
 # If SSO is not provided in inventory for configuration, then the SSO host 

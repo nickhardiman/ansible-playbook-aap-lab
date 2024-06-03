@@ -1,4 +1,17 @@
-= home lab for Ansible Automation Platform
+= Ansible playbook for turning a PC into a set of Ansible Automation Platform VMs
+
+!!! this description is mostly outdated pants. 
+
+Ansible helps me build my home lab. 
+This playbook turns a PC running RHEL 9 into a hypervisor running a pile-load (that's the technical term) of Virtual Machines. 
+Each VM runs a set of services that support my home lab. 
+
+Idea is to build the 
+Ansible Automation Platform 2
+Reference Architecture. 
+
+https://access.redhat.com/documentation/en-us/reference_architectures/2021/html-single/deploying_ansible_automation_platform_2.1/index#doc-wrapper
+
 
 Under construction. Sections marked with !!! and ??? are notes to self. 
 
@@ -95,7 +108,7 @@ The other is private, for all the VMs.
 The https://github.com/nickhardiman/ansible-playbook-aap2-refarch/blob/main/group_vars/all/main.yml[defaults file] defines a lot of values. 
 For instance, most 
 MAC addresses are set to ** 52:54:00:04:00:* **,  and 
-IPv4 addresses are set to ** 192.168.136.* **. 
+IPv4 addresses are set to ** 192.168.21.* **. 
 Check out DHCP's 
 https://github.com/nickhardiman/ansible-collection-platform/blob/main/roles/dhcp_server/templates/dhcpd.conf.j2[config].
 
@@ -111,21 +124,21 @@ name,         interface, MAC,               IP,              domain
 *netpublic0*,    *brpublic0*,    52:54:00:03:00:01, 192.168.1.1,     site1.home
 gateway,      enp1s0,    52:54:00:03:00:03, 192.168.1.3,     site1.home
 
-*netlab0*,  *brsite0*,   52:54:00:04:00:01, 192.168.136.1,   site1.lab.example.com
- ,           ,           52:54:00:04:00:02, 192.168.136.2,   site1.lab.example.com
-gateway,          enp2s0,    52:54:00:04:00:03, 192.168.136.3,   site1.lab.example.com
-controlplane-1,   enp1s0,    52:54:00:04:00:10, 192.168.136.10,   site1.lab.example.com
-controlplane-2,   enp1s0,    52:54:00:04:00:11, 192.168.136.11,   site1.lab.example.com
-controlplane-3,   enp1s0,    52:54:00:04:00:12, 192.168.136.12,   site1.lab.example.com
-controlplane-db,  enp1s0,    52:54:00:04:00:13, 192.168.136.13,   site1.lab.example.com
-               ,  enp1s0,    52:54:00:04:00:14, 192.168.136.14,   site1.lab.example.com
-executionnode-1,  enp1s0,    52:54:00:04:00:15, 192.168.136.15,   site1.lab.example.com
-executionnode-2,  enp1s0,    52:54:00:04:00:16, 192.168.136.16,   site1.lab.example.com
-automationhub-1,  enp1s0,    52:54:00:04:00:17, 192.168.136.17,   site1.lab.example.com
-automationhub-2,  enp1s0,    52:54:00:04:00:18, 192.168.136.18,   site1.lab.example.com
-automationhub-3,  enp1s0,    52:54:00:04:00:19, 192.168.136.19,   site1.lab.example.com
-automationhub-db, enp1s0,    52:54:00:04:00:20, 192.168.136.20,   site1.lab.example.com
-misc-rhel8,       enp1s0,    52:54:00:04:00:21, 192.168.136.21,   site1.lab.example.com
+*netlab0*,  *brlab0*,   52:54:00:04:00:01, 192.168.21.1,   site1.example.com
+ ,           ,           52:54:00:04:00:02, 192.168.21.2,   site1.example.com
+gateway,          enp2s0,    52:54:00:04:00:03, 192.168.21.3,   site1.example.com
+controlplane-1,   enp1s0,    52:54:00:04:00:10, 192.168.21.10,   site1.example.com
+controlplane-2,   enp1s0,    52:54:00:04:00:11, 192.168.21.11,   site1.example.com
+controlplane-3,   enp1s0,    52:54:00:04:00:12, 192.168.21.12,   site1.example.com
+controlplane-db,  enp1s0,    52:54:00:04:00:13, 192.168.21.13,   site1.example.com
+               ,  enp1s0,    52:54:00:04:00:14, 192.168.21.14,   site1.example.com
+executionnode-1,  enp1s0,    52:54:00:04:00:15, 192.168.21.15,   site1.example.com
+executionnode-2,  enp1s0,    52:54:00:04:00:16, 192.168.21.16,   site1.example.com
+automationhub-1,  enp1s0,    52:54:00:04:00:17, 192.168.21.17,   site1.example.com
+automationhub-2,  enp1s0,    52:54:00:04:00:18, 192.168.21.18,   site1.example.com
+automationhub-3,  enp1s0,    52:54:00:04:00:19, 192.168.21.19,   site1.example.com
+automationhub-db, enp1s0,    52:54:00:04:00:20, 192.168.21.20,   site1.example.com
+misc-rhel8      , enp1s0,    52:54:00:04:00:21, 192.168.21.21,   site1.example.com
 |===
 
 
@@ -247,7 +260,7 @@ firewall-cmd --add-service nfs
 ....
 sudo mkdir /var/lib/pulp
 dnf install nfsv4-client-utils.x86_64
-mount -v -t nfs4 192.168.136.3:/var/nfs/exports/pulp /var/lib/pulp
+mount -v -t nfs4 192.168.21.3:/var/nfs/exports/pulp /var/lib/pulp
 ....
 
 * ??? add proxy env vars for hubs to download containers
@@ -286,8 +299,8 @@ ANSIBLE_BECOME=True \
 ANSIBLE_HOST_KEY_CHECKING=False \
 ./setup.sh \
  -e @credentials_hub.yml \
- -e 'http_proxy=http://gateway.site1.lab.example.com:3128' \
- -e 'https_proxy=http://gateway.site1.lab.example.com:3128' \
+ -e 'http_proxy=http://gateway.site1.example.com:3128' \
+ -e 'https_proxy=http://gateway.site1.example.com:3128' \
  -e 'no_proxy=localhost,127.0.0.1,example.com' \
  --  \
  --vault-pass-file=~/vault-password.txt

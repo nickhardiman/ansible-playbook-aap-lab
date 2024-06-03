@@ -1,4 +1,6 @@
 ---
+# group vars for gateway
+
 # virt-install
 # These values override defaults.
 # default variables and their values are listed here. 

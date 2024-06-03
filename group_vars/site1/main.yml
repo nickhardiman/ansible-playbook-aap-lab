@@ -1,3 +1,6 @@
+---
+# group vars for site1
+
 # network
 # Names and addresses are partially set in variables below.
 # A full list is here.
@@ -32,14 +35,3 @@ lab_domain:            "{{ lab_net_short_name }}.example.com"
 # DNS Zone names in IPA Server
 lab_domain_forward:    "{{ lab_net_short_name }}.example.com"
 lab_domain_reverse:    "21.168.192.in-addr.arpa."
-
-
-# compute 
-# double the default
-# half what is recommended by 
-# https://access.redhat.com/documentation/en-us/reference_architectures/2021/html-single/deploying_ansible_automation_platform_2.1/index#node_requirements
-cpus: 4
-ram: 8192
-
-# storage
-disk_size: 30

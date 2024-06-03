@@ -1,0 +1,109 @@
+---
+# vars file for AAP controller
+
+# credentials
+
+# https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/credentials/
+controller_credentials:
+  - name: gitlab
+    description: Credentials for GitLab
+    organization: Default
+    credential_type: Source Control
+    inputs:
+      username: person
+      password: password
+  - name: localuser
+    description: Machine Credential example with become_method input
+    credential_type: Machine
+    inputs:
+      username: localuser
+      password: password
+      become_method: sudo
+
+# inventories
+
+# https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/inventories/
+controller_inventories:
+  - name: o1inv1
+    description: inventory for org1
+    organization: org1
+    variables:
+      inventory_var: inventory_value
+    state: present
+  - name: o2inv1
+    description: inventory for org2
+    organization: org2
+  - name: o3inv1
+    description: inventory for org3
+    organization: org3
+
+# hosts
+
+# https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/hosts/
+controller_hosts:
+  - name: o1host1
+    inventory: o1inv1
+    variables:
+      hosts_var: some_val
+      ansible_connection: local
+    enabled: true
+    state: present
+  - name: o1host2
+    inventory: o1inv1
+  - name: o1host3
+    inventory: o1inv1
+  - name: o2host1
+    inventory: o2inv1
+  - name: o3host1
+    inventory: o3inv1
+
+# https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/groups/
+controller_groups:
+  - name: o1group1
+    inventory: o1inv1
+    variables:
+      groups_variable: group_val
+    hosts:
+      - o1host1
+      - o1host2
+    children:
+      - o1group1_child
+    state: present
+  - name: o1group1_child
+    inventory: o1inv1
+    hosts:
+      - o1host3
+
+
+# projects
+
+# https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/projects/
+controller_projects:
+  - name: Test Project
+    scm_type: git
+    scm_url: https://github.com/ansible/test-playbooks.git
+    # scm_url: https://github.com/ansible/ansible-tower-samples
+    # scm_url: https://github.com/ansible/tower-example.git
+    # scm_url: https://github.com/ansible/ansible-examples.git
+    scm_branch: master
+    scm_clean: true
+    description: Test Project 1
+    organization: Default
+    wait: true
+    update_project: true
+
+# templates
+
+controller_templates:
+  - name: test-template-1
+    description: created by Ansible Playbook
+    job_type: run
+    inventory: o1inv1
+    credentials:
+      - gitlab
+      - localuser
+    project: Test Project
+    playbook: chatty_payload.yml
+    verbosity: 2
+    extra_vars:
+      target_hosts: infra-ansible-tower-01.example.com

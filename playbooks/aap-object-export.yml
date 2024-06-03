@@ -1,0 +1,50 @@
+---
+# reference
+# open source upstream version
+# https://docs.ansible.com/ansible/latest/collections/awx/awx/export_module.html  
+# Red Hat's enterprise-ready downstream version
+# https://console.redhat.com/ansible/automation-hub/repo/published/ansible/controller/content/module/export/
+
+# This CLI command does the same thing.
+#   awx \
+#     --conf.host https://controlplane.site1.example.com \
+#     --conf.username admin \
+#     --conf.password 'Password;1' \
+#     --conf.insecure \
+#     --conf.format yaml  \
+#     export  \
+#     --inventory \
+#   > /var/tmp/inventories.yml
+
+
+- name: Export objects from controller to file
+  hosts: install_host
+  vars_files:
+    - ~/vault-credentials.yml
+
+  tasks:
+
+    - name: Include vars from controller_configs directory
+      ansible.builtin.include_vars:
+        dir: aap-vars
+        ignore_files: [controller_config.yml.template]
+        extensions: ["yml"]
+
+    - name: Export objects from controller
+      ansible.controller.export:
+        # all: True
+        inventory: all
+        controller_host: "{{ controller_hostname }}"
+        controller_username: "{{ controller_username }}"
+        controller_password: "{{ controller_password }}"
+      register: r_export
+
+    - name: Display export result 
+      ansible.builtin.debug:
+        var: r_export['assets']
+
+    - name: Export objects to file /var/tmp/inventories.yml
+      ansible.builtin.copy:
+        content: "{{ r_export['assets'] | to_nice_yaml(indent=2) }}" 
+        dest: /var/tmp/inventories.yml
+...

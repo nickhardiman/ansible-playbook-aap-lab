@@ -12,7 +12,8 @@ for GUEST in \
     controlplane-3.site1.example.com \
     automationhub-1.site1.example.com \
     automationhub-2.site1.example.com \
-    automationhub-3.site1.example.com 
+    automationhub-3.site1.example.com \
+    misc-rhel8.site1.example.com
 do 
   echo -n $GUEST
   ssh nick@$GUEST echo ': alive'

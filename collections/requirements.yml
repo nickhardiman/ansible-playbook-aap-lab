@@ -25,6 +25,9 @@ collections:
   - name: ansible.controller
     # https://github.com/redhat-cop/controller_configuration
   - name: infra.controller_configuration
+    # https://galaxy.ansible.com/ui/repo/published/infra/ah_configuration/
+    # https://console.redhat.com/ansible/automation-hub/repo/validated/infra/ah_configuration/
+  - name: infra.ah_configuration
 # infra.aap_utilities?
 
 # install experiments

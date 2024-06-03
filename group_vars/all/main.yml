@@ -1,6 +1,42 @@
 ---
-
 # group vars for all
 
+# network
 home_network: "192.168.1.0/24"
 home_domain: home
+
+# compute 
+# double the default
+# half what is recommended by 
+# https://access.redhat.com/documentation/en-us/reference_architectures/2021/html-single/deploying_ansible_automation_platform_2.1/index#node_requirements
+cpus: 4
+# size in MiB
+ram: 8192
+
+# storage
+# size in GiB
+disk_size: 30
+# Add up the sizes below and make sure they fit in the disk_size.
+# partitions
+# 1 for /boot/efi                600M
+# 2 for /boot                    1024M
+# 3 LVM Physical Volume          28G * 1024 = 28672M
+pv_size: 28672
+# LVM logical volume for /root   13G * 1024 = 13312M
+lv_root: 13312
+# LVM logical volume for /var   13G * 1024 = 13312M
+lv_var: 13312
+# LVM volume for swap: 256M
+
+# OS
+install_iso: /var/lib/libvirt/images/rhel-9.4-x86_64-dvd.iso
+# Use this command to get the list of accepted OS variants.
+#  virt-install --osinfo list
+os_variant: rhel9.4
+
+# kickstart
+kickstart_path: "/var/tmp"
+kickstart_template: "kvm-guest-nic-static.ks.j2"
+
+# accounts
+# see vault

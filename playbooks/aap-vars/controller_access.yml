@@ -1,0 +1,226 @@
+---
+# vars file for AAP controller
+
+
+# Create organizations
+# see "Organization Data Structure" here.
+# https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/organizations/
+# 3 organizations
+controller_organizations:
+  - name: org1
+    description: Organization 1
+    galaxy_credentials:
+      - Ansible Galaxy
+  - name: org2
+    description: Organization 2
+    galaxy_credentials:
+      - Ansible Galaxy
+  - name: org3
+    description: Organization 3
+    galaxy_credentials:
+      - Ansible Galaxy
+
+
+# Create teams and add to organizations
+# see "Data structure controller_teams: should include following vars" here.
+# https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/teams/
+# 3 teams per organization, 9 teams
+controller_teams:
+# org1
+  - name: o1team1
+    organization: org1
+    description: Team 1 in Organization 1
+    state: present
+  - name: o1team2
+    organization: org1
+  - name: o1team3
+    organization: org1
+# org2
+  - name: o2team1
+    organization: org2
+  - name: o2team2
+    organization: org2
+  - name: o2team3
+    organization: org2
+# org3
+  - name: o3team1
+    organization: org3
+  - name: o3team2
+    organization: org3
+  - name: o3team3
+    organization: org3
+
+
+# Create users
+# see "Data structure" here.
+# https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/users/
+# 3 people per team, 27 user accounts
+controller_user_accounts:
+# org1
+  - user: o1t1user1
+    password: redhat
+    email: o1t1user1@example.com
+    first_name: Org1Team1
+    last_name: User 1
+    is_superuser: false
+    is_system_auditor: false
+    update_secrets: true
+    # organization: org1
+    state: present
+  - user: o1t1user2
+    password: redhat
+  - user: o1t1user3
+    password: redhat
+  - user: o1t2user1
+    password: redhat
+  - user: o1t2user2
+    password: redhat
+  - user: o1t2user3
+    password: redhat
+  - user: o1t3user1
+    password: redhat
+  - user: o1t3user2
+    password: redhat
+  - user: o1t3user3
+    password: redhat
+# org2
+  - user: o2t1user1
+    password: redhat
+  - user: o2t1user2
+    password: redhat
+  - user: o2t1user3
+    password: redhat
+  - user: o2t2user1
+    password: redhat
+  - user: o2t2user2
+    password: redhat
+  - user: o2t2user3
+    password: redhat
+  - user: o2t3user1
+    password: redhat
+  - user: o2t3user2
+    password: redhat
+  - user: o2t3user3
+    password: redhat
+# org3
+  - user: o3t1user1
+    password: redhat
+  - user: o3t1user2
+    password: redhat
+  - user: o3t1user3
+    password: redhat
+  - user: o3t2user1
+    password: redhat
+  - user: o3t2user2
+    password: redhat
+  - user: o3t2user3
+    password: redhat
+  - user: o3t3user1
+    password: redhat
+  - user: o3t3user2
+    password: redhat
+  - user: o3t3user3
+    password: redhat
+
+
+# Add users to teams and organizations
+# see "Data structure" here.
+# https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/roles/
+controller_roles:
+# org1
+  - users:  
+      - o1t1user1
+      - o1t1user2
+      - o1t1user3
+    target_team: o1team1
+    organization: org1
+    role: member
+    state: present
+  - users:  
+      - o1t2user1
+      - o1t2user2
+      - o1t2user3
+    target_team: o1team2
+    organization: org1
+    role: member
+  - users:  
+      - o1t3user1
+      - o1t3user2
+      - o1t3user3
+    target_team: o1team3
+    organization: org1
+    role: member
+# org2
+  - users:  
+      - o2t1user1
+      - o2t1user2
+      - o2t1user3
+    target_team: o2team1
+    organization: org2
+    role: member
+  - users:  
+      - o2t2user1
+      - o2t2user2
+      - o2t2user3
+    target_team: o2team2
+    organization: org2
+    role: member
+  - users:  
+      - o2t3user1
+      - o2t3user2
+      - o2t3user3
+    target_team: o2team3
+    organization: org2
+    role: member
+# org3
+  - users:  
+      - o3t1user1
+      - o3t1user2
+      - o3t1user3
+    target_team: o3team1
+    organization: org3
+    role: member
+  - users:  
+      - o3t2user1
+      - o3t2user2
+      - o3t2user3
+    target_team: o3team2
+    organization: org3
+    role: member
+  - users:  
+      - o3t3user1
+      - o3t3user2
+      - o3t3user3
+    target_team: o3team3
+    organization: org3
+    role: member
+
+
+
+# remove users from an organization
+# controller_roles:
+#   - users:  
+#       - o2t1user1
+#       - o2t1user2
+#       - o2t1user3
+#     organization: org1
+#     role: member
+#     state: absent
+
+
+# examples from book "Demystifying Ansible Automation Platform"
+# https://github.com/PacktPublishing/Demystifying-Ansible-Automation-Platform
+
+# controller_user_accounts:
+#   - user: joe_123
+#     is_superuser: false
+#     password: password123
+    
+# controller_teams:
+#   - name: Joes
+#     organization: Default
+
+# controller_roles:
+#   - user:  joe_123
+#     team: Joes
+#     role: member

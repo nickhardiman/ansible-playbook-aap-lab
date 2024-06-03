@@ -1,0 +1,34 @@
+- name: Download manifest from Red Hat and upload to AAP
+  hosts: install_host
+  gather_facts: true
+  become: true
+  vars_files:
+    - ~/vault-credentials.yml
+
+  tasks:
+
+    - name: Include vars from controller_configs directory
+      ansible.builtin.include_vars:
+        dir: aap-vars
+        ignore_files: [controller_config.yml.template]
+        extensions: ["yml"]
+
+    - name: Get manifest from Red Hat Customer Portal
+      redhat.satellite.redhat_manifest:
+        uuid: "eb6a627a-4ebc-4cd0-9abd-754621d54535"
+        username: "{{ rhsm_user }}"
+        password: "{{ rhsm_password }}"
+        path: "{{ work_dir }}/aap2-manifest.zip"
+
+    # !!! Update to use "manifest_download is changed" in when once working
+    # https://github.com/theforeman/foreman-ansible-modules/issues/1473
+    # !!! or swap to 
+    # https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/license/
+    - name: Upload manifest to automation controller
+      ansible.controller.license:
+        controller_host: "{{ controller_hostname }}"
+        controller_username: "{{ controller_username }}"
+        controller_password: "{{ controller_password }}"
+        manifest: "{{ work_dir }}/aap2-manifest.zip"
+
+

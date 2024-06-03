@@ -1,0 +1,26 @@
+---
+# reference
+# module "infra.controller_configuration.inventories"
+# https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/inventories/
+
+- name: Add inventories, hosts and groups to controller
+  hosts: install_host
+  vars_files:
+    - ~/vault-credentials.yml
+
+  pre_tasks:
+
+    - name: Include vars from controller_configs directory
+      ansible.builtin.include_vars:
+        dir: aap-vars
+        ignore_files: [controller_config.yml.template]
+        extensions: ["yml"]
+
+  roles:
+
+    - infra.controller_configuration.credentials
+    - infra.controller_configuration.inventories
+    - infra.controller_configuration.hosts
+    - infra.controller_configuration.groups
+    - infra.controller_configuration.projects
+    - infra.controller_configuration.job_templates
