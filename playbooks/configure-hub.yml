@@ -8,8 +8,10 @@
     - ~/vault-credentials.yml
 
   roles:
+  
     - role: nick.platform.system_user
     - role: nick.platform.nfs_client
+    # !!! not working
     - role: nick.platform.proxy_client_system
       vars:
         proxy_server: "gateway.{{ lab_domain }}"
