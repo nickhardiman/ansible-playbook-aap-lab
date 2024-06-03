@@ -1,45 +1,82 @@
-= Ansible playbook for turning a PC into a set of Ansible Automation Platform VMs
-
-Ansible helps me build my home lab. 
-This playbook turns a PC running RHEL 9 into a hypervisor running a pile-load (that's the technical term) of Virtual Machines. 
-Each VM runs a set of services that support my home lab. 
-
-Idea is to build the 
-Ansible Automation Platform 2
-Reference Architecture. 
-
-https://access.redhat.com/documentation/en-us/reference_architectures/2021/html-single/deploying_ansible_automation_platform_2.1/index#doc-wrapper
-
+= home lab for Ansible Automation Platform
 
 Under construction. Sections marked with !!! and ??? are notes to self. 
 
-. *gateway*, a proxy with interfaces on the public and private networks. Also provides utilities.
+Ansible helps me build my home lab. 
+This playbook turns three PCs into a distributed automation platform.
+Each PC runs RHEL 9, a hypervisor, a pile-load (that's the technical term) of Virtual Machines, and many applications.
+
+Architecture is based on the 
+https://access.redhat.com/documentation/en-us/reference_architectures/2021/html-single/deploying_ansible_automation_platform_2.1/index#doc-wrapper[Ansible Automation Platform Reference Architecture].
+
+The home lab allows me to emulate a complex IT estate, like you might find in a large organization.
+
+== physical machines
+
+I work from a regular laptop on my home network.
+The AAP home lab runs on three PCs.
+Each PC emulates a geographical site 
+* workstation 
+* site 1, primary AAP cluster
+* site 2, secondary AAP cluster
+* site 3, supporting services (LDAP, git, DNS, and so on)
+
+== networks
+
+Three networks are involved in making this home lab work.
+
+* home lab
+* home network
+* Internet
+
+Three PCs provide the physical platform for my home lab, and are connected to my home network. 
+The home network is an ordinary domestic network managed by the magic box my ISP provided.
+The home network is the collection of router, WiFI antennas, TV, mobile phone and other devices.
+The ISP router provides access to the Internet, so this AAP installation can connect to Red Hat's central services.
+For instance, RPM packages are downloaded from the Red Hat CDN.
+The home lab has its own networks.
+
+Each home lab machine contains two virtual networks. 
+One is for public access. This connects to the home lab, and via there to the Internet.
+The other network is private, with all the VMs connected to it. 
+Access is restricted. 
+These VMs can only get to the Internet via a proxy running on the gateway.
+I connect to web services on these VMs via a reverse proxy running on the gateway.
+
+
+
+== site 1, primary AAP cluster
+
+. *gateway*, a proxy with interfaces on the public and private networks. Also provides utilities. !!! move NFS to misc-rhel8?
 . *controlplane-1*, a control plane node in the Automation Controller cluster
 . *controlplane-2*
 . *controlplane-3*
-. *controlplane-db*, a Postgres database for the Automation Controller
+. *controlplane-db*, a Postgres database for the Automation Controller !!! change to "rdbms", one central postgresql server
 . *automationhub-1*, a hub node in the Private Automation Hub cluster. This mounts an NFS share from gateway.
 . *automationhub-2*
 . *automationhub-3*
-. *automationhub-db*, a Postgres database for the Private Automation Hub
+. *automationhub-db*, a Postgres database for the Private Automation Hub !!! change to "automationedacontroller"
 . *executionnode-1*, an execution plane node 
 . *executionnode-2*
+. *misc-rhel8*, RH-SSO and other RHEL 8 applications.
 
+=== physical machine
 
-==  requirements 
+=== OS (Operating System)
 
-Various roles and collections. 
-See the cheatsheet below. 
-
-
-== the KVM/QEMU hypervisor 
+=== the KVM/QEMU hypervisor 
 
 A bootstrap shell script kicks off the install. 
 See instructions in 
 https://github.com/nickhardiman/ansible-playbook-lab/blob/main/machine-hypervisor.sh[machine-hypervisor.sh]
 
 
-== virtual network
+=== virtual network
+
+networks 
+
+* home network
+* home lab
 
 Each machine has two networks. 
 One is for public access from elsewhere in the network. 
@@ -53,8 +90,7 @@ The other is private, for all the VMs.
 * 192.168.25.0/24 - private network on the site3 PC
 
 
-== VMs 
-
+=== VMs 
 
 The https://github.com/nickhardiman/ansible-playbook-aap2-refarch/blob/main/group_vars/all/main.yml[defaults file] defines a lot of values. 
 For instance, most 
@@ -63,6 +99,11 @@ IPv4 addresses are set to ** 192.168.136.* **.
 Check out DHCP's 
 https://github.com/nickhardiman/ansible-collection-platform/blob/main/roles/dhcp_server/templates/dhcpd.conf.j2[config].
 
+bridges
+
+* brpublic0
+* brsite0
+
 .guests attached to bridges
 [%header,format=csv]
 |===
@@ -70,7 +111,7 @@ name,         interface, MAC,               IP,              domain
 *netpublic0*,    *brpublic0*,    52:54:00:03:00:01, 192.168.1.1,     site1.home
 gateway,      enp1s0,    52:54:00:03:00:03, 192.168.1.3,     site1.home
 
-*netlab0*,  *brlab0*,   52:54:00:04:00:01, 192.168.136.1,   site1.lab.example.com
+*netlab0*,  *brsite0*,   52:54:00:04:00:01, 192.168.136.1,   site1.lab.example.com
  ,           ,           52:54:00:04:00:02, 192.168.136.2,   site1.lab.example.com
 gateway,          enp2s0,    52:54:00:04:00:03, 192.168.136.3,   site1.lab.example.com
 controlplane-1,   enp1s0,    52:54:00:04:00:10, 192.168.136.10,   site1.lab.example.com
@@ -84,8 +125,33 @@ automationhub-1,  enp1s0,    52:54:00:04:00:17, 192.168.136.17,   site1.lab.exam
 automationhub-2,  enp1s0,    52:54:00:04:00:18, 192.168.136.18,   site1.lab.example.com
 automationhub-3,  enp1s0,    52:54:00:04:00:19, 192.168.136.19,   site1.lab.example.com
 automationhub-db, enp1s0,    52:54:00:04:00:20, 192.168.136.20,   site1.lab.example.com
-                , enp1s0,    52:54:00:04:00:21, 192.168.136.21,   site1.lab.example.com
+misc-rhel8,       enp1s0,    52:54:00:04:00:21, 192.168.136.21,   site1.lab.example.com
 |===
+
+
+== site 2, secondary AAP cluster
+
+A duplicate of site 1.
+
+. *gateway*, a proxy with interfaces on the public and private networks. Also provides utilities.
+. *controlplane-1*, a control plane node in the Automation Controller cluster
+. *controlplane-2*
+. *controlplane-3*
+. *controlplane-db*, a Postgres database for the Automation Controller !!! change to "rdbms", one central postgresql server
+. *automationhub-1*, a hub node in the Private Automation Hub cluster. This mounts an NFS share from gateway.
+. *automationhub-2*
+. *automationhub-3*
+. *automationhub-db*, a Postgres database for the Private Automation Hub !!! change to "automationedacontroller"
+. *executionnode-1*, an execution plane node 
+. *executionnode-2*
+. *misc-rhel8*, RH-SSO and other RHEL 8 applications.
+
+
+== site 3, supporting services 
+
+LDAP, git, DNS, and so on.
+
+. *gateway*, a proxy with interfaces on the public and private networks. Also provides utilities.
 
 
 == cheatsheet 
