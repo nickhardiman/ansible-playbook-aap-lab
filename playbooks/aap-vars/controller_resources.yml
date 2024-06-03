@@ -4,31 +4,31 @@
 # credentials
 
 # https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/credentials/
-# machine input fields are described in each API page. 
-# machine credential type is ID 1.
+# Each credential type has input fields, described in each API page. 
+# The "machine" credential type is assigned ID 1, SCM is 2, vault is 3, etc. 
 # https://controlplane-site1.home/api/v2/credential_types/1/
 controller_credentials:
-  - name: gitlab
-    description: Credentials for GitLab
-    organization: Default
+  - name: o1_gitlab
+    description: org1's credentials for GitLab, created by Ansible Playbook
+    organization: org1
     credential_type: Source Control
     inputs:
       username: person
       password: password
-  - name: Ansible user
-    description: Machine Credential
+  - name: o1_ansible_user
+    description: org1's Ansible user, created by Ansible Playbook
     credential_type: Machine
     organization: org1
     inputs:
       username: "{{ user_ansible_name }}"
-      ssh_key_data: "{{ user_ansible_public_key}}"
+      ssh_key_data: "{{ user_ansible_private_key}}"
       # become_method: sudo
 
 # inventories
 
 # https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/inventories/
 controller_inventories:
-  - name: o1inv1
+  - name: o1_inv1
     description: inventory for org1
     organization: org1
     variables:
@@ -46,16 +46,16 @@ controller_inventories:
 # https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/hosts/
 controller_hosts:
   - name: o1host1
-    inventory: o1inv1
+    inventory: o1_inv1
     variables:
       hosts_var: some_val
       ansible_connection: local
     enabled: true
     state: present
   - name: o1host2
-    inventory: o1inv1
+    inventory: o1_inv1
   - name: o1host3
-    inventory: o1inv1
+    inventory: o1_inv1
   - name: o2host1
     inventory: o2inv1
   - name: o3host1
@@ -64,7 +64,7 @@ controller_hosts:
 # https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/groups/
 controller_groups:
   - name: o1group1
-    inventory: o1inv1
+    inventory: o1_inv1
     variables:
       groups_variable: group_val
     hosts:
@@ -74,7 +74,7 @@ controller_groups:
       - o1group1_child
     state: present
   - name: o1group1_child
-    inventory: o1inv1
+    inventory: o1_inv1
     hosts:
       - o1host3
 
@@ -83,7 +83,7 @@ controller_groups:
 
 # https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/projects/
 controller_projects:
-  - name: Test Project
+  - name: o1_public_project
     scm_type: git
     scm_url: https://github.com/ansible/test-playbooks.git
     # scm_url: https://github.com/ansible/ansible-tower-samples
@@ -91,23 +91,31 @@ controller_projects:
     # scm_url: https://github.com/ansible/ansible-examples.git
     scm_branch: master
     scm_clean: true
-    description: Test Project 1
-    organization: Default
+    description: org1's project sourced from a public github repo
+    organization: org1
     wait: true
     update_project: true
+  - name: o1_private_project
+    scm_type: git
+    scm_url: https://gitlab.dite3.example.com/ansible/test-playbooks.git
+    # scm_branch: master
+    credential: o1_gitlab
+    description: org1's project sourced from a private gitlab repo
+    organization: org1
 
 # templates
 
+# https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/job_templates/
+# No field "organization" for job templates.
 controller_templates:
-  - name: test-template-1
-    description: created by Ansible Playbook
+  - name: o1_test_template
+    description: org1's test template, created by Ansible Playbook
     job_type: run
-    inventory: o1inv1
+    inventory: o1_inv1
     credentials:
-      - gitlab
-      - localuser
-    project: Test Project
+      - o1_ansible_user
+    project: o1_public_project
     playbook: chatty_payload.yml
     verbosity: 2
     extra_vars:
-      target_hosts: infra-ansible-tower-01.example.com
+      target_hosts: controlplane-1.site1.example.com
