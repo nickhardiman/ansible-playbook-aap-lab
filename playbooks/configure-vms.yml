@@ -20,6 +20,7 @@
   roles:
     - role: nick.platform.managed_node
     - role: nick.platform.hosts_file
+    - role: nick.platform.dns_client_of_gateway
     - role: nick.platform.cdn_repo_consumer
     - role: nick.platform.latest_packages
     - role: nick.platform.server_cert

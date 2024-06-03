@@ -1,0 +1,15 @@
+---
+
+- name: Configure NFS and proxy on hubs
+  hosts: automationhub
+  become: true
+  gather_facts: false
+  vars_files:
+    - ~/vault-credentials.yml
+
+  roles:
+    - role: nick.platform.system_user
+    - role: nick.platform.nfs_client
+    - role: nick.platform.proxy_client_system
+      vars:
+        proxy_server: "gateway.{{ lab_domain }}"

@@ -58,7 +58,77 @@ I connect to web services on these VMs via a reverse proxy running on the gatewa
 
 
 
-== site 1, primary AAP cluster
+
+== physical machines (hosts)
+
+
+== OS (Operating System)
+
+== KVM/QEMU hypervisor 
+
+A bootstrap shell script kicks off the install. 
+See instructions in 
+https://github.com/nickhardiman/ansible-playbook-lab/blob/main/machine-hypervisor.sh[machine-hypervisor.sh]
+
+
+== virtual network
+
+* home lab public network
+* home lab private network
+
+=== bridges
+
+!!! No point sticking a zero on the end of these. 
+
+.bridges
+[%header,format=csv]
+|===
+name,         libvirt config, networkmanager config, notes
+*brpublic0*,    netpublic0,    bridge-public0, public network on every PC
+*brsite10*,    netsite10,    bridge-site10, private network on site1 PC
+*brsite20*,    netsite20,    bridge-site20, private network on site2 PC
+*brsite30*,    netsite30,    bridge-site30, private network on site3 PC
+|===
+
+=== MAC addresses
+
+The fourth set of hexadecimal digits is the same as the third octet of the IPv4 address.
+eg. All VMs in the domain _site1.example.com_ have MAC addresses starting with 52:54:00:*21* and IPv4 addresses with 192.168.*21*.
+The last digits of each host also match. 
+eg. controlplane-1.site1.example.com has MAC address 52:54:00:21:00:*10* and IPv4 address 192.168.21.*10*.
+
+* 52:54:00:20:00:00 - public network on the site1 PC
+* 52:54:00:21:00:00 - private network on the site1 PC
+* 52:54:00:22:00:00 - public network on the site2 PC
+* 52:54:00:23:00:00 - private network on the site2 PC
+* 52:54:00:24:00:00 - public network on the site3 PC
+* 52:54:00:25:00:00 - private network on the site3 PC
+
+=== IPv4 addresses
+
+Each machine has two networks. 
+One is for public access from elsewhere in the network. 
+The other is private, for all the VMs.
+
+* 192.168.20.0/24 - public network on the site1 PC
+* 192.168.21.0/24 - private network on the site1 PC
+* 192.168.22.0/24 - public network on the site2 PC
+* 192.168.23.0/24 - private network on the site2 PC
+* 192.168.24.0/24 - public network on the site3 PC
+* 192.168.25.0/24 - private network on the site3 PC
+
+
+
+== VMs (guests)
+
+The https://github.com/nickhardiman/ansible-playbook-aap2-refarch/blob/main/group_vars/all/main.yml[defaults file] defines a lot of values. 
+For instance, most 
+MAC addresses are set to ** 52:54:00:21:00:* **,  and 
+IPv4 addresses are set to ** 192.168.21.* **. 
+Check out DHCP's 
+https://github.com/nickhardiman/ansible-collection-platform/blob/main/roles/dhcp_server/templates/dhcpd.conf.j2[config].
+
+=== site 1, primary AAP cluster
 
 . *gateway*, a proxy with interfaces on the public and private networks. Also provides utilities. !!! move NFS to misc-rhel8?
 . *controlplane-1*, a control plane node in the Automation Controller cluster
@@ -73,50 +143,6 @@ I connect to web services on these VMs via a reverse proxy running on the gatewa
 . *executionnode-2*
 . *misc-rhel8*, RH-SSO and other RHEL 8 applications.
 
-=== physical machine
-
-=== OS (Operating System)
-
-=== the KVM/QEMU hypervisor 
-
-A bootstrap shell script kicks off the install. 
-See instructions in 
-https://github.com/nickhardiman/ansible-playbook-lab/blob/main/machine-hypervisor.sh[machine-hypervisor.sh]
-
-
-=== virtual network
-
-networks 
-
-* home network
-* home lab
-
-Each machine has two networks. 
-One is for public access from elsewhere in the network. 
-The other is private, for all the VMs.
-
-* 192.168.20.0/24 - public network on the site1 PC
-* 192.168.21.0/24 - private network on the site1 PC
-* 192.168.22.0/24 - public network on the site2 PC
-* 192.168.23.0/24 - private network on the site2 PC
-* 192.168.24.0/24 - public network on the site3 PC
-* 192.168.25.0/24 - private network on the site3 PC
-
-
-=== VMs 
-
-The https://github.com/nickhardiman/ansible-playbook-aap2-refarch/blob/main/group_vars/all/main.yml[defaults file] defines a lot of values. 
-For instance, most 
-MAC addresses are set to ** 52:54:00:04:00:* **,  and 
-IPv4 addresses are set to ** 192.168.21.* **. 
-Check out DHCP's 
-https://github.com/nickhardiman/ansible-collection-platform/blob/main/roles/dhcp_server/templates/dhcpd.conf.j2[config].
-
-bridges
-
-* brpublic0
-* brsite0
-
 .guests attached to bridges
 [%header,format=csv]
 |===
@@ -124,21 +150,21 @@ name,         interface, MAC,               IP,              domain
 *netpublic0*,    *brpublic0*,    52:54:00:03:00:01, 192.168.1.1,     site1.home
 gateway,      enp1s0,    52:54:00:03:00:03, 192.168.1.3,     site1.home
 
-*netlab0*,  *brlab0*,   52:54:00:04:00:01, 192.168.21.1,   site1.example.com
- ,           ,           52:54:00:04:00:02, 192.168.21.2,   site1.example.com
-gateway,          enp2s0,    52:54:00:04:00:03, 192.168.21.3,   site1.example.com
-controlplane-1,   enp1s0,    52:54:00:04:00:10, 192.168.21.10,   site1.example.com
-controlplane-2,   enp1s0,    52:54:00:04:00:11, 192.168.21.11,   site1.example.com
-controlplane-3,   enp1s0,    52:54:00:04:00:12, 192.168.21.12,   site1.example.com
-controlplane-db,  enp1s0,    52:54:00:04:00:13, 192.168.21.13,   site1.example.com
-               ,  enp1s0,    52:54:00:04:00:14, 192.168.21.14,   site1.example.com
-executionnode-1,  enp1s0,    52:54:00:04:00:15, 192.168.21.15,   site1.example.com
-executionnode-2,  enp1s0,    52:54:00:04:00:16, 192.168.21.16,   site1.example.com
-automationhub-1,  enp1s0,    52:54:00:04:00:17, 192.168.21.17,   site1.example.com
-automationhub-2,  enp1s0,    52:54:00:04:00:18, 192.168.21.18,   site1.example.com
-automationhub-3,  enp1s0,    52:54:00:04:00:19, 192.168.21.19,   site1.example.com
-automationhub-db, enp1s0,    52:54:00:04:00:20, 192.168.21.20,   site1.example.com
-misc-rhel8      , enp1s0,    52:54:00:04:00:21, 192.168.21.21,   site1.example.com
+*netsite10*,  *brsite10*,   52:54:00:21:00:01, 192.168.21.1,   site1.example.com
+ ,           ,           52:54:00:21:00:02, 192.168.21.2,   site1.example.com
+gateway,          enp2s0,    52:54:00:21:00:03, 192.168.21.3,   site1.example.com
+controlplane-1,   enp1s0,    52:54:00:21:00:10, 192.168.21.10,   site1.example.com
+controlplane-2,   enp1s0,    52:54:00:21:00:11, 192.168.21.11,   site1.example.com
+controlplane-3,   enp1s0,    52:54:00:21:00:12, 192.168.21.12,   site1.example.com
+controlplane-db,  enp1s0,    52:54:00:21:00:13, 192.168.21.13,   site1.example.com
+               ,  enp1s0,    52:54:00:21:00:14, 192.168.21.14,   site1.example.com
+executionnode-1,  enp1s0,    52:54:00:21:00:15, 192.168.21.15,   site1.example.com
+executionnode-2,  enp1s0,    52:54:00:21:00:16, 192.168.21.16,   site1.example.com
+automationhub-1,  enp1s0,    52:54:00:21:00:17, 192.168.21.17,   site1.example.com
+automationhub-2,  enp1s0,    52:54:00:21:00:18, 192.168.21.18,   site1.example.com
+automationhub-3,  enp1s0,    52:54:00:21:00:19, 192.168.21.19,   site1.example.com
+automationhub-db, enp1s0,    52:54:00:21:00:20, 192.168.21.20,   site1.example.com
+misc-rhel8      , enp1s0,    52:54:00:21:00:21, 192.168.21.21,   site1.example.com
 |===
 
 
@@ -165,6 +191,13 @@ A duplicate of site 1.
 LDAP, git, DNS, and so on.
 
 . *gateway*, a proxy with interfaces on the public and private networks. Also provides utilities.
+. *satellite* VM provisioning, RPM repos
+. *id* Red Hat IDM (LDAP, CA, DNS)
+. *message* Postfix
+. *monitor* 
+. *git* Gitlab
+. *secret* Vault
+. *dev* toolshed
 
 
 == cheatsheet 
@@ -232,77 +265,4 @@ ansible-vault encrypt --vault-pass-file ~/my-vault-pass vault-credentials.yml
 ....
 
 
-=== AAP prereqs
-
-* get install bundle
-* inventory, credentials vault (see files)
-* firewall ports 
-* create NFS share on gateway 
-
-[source,shell]
-....
-# https://www.redhat.com/sysadmin/configure-nfs-linux
-systemctl enable --now nfs-server
-dnf install nfs-utils
-systemctl enable --now rpcbind
-mkdir -p /var/nfs/exports/pulp
-chown root:ansible_user /var/nfs/exports/pulp 
-chmod 775 root:ansible_user /var/nfs/exports/pulp 
-echo '/var/nfs/exports/pulp 192.168.0.0/16(rw,no_root_squash)' >> /etc/exports
-exportfs -r
-firewall-cmd --add-service nfs --permanent
-firewall-cmd --add-service nfs
-....
-
-* create NFS mount on hubs 
-
-[source,shell]
-....
-sudo mkdir /var/lib/pulp
-dnf install nfsv4-client-utils.x86_64
-mount -v -t nfs4 192.168.21.3:/var/nfs/exports/pulp /var/lib/pulp
-....
-
-* ??? add proxy env vars for hubs to download containers
-* !!! no, maybe login is non-interactive. /etc/environment?
-* ??? add proxy env vars for controller to download manifest
-*     in /etc/profile.d/http_proxy.sh 
-
-
-=== Install AAP
-
-* copy files/credentials-controlplane-plaintext.yml to credentials-controlplane.yml 
-* add sensitive details
-* encrypt
-*  Install controller.
-
-[source,shell]
-....
-ANSIBLE_PRIVATE_KEY_FILE=~/.ssh/ansible-key.priv \
-ANSIBLE_REMOTE_USER=ansible_user \
-ANSIBLE_BECOME=True \
-ANSIBLE_HOST_KEY_CHECKING=False \
-./setup.sh -e @credentials-controlplane.yml --  \
-  --vault-pass-file=~/vault-password.txt
-....
-
-* !!! copy files/credentials-hub-plaintext.yml, add sensitive details, encrypt
-*  Install hub. 
- proxy settings are for internet downloads of container images. 
- Installer doesn't download collections.
-
-[source,shell]
-....
-ANSIBLE_PRIVATE_KEY_FILE=~/.ssh/ansible-key.priv \
-ANSIBLE_REMOTE_USER=ansible_user \
-ANSIBLE_BECOME=True \
-ANSIBLE_HOST_KEY_CHECKING=False \
-./setup.sh \
- -e @credentials_hub.yml \
- -e 'http_proxy=http://gateway.site1.example.com:3128' \
- -e 'https_proxy=http://gateway.site1.example.com:3128' \
- -e 'no_proxy=localhost,127.0.0.1,example.com' \
- --  \
- --vault-pass-file=~/vault-password.txt
-....
 
