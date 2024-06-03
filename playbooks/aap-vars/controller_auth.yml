@@ -7,5 +7,12 @@ controller_username: admin
 controller_password: '{{ default_password }}'
 
 # testing
+# Many tasks include a line like this. 
+#   no_log: "{{ controller_configuration_SOME_OBJECT_secure_logging
+# eg. This file contains "controller_configuration_credentials_secure_logging".
+#   collections/ansible_collections/infra/controller_configuration/roles/credentials/tasks/main.yml
+# more examples:
 # controller_configuration_groups_secure_logging: false
-# controller_configuration_users_secure_logging: false
+# controller_configuration_users_secure_logging: false  
+# controller_configuration_credentials_secure_logging: false
+# controller_configuration_credential_types_secure_logging: false
