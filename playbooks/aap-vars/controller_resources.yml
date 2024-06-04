@@ -102,7 +102,8 @@ controller_projects:
     credential: o1_gitlab
     description: org1's project sourced from a private gitlab repo
     organization: org1
-  - name: o1_misc
+    update_project: false
+  - name: o1_misc_project
     scm_type: git
     scm_url: https://github.com/nickhardiman/misc
     description: project sourced from Nick's public github repo
@@ -114,7 +115,8 @@ controller_projects:
 # https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/job_templates/
 # No field "organization" for job templates.
 controller_templates:
-  - name: o1_test_template
+  - 
+    name: o1_test_template
     description: org1's test template, created by Ansible Playbook
     job_type: run
     inventory: o1_inv1
@@ -125,3 +127,58 @@ controller_templates:
     verbosity: 2
     extra_vars:
       target_hosts: controlplane-1.site1.example.com
+  - 
+    name: o1_misc_template_check_before
+    description: part of org1's misc workflow
+    job_type: run
+    inventory: o1_inv1
+    credentials:
+      - o1_ansible_user
+    project: o1_misc_project
+    playbook: ansible/workflow/check-before.yml
+  - 
+    name: o1_misc_template_do_thing
+    description: part of org1's misc workflow
+    job_type: run
+    inventory: o1_inv1
+    credentials:
+      - o1_ansible_user
+    project: o1_misc_project
+    playbook: ansible/workflow/do-thing.yml
+  - 
+    name: o1_misc_template_check_after
+    description: part of org1's misc workflow
+    job_type: run
+    inventory: o1_inv1
+    credentials:
+      - o1_ansible_user
+    project: o1_misc_project
+    playbook: ansible/workflow/check-after.yml
+
+# https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/workflow_job_templates/
+controller_workflows:
+  - name: o1_misc_workflow
+    description: A basic workflow schema example
+    ask_inventory_on_launch: false
+    organization: org1
+    simplified_workflow_nodes:
+      - 
+        identifier: check_before
+        unified_job_template: o1_misc_template_check_before
+        success_nodes:
+          - do_thing
+        failure_nodes: []
+        always_nodes: []
+      - 
+        identifier: do_thing
+        unified_job_template: o1_misc_template_do_thing
+        success_nodes:
+          - check_after
+        failure_nodes: []
+        always_nodes: []
+      - 
+        identifier: check_after
+        unified_job_template: o1_misc_template_check_after
+        success_nodes: []
+        failure_nodes: []
+        always_nodes: []
