@@ -1,0 +1,25 @@
+---
+# !!! unfinished, untested
+# reference
+# https://galaxy.ansible.com/ui/repo/published/infra/ah_configuration/content/role/collection_remote/
+# home lab hub
+# https://automationhub.site1.example.com/ui/ansible/remotes/
+
+- name: Manage collections in hub
+  hosts: install_host
+  gather_facts: true
+  become: true
+  vars_files:
+    - ~/vault-credentials.yml
+
+  pre_tasks:
+
+    - name: Include vars from controller_configs directory
+      ansible.builtin.include_vars:
+        dir: aap-vars
+        ignore_files: [controller_config.yml.template]
+        extensions: ["yml"]
+
+  roles:
+    - infra.ah_configuration.collection_remote
+

@@ -17,6 +17,8 @@
 - ansible.builtin.import_playbook: aap-controller-access.yml
 - ansible.builtin.import_playbook: aap-controller-resources.yml
 - ansible.builtin.import_playbook: aap-hub-access.yml
+- ansible.builtin.import_playbook: aap-hub-collections.yml
+# - ansible.builtin.import_playbook: aap-hub-execution-environments.yml
 
 # !!! todo
 # - ansible.builtin.import_playbook: vm-to-template.yml
