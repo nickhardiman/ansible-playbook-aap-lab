@@ -26,10 +26,14 @@ The home lab allows me to emulate a complex IT estate, like you might find in a 
 
 == physical machines
 
+image::aap-refarch-hardware.jpeg[]
+
 I work from a regular laptop on my home network.
 The AAP home lab runs on three PCs.
-Each PC emulates a geographical site 
-* workstation 
+Each PC emulates a geographical site.
+
+
+* workstation, my laptop
 * site 1, primary AAP cluster
 * site 2, secondary AAP cluster
 * site 3, supporting services (LDAP, git, DNS, and so on)

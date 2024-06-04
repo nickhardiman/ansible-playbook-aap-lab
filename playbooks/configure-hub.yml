@@ -8,10 +8,38 @@
     - ~/vault-credentials.yml
 
   roles:
-  
+
     - role: nick.platform.system_user
     - role: nick.platform.nfs_client
-    # !!! not working
-    - role: nick.platform.proxy_client_system
-      vars:
-        proxy_server: "gateway.{{ lab_domain }}"
+
+# !!! set proxy_url
+# reference
+# proxy_url in https://automationhub-site1.home/api/galaxy/pulp/api/v3/remotes/
+# pulp ignores http_proxy env vars.
+# instead, 
+# navigate to hub web UI > collections > remotes > name > edit > show advanced options > proxy url
+# set proxy_url to "http://gateway.site1.example.com:3128" 
+# !!! set token
+# set token to ansible_galaxy_server_automation_hub_token
+# - role: nick.platform.proxy_client_system
+#   vars:
+#     proxy_server: "gateway.{{ lab_domain }}"
+# !!! set url
+# reference
+# Server URL in https://console.redhat.com/ansible/automation-hub/token
+# https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html-single/managing_content_in_automation_hub/index#proc-set-rhcertified-remote
+# Not able to sync rh-certified repository on Private Automation Hub
+# https://access.redhat.com/solutions/7029895
+# change url from
+# https://console.redhat.com/api/automation-hub/
+# to 
+# https://console.redhat.com/api/automation-hub/content/published/
+# 
+# !!! check controller list, should be fine
+# reference
+# Private Automation Hub, how to correctly configure the connection to the controller
+# https://access.redhat.com/solutions/6989858
+# CONNECTED_ANSIBLE_CONTROLLERS in /etc/pulp/settings.py
+# data list in https://automationhub-site1.home/api/galaxy/_ui/v1/controllers/ 
+# 
+# reduce Download concurrency  and rate limit?

@@ -10,7 +10,7 @@ home_domain: home
 # half what is recommended by 
 # https://access.redhat.com/documentation/en-us/reference_architectures/2021/html-single/deploying_ansible_automation_platform_2.1/index#node_requirements
 cpus: 4
-# size in MiB
+# size in MiB (8G * 1024 = 8192M * 1024 = 8388608K)
 ram: 8192
 
 # storage

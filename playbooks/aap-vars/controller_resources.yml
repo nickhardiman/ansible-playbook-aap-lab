@@ -97,11 +97,17 @@ controller_projects:
     update_project: true
   - name: o1_private_project
     scm_type: git
-    scm_url: https://gitlab.dite3.example.com/ansible/test-playbooks.git
+    scm_url: https://gitlab.site3.example.com/ansible/test-playbooks.git
     # scm_branch: master
     credential: o1_gitlab
     description: org1's project sourced from a private gitlab repo
     organization: org1
+  - name: o1_misc
+    scm_type: git
+    scm_url: https://github.com/nickhardiman/misc
+    description: project sourced from Nick's public github repo
+    organization: org1
+
 
 # templates
 

@@ -21,6 +21,12 @@ net_services:
   - https
   - ssh
 
+# compute 
+# !!! too small for syncing all rh-certified content
+# runs out of memory a few minutes into pulp remote sync
+# ram: 8192, size in MiB (8G * 1024 = 8192M * 1024 = 8388608K)
+# try 
+# ram: 16384, size in MiB (16G * 1024 = 16384M * 1024 = 16777216K)
 
 # OS
 host: automationhub-1
