@@ -1,0 +1,23 @@
+---
+- name: Configure AAP settings
+  hosts: install_host
+  gather_facts: true
+  become: true
+  vars_files:
+    - ~/vault-credentials.yml
+
+  pre_tasks:
+
+    - name: Include vars from controller_configs directory
+      ansible.builtin.include_vars:
+        dir: aap-vars
+        ignore_files: [controller_config.yml.template]
+        extensions: ["yml"]
+
+  roles:
+  
+    # reference
+    # https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4/html/red_hat_ansible_automation_platform_operations_guide/assembly-configuring-proxy-support#doc-wrapper
+    #
+    - name: Change 'Settings' eg. Add HTTP_X_FORWARDED_FOR to the REMOTE_HOST_HEADERS field
+      role: infra.controller_configuration.settings

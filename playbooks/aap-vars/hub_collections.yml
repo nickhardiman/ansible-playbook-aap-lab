@@ -1,4 +1,5 @@
 
+# remote
 # https://galaxy.ansible.com/ui/repo/published/infra/ah_configuration/content/role/collection_remote/
 ah_collection_remotes:
   - name: community-infra
@@ -6,3 +7,49 @@ ah_collection_remotes:
     requirements:
       - name: infra.ee_utilities
       - name: infra.controller_configuration
+
+# repository, define and publish
+# https://galaxy.ansible.com/ui/repo/published/infra/ah_configuration/content/role/collection_repository/
+ah_collection_repositories:
+  - name: rh-certified 
+    # sync settings
+    wait: false
+  - name: community
+    wait: true
+    timeout: 60
+  - name: "foobar"
+    description: "description of foobar repository"
+    pulp_labels:
+      pipeline: "approved"
+    distribution:
+      name: "foobar"
+      state: present
+    remote: community-infra
+
+# namespace
+# https://galaxy.ansible.com/ui/repo/published/infra/ah_configuration/content/role/namespace/
+ah_namespaces:
+  - name: abc15
+    company: Redhat
+    email: user@example.com
+    avatar_url: https://static.redhat.com/libs/redhat/brand-assets/latest/corp/logo.svg
+    description: string
+    resources: "# Redhat\nA Namespace test with changes"
+    links:
+      - name: "New_Google"
+        url: "http://www.google.com"
+    groups:
+      - name: system:partner-engineers
+        object_roles:
+          - "change_namespace"
+          - "upload_to_namespace"
+
+# collection
+# https://galaxy.ansible.com/ui/repo/published/infra/ah_configuration/content/role/publish/
+ah_collections:
+  - collection_name: cisco.iosxr
+    git_url: https://github.com/ansible-collections/cisco.iosxr
+  - collection_name: awx.awx
+    collection_local_path: /var/tmp/collections/awx_awx-15.0.0.tar.gz
+#
+ah_auto_approve: true

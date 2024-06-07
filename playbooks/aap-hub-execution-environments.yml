@@ -1,7 +1,7 @@
 ---
 # !!! unfinished, untested
 # reference
-# https://galaxy.ansible.com/ui/repo/published/infra/ah_configuration/content/role/collection_remote/
+# https://galaxy.ansible.com/ui/repo/published/infra/ah_configuration/
 # home lab hub
 # https://automationhub.site1.example.com/ui/ansible/remotes/
 
@@ -21,7 +21,5 @@
         extensions: ["yml"]
 
   roles:
-    - infra.ah_configuration.collection_remote
-    - infra.ah_configuration.collection_repository
-    - infra.ah_configuration.namespace
-    - infra.ah_configuration.collection_repository_sync
+    - infra.ah_configuration.ee_registry
+    - infra.ah_configuration.ee_registry_sync

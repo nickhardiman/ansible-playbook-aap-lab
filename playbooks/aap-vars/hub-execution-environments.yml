@@ -1,0 +1,11 @@
+---
+
+# https://galaxy.ansible.com/ui/repo/published/infra/ah_configuration/content/role/ee_registry/
+ah_ee_registries:
+  - name: myreg
+    url: https://quay.io/my/registry
+    # sync settings
+    interval: 10
+    wait: true
+    timeout: 300
+    

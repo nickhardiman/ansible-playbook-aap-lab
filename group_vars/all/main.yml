@@ -40,3 +40,7 @@ kickstart_template: "kvm-guest-nic-static.ks.j2"
 
 # accounts
 # see vault
+
+# service
+# send mail here
+relayhost: "message.site3.example.com"
