@@ -15,9 +15,9 @@
 # hybrid2.example <- this will default to hybrid
 #
 [automationcontroller]
-controlplane-1.site1.example.com
-controlplane-2.site1.example.com
-controlplane-3.site1.example.com
+controlplane-1.site2.example.com
+controlplane-2.site2.example.com
+controlplane-3.site2.example.com
 #
 [automationcontroller:vars]
 node_type=control
@@ -25,7 +25,7 @@ peers=execution_nodes
 #
 # One, and only one, database host may be specified.
 [database]
-database.site1.example.com
+database.site2.example.com
 
 
 # Execution Nodes
@@ -39,17 +39,16 @@ database.site1.example.com
 # execution2.example <- this will default to execution
 #
 [execution_nodes]
-executionnode-1.site1.example.com peers=executionnode-2.site1.example.com 
-executionnode-2.site1.example.com
+executionnode-1.site2.example.com peers=executionnode-2.site2.example.com 
+executionnode-2.site2.example.com
 
 [automationhub]
-automationhub-1.site1.example.com
-automationhub-2.site1.example.com
-automationhub-3.site1.example.com
+automationhub-1.site2.example.com
+automationhub-2.site2.example.com
+automationhub-3.site2.example.com
 
 [automationedacontroller]
-automationedacontroller.site1.example.com
-
+automationedacontroller.site2.example.com
 
 # Single Sign-On
 # 
@@ -66,13 +65,15 @@ automationedacontroller.site1.example.com
 # !!! requires keycloak changes for hub.
 # add superuser
 # https://access.redhat.com/solutions/6989591
-# add redirect URI
-# redirect URI  is set to 
-# https://automationhub.site1.example.com/*
+# add redirect URIs
+# redirect URI is set to only one name
+# https://automationhub.site2.example.com/*
 # not
-# https://automationhub-site1.home/*
+# https://automationhub.site2.example.com/*
+# https://automationhub-site2.hardiman.consulting/*
+# https://automationhub-site2.home/*
 # see
-# https://misc-rhel8.site1.example.com:8443/ > Clients > automation-hub > Valid Redirect URIs
+# https://misc-rhel8.site2.example.com:8443/ > Clients > automation-hub > Valid Redirect URIs
 #
 # !!! requires linking controller to keycloak
 # see book "demystifying ansible automation platform" chapter 4 "configuring settings and authentication", Integrating the Automation controller with RH-SSO
@@ -84,14 +85,14 @@ automationedacontroller.site1.example.com
 #
 [sso]
 # !!! repurposed machine. Rename to misc
-misc-rhel8.site1.example.com
+misc-rhel8.site2.example.com
 
 
 [all:vars]
 # Handled by Ansible Vault
 admin_password='{{ default_password }}'
 
-pg_host=database.site1.example.com
+pg_host=database.site2.example.com
 pg_port=5432
 
 pg_database=awx
@@ -145,7 +146,7 @@ receptor_listener_port=27199
 # Handled by Ansible Vault
 automationhub_admin_password='{{ default_password }}'
 #
-automationhub_pg_host=database.site1.example.com
+automationhub_pg_host=database.site2.example.com
 automationhub_pg_port=5432
 
 automationhub_pg_database=automationhub
@@ -160,7 +161,7 @@ automationhub_pg_sslmode='prefer'
 # The main automation hub URL that clients will connect to (e.g. https://<load balancer host>).
 # If not specified, the first node in the [automationhub] group will be used when needed.
 #
-automationhub_main_url=https://automationhub.site1.example.com
+automationhub_main_url=https://automationhub.site2.example.com
 
 # By default when one uploads collections to Automation Hub
 # an admin needs to approve it before it is made available
@@ -275,12 +276,12 @@ automationedacontroller_pg_sslmode='prefer'
 # custom_ca_cert=/path/to/ca.crt
 
 # Certificate and key to install in nginx for the web UI and API
-web_server_ssl_cert=/opt/ansible-automation-platform/installer/controlplane.site1.example.com.pem
-web_server_ssl_key=/opt/ansible-automation-platform/installer/controlplane.site1.example.com.key
+web_server_ssl_cert=/opt/ansible-automation-platform/installer/controlplane.site2.example.com.pem
+web_server_ssl_key=/opt/ansible-automation-platform/installer/controlplane.site2.example.com.key
 
 # Certificate and key to install in Automation Hub node
-automationhub_ssl_cert=/opt/ansible-automation-platform/installer/automationhub.site1.example.com.pem
-automationhub_ssl_key=/opt/ansible-automation-platform/installer/automationhub.site1.example.com.key
+automationhub_ssl_cert=/opt/ansible-automation-platform/installer/automationhub.site2.example.com.pem
+automationhub_ssl_key=/opt/ansible-automation-platform/installer/automationhub.site2.example.com.key
 
 # Server-side SSL settings for PostgreSQL (when we are installing it).
 # postgres_use_ssl=False

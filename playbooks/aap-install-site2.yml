@@ -1,0 +1,61 @@
+---
+
+
+# !!! site2 play duplicates site1 play. 
+# I'm dubious about a loop, but why not?
+#   block:
+#     ...
+#   loop:
+#     - site1
+#     - site2
+
+- name: AAP install site2 
+  hosts: install_host
+  gather_facts: true
+  become: true
+  vars_files:
+    - ~/vault-credentials.yml
+  tasks:
+
+    # !!! plain text file containing sensitive info
+    # move passwords to vault
+    - name: Configure inventory file
+      ansible.builtin.template:
+        src: inventory-install-site2.ini.j2
+        dest: /opt/ansible-automation-platform/installer/inventory
+        mode: '0644'
+
+    # only run if the controller is not running, or
+    # if the installer package has been updated
+    - name: Before launching setup.sh, check automation controller status
+      ansible.builtin.uri:
+        url: "https://controlplane-1.site2.example.com/ui/"
+        method: GET
+        validate_certs: false
+      register: r_controller_info
+      failed_when: false
+      # ignore_errors: true
+    #
+    - name: Fail if controller is already running
+      ansible.builtin.fail:
+        msg: "Controller is already running at https://controlplane-1.site2.example.com/ui/"
+      when: not r_controller_info['failed']
+
+    - name: Run setup.sh for controller
+      ansible.builtin.shell:
+        cmd: >
+          ./setup.sh
+          --
+          --extra-vars  "http_proxy=http://gateway.site2.example.com:3128"
+          --extra-vars "https_proxy=http://gateway.site2.example.com:3128"
+          --extra-vars no_proxy=localhost,127.0.0.1,example.com
+        chdir: /opt/ansible-automation-platform/installer
+      environment:
+        ANSIBLE_BECOME: True
+        ANSIBLE_NOCOWS: 1
+        ANSIBLE_REMOTE_USER: ansible_user
+        # ANSIBLE_PRIVATE_KEY_FILE: /home/nick/.ssh/ansible-key.priv
+      # I am not using the root account to run setup.sh. my user has SSH keys. Root doesn't.
+      become: false
+      when: r_installer_package is changed or
+            r_controller_info.status != 200

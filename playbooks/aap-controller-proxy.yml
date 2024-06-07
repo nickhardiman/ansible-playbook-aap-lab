@@ -1,7 +1,7 @@
 ---
 # see aap-controller-settings.yml for more proxy config
 - name: Make AAP play nice with a reverse proxy
-  hosts: automationcontroller_site1
+  hosts: automationcontroller
   gather_facts: true
   become: true
   vars_files:

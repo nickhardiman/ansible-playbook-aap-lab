@@ -17,47 +17,6 @@
       ansible.builtin.ping:
 
 
-- name: AAP install the installer  
-  hosts: install_host
-  gather_facts: true
-  become: true
-  vars_files:
-    - ~/vault-credentials.yml
-
-  tasks:
-    
-    # create /opt/ansible-automation-platform/installer/
-    - name: Install Ansible Automation Platform installer package to create /opt/ansible-automation-platform/installer/
-      ansible.builtin.dnf:
-        name: ansible-automation-platform-installer
-        enablerepo: ansible-automation-platform-2.4-for-rhel-9-x86_64-rpms
-        state: present
-      register: r_installer_package
-
-    - name: Ansible user and admins can use the installer directory
-      ansible.builtin.file:
-        path: /opt/ansible-automation-platform/installer
-        owner: "{{ user_ansible_name }}"
-        group: wheel
-        mode: '2770'
-        state: touch
-
-    - name: Let ansible user and admins write to setup.log
-      ansible.builtin.file:
-        path: /opt/ansible-automation-platform/installer/setup.log
-        owner: "{{ user_ansible_name }}"
-        group: wheel
-        mode: '0664'
-        state: touch
-
-    - ansible.builtin.shell:
-        cmd: /usr/bin/id && /usr/bin/hostname
-      register: r_id
-    - ansible.builtin.debug:
-        var: r_id
-
-
-
   # setup.sh kicks off the install
   # options
   # Use this if Hub doesn't have enough RAM to pass preflight check.

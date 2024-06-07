@@ -1,0 +1,139 @@
+# Create new certs
+# . controlplane.site1.example.com
+# . controlplane.site2.example.com
+# . automationhub.site1.example.com
+# . automationhub.site2.example.com
+# . misc-rhel8.site1.example.com
+# . misc-rhel8.site2.example.com
+# . automationedacontroller.site1.example.com
+# . automationedacontroller.site2.example.com
+
+# Backend servers all get the same certificate 
+# eg. 
+# controlplane.site1.example.com is installed on all three controllers in site1.
+# haproxy doesn't use a certificate - it uses TLS pass-through.
+# Each site needs no less than three DNS names.
+# eg.
+# * controlplane.site1.example.com, the name used in the home lab
+# * controlplane-site1.home, the name used in the home network
+# * controlplane-site1.hardiman.consulting, the name used in the Internet
+#
+# !!! replace with letsencrypt certs
+#
+# Role places each cert file here.
+# * private key                              /etc/pki/tls/private/ 
+# * certificate containing the public key    /etc/pki/tls/certs/
+
+- name: AAP SAN certificates 
+  hosts: install_host
+  gather_facts: true
+  become: true
+  vars_files:
+    - ~/vault-credentials.yml
+  roles:
+    #
+    # !!! SSO is missing
+    # Host misc-rhel8 hosts keycloak. 
+    # That needs to be exposed, starting with creating a cert here.
+    - role: nick.platform.server_cert
+      vars:
+        server_cn: controlplane.site1.example.com
+        subject_alt_name:
+          - DNS:controlplane.site1.example.com
+          - DNS:controlplane-site1.home
+          - DNS:controlplane-1.site1.example.com
+          - DNS:controlplane-2.site1.example.com
+          - DNS:controlplane-3.site1.example.com
+    - role: nick.platform.server_cert
+      vars:
+        server_cn: controlplane.site2.example.com
+        subject_alt_name:
+          - DNS:controlplane.site2.example.com
+          - DNS:controlplane-site2.home
+          - DNS:controlplane-1.site2.example.com
+          - DNS:controlplane-2.site2.example.com
+          - DNS:controlplane-3.site2.example.com
+    #
+    - role: nick.platform.server_cert
+      vars:
+        server_cn: automationhub.site1.example.com
+        subject_alt_name:
+          - DNS:automationhub.site1.example.com
+          - DNS:automationhub-site1.home
+          - DNS:automationhub-1.site1.example.com
+          - DNS:automationhub-2.site1.example.com
+          - DNS:automationhub-3.site1.example.com
+    - role: nick.platform.server_cert
+      vars:
+        server_cn: automationhub.site2.example.com
+        subject_alt_name:
+          - DNS:automationhub.site2.example.com
+          - DNS:automationhub-site2.home
+          - DNS:automationhub-1.site2.example.com
+          - DNS:automationhub-2.site2.example.com
+          - DNS:automationhub-3.site2.example.com
+    #
+    - role: nick.platform.server_cert
+      vars:
+        server_cn: misc-rhel8.site1.example.com
+        subject_alt_name:
+          - DNS:misc-rhel8.site1.example.com
+          - DNS:misc-rhel8-site1.home
+    - role: nick.platform.server_cert
+      vars:
+        server_cn: misc-rhel8.site2.example.com
+        subject_alt_name:
+          - DNS:misc-rhel8.site2.example.com
+          - DNS:misc-rhel8-site2.home
+    #
+    - role: nick.platform.server_cert
+      vars:
+        server_cn: automationedacontroller.site1.example.com
+        subject_alt_name:
+          - DNS:automationedacontroller.site1.example.com
+          - DNS:automationedacontroller-site1.home
+    - role: nick.platform.server_cert
+      vars:
+        server_cn: automationedacontroller.site2.example.com
+        subject_alt_name:
+          - DNS:automationedacontroller.site2.example.com
+          - DNS:automationedacontroller-site2.home
+
+  tasks:
+  
+    - name: Copy keys to installer directory
+      ansible.builtin.copy:
+        src: "/etc/pki/tls/private/{{ item }}.key"
+        remote_src: true
+        dest: "/opt/ansible-automation-platform/installer/{{ item }}.key"
+        owner: "{{ user_ansible_name }}"
+        group: wheel
+        mode: '0440'
+      loop:
+        - controlplane.site1.example.com
+        - controlplane.site2.example.com
+        - automationhub.site1.example.com
+        - automationhub.site2.example.com
+        - misc-rhel8.site1.example.com
+        - misc-rhel8.site2.example.com
+        - automationedacontroller.site1.example.com
+        - automationedacontroller.site2.example.com
+
+    - name: Copy certs to installer directory
+      ansible.builtin.copy:
+        src: "/etc/pki/tls/certs/{{ item }}.pem"
+        remote_src: true
+        dest: "/opt/ansible-automation-platform/installer/{{ item }}.pem"
+        owner: "{{ user_ansible_name }}"
+        group: wheel
+        mode: '0444'
+      loop:
+        - controlplane.site1.example.com
+        - controlplane.site2.example.com
+        - automationhub.site1.example.com
+        - automationhub.site2.example.com
+        - misc-rhel8.site1.example.com
+        - misc-rhel8.site2.example.com
+        - automationedacontroller.site1.example.com
+        - automationedacontroller.site2.example.com
+     
