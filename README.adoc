@@ -138,11 +138,11 @@ https://github.com/nickhardiman/ansible-collection-platform/blob/main/roles/dhcp
 . *controlplane-1*, a control plane node in the Automation Controller cluster
 . *controlplane-2*
 . *controlplane-3*
-. *controlplane-db*, a Postgres database for the Automation Controller !!! change to "rdbms", one central postgresql server
+. *database*, a Postgres database for the Automation Controller !!! change to "rdbms", one central postgresql server
 . *automationhub-1*, a hub node in the Private Automation Hub cluster. This mounts an NFS share from gateway.
 . *automationhub-2*
 . *automationhub-3*
-. *automationhub-db*, a Postgres database for the Private Automation Hub !!! change to "automationedacontroller"
+. *automationedacontroller*, Event Driven Ansible
 . *executionnode-1*, an execution plane node 
 . *executionnode-2*
 . *misc-rhel8*, RH-SSO and other RHEL 8 applications.
@@ -160,14 +160,14 @@ gateway,          enp2s0,    52:54:00:21:00:03, 192.168.21.3,   site1.example.co
 controlplane-1,   enp1s0,    52:54:00:21:00:10, 192.168.21.10,   site1.example.com
 controlplane-2,   enp1s0,    52:54:00:21:00:11, 192.168.21.11,   site1.example.com
 controlplane-3,   enp1s0,    52:54:00:21:00:12, 192.168.21.12,   site1.example.com
-controlplane-db,  enp1s0,    52:54:00:21:00:13, 192.168.21.13,   site1.example.com
+database,  enp1s0,    52:54:00:21:00:13, 192.168.21.13,   site1.example.com
                ,  enp1s0,    52:54:00:21:00:14, 192.168.21.14,   site1.example.com
 executionnode-1,  enp1s0,    52:54:00:21:00:15, 192.168.21.15,   site1.example.com
 executionnode-2,  enp1s0,    52:54:00:21:00:16, 192.168.21.16,   site1.example.com
 automationhub-1,  enp1s0,    52:54:00:21:00:17, 192.168.21.17,   site1.example.com
 automationhub-2,  enp1s0,    52:54:00:21:00:18, 192.168.21.18,   site1.example.com
 automationhub-3,  enp1s0,    52:54:00:21:00:19, 192.168.21.19,   site1.example.com
-automationhub-db, enp1s0,    52:54:00:21:00:20, 192.168.21.20,   site1.example.com
+automationedacontroller, enp1s0,    52:54:00:21:00:20, 192.168.21.20,   site1.example.com
 misc-rhel8      , enp1s0,    52:54:00:21:00:21, 192.168.21.21,   site1.example.com
 |===
 
@@ -180,11 +180,11 @@ A duplicate of site 1.
 . *controlplane-1*, a control plane node in the Automation Controller cluster
 . *controlplane-2*
 . *controlplane-3*
-. *controlplane-db*, a Postgres database for the Automation Controller !!! change to "rdbms", one central postgresql server
+. *database*, a Postgres database for the Automation Controller !!! change to "rdbms", one central postgresql server
 . *automationhub-1*, a hub node in the Private Automation Hub cluster. This mounts an NFS share from gateway.
 . *automationhub-2*
 . *automationhub-3*
-. *automationhub-db*, a Postgres database for the Private Automation Hub !!! change to "automationedacontroller"
+. *automationedacontroller*, Even Driven Ansible
 . *executionnode-1*, an execution plane node 
 . *executionnode-2*
 . *misc-rhel8*, RH-SSO and other RHEL 8 applications.

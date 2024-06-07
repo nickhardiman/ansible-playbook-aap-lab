@@ -25,7 +25,7 @@ peers=execution_nodes
 #
 # One, and only one, database host may be specified.
 [database]
-controlplane-db.site1.example.com
+database.site1.example.com
 
 
 # Execution Nodes
@@ -90,7 +90,7 @@ misc-rhel8.site1.example.com
 # Handled by Ansible Vault
 admin_password='{{ default_password }}'
 
-pg_host=controlplane-db.site1.example.com
+pg_host=database.site1.example.com
 pg_port=5432
 
 pg_database=awx
@@ -144,9 +144,7 @@ receptor_listener_port=27199
 # Handled by Ansible Vault
 automationhub_admin_password='{{ default_password }}'
 #
-# !!! split the install in two to enable different DBs for controller and hub
-automationhub_pg_host=controlplane-db.site1.example.com
-# automationhub_pg_host=automationhub-db.site1.example.com
+automationhub_pg_host=database.site1.example.com
 automationhub_pg_port=5432
 
 automationhub_pg_database=automationhub

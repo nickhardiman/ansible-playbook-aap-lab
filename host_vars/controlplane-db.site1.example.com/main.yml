@@ -23,7 +23,7 @@ net_services:
 
 
 # OS
-host: controlplane-db
+host: database
 fqdn: "{{ host }}.{{ lab_domain }}"
 # extra RPM packages to add to the install list in
 # https://github.com/nickhardiman/ansible-collection-aap2-refarch/blob/main/roles/libvirt_machine_kickstart/templates/kvm-guest-nic-static.ks.j2

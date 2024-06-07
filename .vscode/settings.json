@@ -1,4 +1,3 @@
 {
-    "ansible.python.interpreterPath": "/usr/bin/python3",
-    "asciidoc.antora.enableAntoraSupport": false
+    "ansible.python.interpreterPath": "/usr/bin/python3"
 }

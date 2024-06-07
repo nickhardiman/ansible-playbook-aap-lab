@@ -13,8 +13,8 @@ for GUEST in \
     automationhub-3.site1.example.com \
     executionnode-1.site1.example.com \
     executionnode-2.site1.example.com \
-    controlplane-db.site1.example.com \
-    automationhub-db.site1.example.com \
+    database.site1.example.com \
+    automationedacontroller.site1.example.com \
     gateway.site1.example.com 
 do 
   sudo virsh shutdown $GUEST

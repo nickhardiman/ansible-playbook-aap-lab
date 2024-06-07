@@ -3,8 +3,8 @@
 
 for GUEST in \
     gateway.site2.example.com  \
-    controlplane-db.site2.example.com \
-    automationhub-db.site2.example.com \
+    database.site2.example.com \
+    automationedacontroller.site2.example.com \
     executionnode-1.site2.example.com \
     executionnode-2.site2.example.com \
     controlplane-1.site2.example.com \
