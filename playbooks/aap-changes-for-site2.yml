@@ -1,0 +1,22 @@
+- name: AAP overwrite myself (weird) 
+  hosts: install_host
+  gather_facts: true
+  become: true
+  vars_files:
+    - ~/vault-credentials.yml
+
+    - name: Overwrite controller server config file
+      ansible.builtin.copy:
+        source: controller_auth_site2.yml
+        dest: aap-vars/controller_auth.yml
+        owner: "{{ user_admin_name }}"
+        group: wheel
+        mode: '0644'
+
+    - name: Overwrite hub server config file
+      ansible.builtin.copy:
+        source: hub_auth_site2.yml
+        dest: aap-vars/hub_auth.yml
+        owner: "{{ user_admin_name }}"
+        group: wheel
+        mode: '0644'
