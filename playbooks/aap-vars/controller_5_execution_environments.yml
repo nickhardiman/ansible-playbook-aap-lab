@@ -1,7 +1,6 @@
 ---
 
 # https://galaxy.ansible.com/ui/repo/published/infra/controller_configuration/content/role/execution_environments/
----
 controller_execution_environments:
   - name: "My EE"
     image: quay.io/ansible/awx-ee

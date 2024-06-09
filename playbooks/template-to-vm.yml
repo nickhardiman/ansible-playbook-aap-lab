@@ -4,7 +4,7 @@
 # to
 #   hosts: hypervisor
 
-- name: Start a new instance of the machine.
+- name: Start a new instance of the machine, and set to autostart
   hosts: "{{ host_to_start }}"
   become: true
   gather_facts: false

@@ -2,8 +2,8 @@
 # remote
 # https://galaxy.ansible.com/ui/repo/published/infra/ah_configuration/content/role/collection_remote/
 ah_collection_remotes:
-  - name: community-infra
-    url: https://beta-galaxy.ansible.com/
+  - name: community-infra-remote
+    url: https://galaxy.ansible.com/
     requirements:
       - name: infra.ee_utilities
       - name: infra.controller_configuration
@@ -11,12 +11,18 @@ ah_collection_remotes:
 # repository, define and publish
 # https://galaxy.ansible.com/ui/repo/published/infra/ah_configuration/content/role/collection_repository/
 ah_collection_repositories:
+  - name: community-infra-repo
+    wait: true
+    timeout: 60
+    remote: community-infra-remote
   - name: rh-certified 
     # sync settings
     wait: false
+    remote: rh-certified
   - name: community
     wait: true
     timeout: 60
+    remote: community
   - name: "foobar"
     description: "description of foobar repository"
     pulp_labels:
@@ -29,7 +35,7 @@ ah_collection_repositories:
 # namespace
 # https://galaxy.ansible.com/ui/repo/published/infra/ah_configuration/content/role/namespace/
 ah_namespaces:
-  - name: abc15
+  - name: a_namespace
     company: Redhat
     email: user@example.com
     avatar_url: https://static.redhat.com/libs/redhat/brand-assets/latest/corp/logo.svg
@@ -38,11 +44,11 @@ ah_namespaces:
     links:
       - name: "New_Google"
         url: "http://www.google.com"
-    groups:
-      - name: system:partner-engineers
-        object_roles:
-          - "change_namespace"
-          - "upload_to_namespace"
+    # groups:
+    #   - name: group1
+    #     object_roles:
+    #       - "change_namespace"
+    #       - "upload_to_namespace"
 
 # collection
 # https://galaxy.ansible.com/ui/repo/published/infra/ah_configuration/content/role/publish/

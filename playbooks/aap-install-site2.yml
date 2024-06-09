@@ -1,6 +1,5 @@
 ---
 
-
 # !!! site2 play duplicates site1 play. 
 # I'm dubious about a loop, but why not?
 #   block:
@@ -33,7 +32,6 @@
         method: GET
         validate_certs: false
       register: r_controller_info
-      # failed_when: false
       ignore_errors: true
     #
     - name: Fail if controller is already running
@@ -57,4 +55,3 @@
         # ANSIBLE_PRIVATE_KEY_FILE: /home/nick/.ssh/ansible-key.priv
       # I am not using the root account to run setup.sh. my user has SSH keys. Root doesn't.
       become: false
-

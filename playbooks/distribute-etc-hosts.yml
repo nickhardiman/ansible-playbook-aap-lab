@@ -1,5 +1,5 @@
-- name: Configure new server machine
-  hosts: vm
+- name: Distribute /etc/hosts file from install host to all hosts
+  hosts: all:!install_host
   become: true
   gather_facts: false
   vars_files:

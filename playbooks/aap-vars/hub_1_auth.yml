@@ -9,7 +9,7 @@
 #    https://automationhub-site1.home/ui/login/
 # SSO login is available at 
 #    https://automationhub-site1.home/ui/extlogin/ ??? > https://misc-rhel8.site1.example.com:8443/ ???
-ah_host: automationhub.site2.example.com
+ah_host: automationhub-site2.home
 ah_username: admin
 ah_password: '{{ default_password }}'
 

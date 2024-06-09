@@ -126,7 +126,7 @@ controller_templates:
     playbook: chatty_payload.yml
     verbosity: 2
     extra_vars:
-      target_hosts: controlplane-1.site1.example.com
+      target_hosts: "controlplane-1.{{ lab_domain }}"
   - 
     name: o1_misc_template_check_before
     description: part of org1's misc workflow

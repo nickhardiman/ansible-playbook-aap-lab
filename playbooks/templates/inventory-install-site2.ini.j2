@@ -251,6 +251,19 @@ automationedacontroller_pg_port=5432
 automationedacontroller_pg_database='automationedacontroller'
 automationedacontroller_pg_username='automationedacontroller'
 automationedacontroller_pg_password='{{ default_password }}'
+# fails due to non-quoting of value
+# task: Migrate the EDA Controller database schema
+# file: collections/ansible_collections/ansible/automation_platform_installer/roles/automationedacontroller/tasks/main.yml
+# "source" command chokes on funny characters.
+# fix 
+# task: Configure EDA Controller settings file
+# file: collections/ansible_collections/ansible/automation_platform_installer/roles/automationedacontroller/tasks/main.yml
+# EDA_DB_PASSWORD value needs quotes 
+#   automationedacontroller.site2.example.com /etc/ansible-automation-platform/eda/environment
+#   EDA_DB_PASSWORD=funny&character
+# no quotes in this installer template
+#   collections/ansible_collections/ansible/automation_platform_installer/roles/automationedacontroller/templates/environment.j2
+
 automationedacontroller_pg_sslmode='prefer'
 
 # Certificate and key to install in Automation EDa Controller 
