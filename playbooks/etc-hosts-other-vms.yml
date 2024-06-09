@@ -1,6 +1,6 @@
 ---
 - name: Record all other VM names and addresses in /etc/hosts (ignore gateways)
-  hosts: hypervisor
+  hosts: install_host
   become: true
   gather_facts: false
   vars_files:

@@ -62,7 +62,7 @@
 
 # virtual machine OS layer
 - ansible.builtin.import_playbook: configure-gateways.yml
-- ansible.builtin.import_playbook: configure-vms.yml
+- ansible.builtin.import_playbook: configure-other-vms.yml
 - ansible.builtin.import_playbook: configure-hub.yml
 
 # virtual machine application layer

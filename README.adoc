@@ -61,11 +61,6 @@ These VMs can only get to the Internet via a proxy running on the gateway.
 I connect to web services on these VMs via a reverse proxy running on the gateway.
 
 
-
-
-== physical machines (hosts)
-
-
 == OS (Operating System)
 
 == KVM/QEMU hypervisor 
@@ -132,13 +127,16 @@ The third octect matches part of the MAC address (see above).
 Everything is in the _example.com_ domain. 
 Addresses on each PC get a site subdomain eg. _controlplane-1.site1.example.com_.
 
+Host names and addresses are stored in /etc/hosts, not in a DNS service. 
+This is a pretty poor way of doing things because changes are hard. 
+Creating, updating and deleting host names and addresses requires redistributing the /etc/hosts file.
+If you want to be flexible, use DNS.
+
 
 == VMs (guests)
 
-Each VM gets its own __host_vars__ variable file, defining name, address and a few other things.
-It also inherits a lot of values from __group_vars__ variables files, starting with the 
-The https://github.com/nickhardiman/ansible-playbook-aap2-refarch/blob/main/group_vars/all/main.yml["all" variable file]. 
-
+Each VM gets its own __host_vars__ variable file.
+More below.
 
 === site 1, primary AAP cluster
 
@@ -211,6 +209,18 @@ LDAP, git, DNS, and so on.
 . *secret* Vault
 . *dev* toolshed
 
+
+== variables
+
+Each VM gets its own __host_vars__ variable file, defining name, address and a few other things.
+It also inherits a lot of values from __group_vars__ variables files, starting with the 
+The https://github.com/nickhardiman/ansible-playbook-aap2-refarch/blob/main/group_vars/all/main.yml["all" variable file]. 
+
+This ansible-inventory command is handy for collecting the many variables for each host in one file.
+----
+ansible-inventory --inventory ./inventory-site2-single-host.ini  --list --yaml --output ./inventory-site2-single-host.yml
+vim ./inventory-site2-single-host.yml
+----
 
 == cheatsheet 
 
