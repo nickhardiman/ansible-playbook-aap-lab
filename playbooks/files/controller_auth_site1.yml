@@ -1,3 +1,6 @@
+---
+# vars file for AAP Controller
+
 # Ansible Automation Controller is accessible using either a home network URL like this:
 #    https://controlplane-site1.home/
 # or a home lab URL like this:

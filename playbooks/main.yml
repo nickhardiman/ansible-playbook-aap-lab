@@ -68,12 +68,15 @@
 # virtual machine application layer
 
 # install and configure AAP 
+#
+# installer host preparation
 - ansible.builtin.import_playbook: aap-install-installer.yml
 - ansible.builtin.import_playbook: aap-install-certs.yml
 #
 # site1
 - ansible.builtin.import_playbook: aap-install-site1.yml
 # CaC playbooks 
+- ansible.builtin.import_playbook: aap-changes-for-site2.yml
 - ansible.builtin.import_playbook: aap-manifest.yml
 - ansible.builtin.import_playbook: aap-controller-settings.yml
 - ansible.builtin.import_playbook: aap-controller-proxy.yml
@@ -89,21 +92,16 @@
 # The CaC playbooks are identical to site1 except:  
 # * controller_hostname
 # * ah_host
-# !!! perhaps 
-# - ansible.builtin.import_playbook: aap-changes-for-site2.yml
-# - ansible.builtin.import_playbook: aap-manifest.yml
-# - ansible.builtin.import_playbook: aap-controller-settings.yml
-# ...
-# or
-# - ansible.builtin.import_playbook: aap-manifest.yml
-#   vars:
-#     controller_hostname: controlplane.site2.example.com
-#     ah_host: automationhub.site2.example.com
-# - ansible.builtin.import_playbook: aap-controller-settings.yml
-#   vars:
-#     controller_hostname: controlplane.site2.example.com
-#     ah_host: automationhub.site2.example.com
-# ...
+- ansible.builtin.import_playbook: aap-changes-for-site2.yml
+- ansible.builtin.import_playbook: aap-manifest.yml
+- ansible.builtin.import_playbook: aap-controller-settings.yml
+- ansible.builtin.import_playbook: aap-controller-proxy.yml
+- ansible.builtin.import_playbook: aap-controller-access.yml
+- ansible.builtin.import_playbook: aap-controller-resources.yml
+- ansible.builtin.import_playbook: aap-hub-access.yml
+- ansible.builtin.import_playbook: aap-hub-collections.yml
+- ansible.builtin.import_playbook: aap-hub-execution-environments.yml
+- ansible.builtin.import_playbook: aap-controller-execution-environments.yml
 
 # install and configure OS and application layers on site3
 

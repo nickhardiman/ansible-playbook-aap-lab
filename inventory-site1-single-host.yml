@@ -40,6 +40,7 @@ all:
               public_nmcli_name: bridge-{{ public_net_short_name }}0
               pv_size: 28672
               ram: 8192
+              relayhost: message.site3.example.com
               vm_group: vm_site1
         vm_site1:
           hosts:
@@ -86,6 +87,7 @@ all:
               public_nmcli_name: bridge-{{ public_net_short_name }}0
               pv_size: 28672
               ram: 8192
+              relayhost: message.site3.example.com
               server_proxy_hostname: gateway.{{ lab_domain }}
               server_proxy_port: 3128
     ungrouped: {}

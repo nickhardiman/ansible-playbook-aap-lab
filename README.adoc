@@ -110,9 +110,15 @@ eg. controlplane-1.site1.example.com has MAC address 52:54:00:21:00:*10* and IPv
 
 === IPv4 addresses
 
+All addresses are static. 
+There are (currently) no DHCP or DNS services.
+All host names and addresses are 
+
 Each machine has two networks. 
 One is for public access from elsewhere in the network. 
 The other is private, for all the VMs.
+
+The third octect matches part of the MAC address (see above).
 
 * 192.168.20.0/24 - public network on the site1 PC
 * 192.168.21.0/24 - private network on the site1 PC
@@ -121,16 +127,18 @@ The other is private, for all the VMs.
 * 192.168.24.0/24 - public network on the site3 PC
 * 192.168.25.0/24 - private network on the site3 PC
 
+=== DNS names
+
+Everything is in the _example.com_ domain. 
+Addresses on each PC get a site subdomain eg. _controlplane-1.site1.example.com_.
 
 
 == VMs (guests)
 
-The https://github.com/nickhardiman/ansible-playbook-aap2-refarch/blob/main/group_vars/all/main.yml[defaults file] defines a lot of values. 
-For instance, most 
-MAC addresses are set to ** 52:54:00:21:00:* **,  and 
-IPv4 addresses are set to ** 192.168.21.* **. 
-Check out DHCP's 
-https://github.com/nickhardiman/ansible-collection-platform/blob/main/roles/dhcp_server/templates/dhcpd.conf.j2[config].
+Each VM gets its own __host_vars__ variable file, defining name, address and a few other things.
+It also inherits a lot of values from __group_vars__ variables files, starting with the 
+The https://github.com/nickhardiman/ansible-playbook-aap2-refarch/blob/main/group_vars/all/main.yml["all" variable file]. 
+
 
 === site 1, primary AAP cluster
 

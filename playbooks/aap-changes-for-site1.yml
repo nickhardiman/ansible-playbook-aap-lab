@@ -7,7 +7,7 @@
   tasks:
     - name: Overwrite controller server config file
       ansible.builtin.copy:
-        src: controller_auth_site2.yml
+        src: controller_auth_site1.yml
         dest: aap-vars/controller_auth.yml
         owner: "{{ user_admin_name }}"
         group: wheel
@@ -15,7 +15,7 @@
 
     - name: Overwrite hub server config file
       ansible.builtin.copy:
-        src: hub_auth_site2.yml
+        src: hub_auth_site1.yml
         dest: aap-vars/hub_auth.yml
         owner: "{{ user_admin_name }}"
         group: wheel
