@@ -33,8 +33,8 @@
         method: GET
         validate_certs: false
       register: r_controller_info
-      failed_when: false
-      # ignore_errors: true
+      # failed_when: false
+      ignore_errors: true
     #
     - name: Fail if controller is already running
       ansible.builtin.fail:
@@ -57,5 +57,4 @@
         # ANSIBLE_PRIVATE_KEY_FILE: /home/nick/.ssh/ansible-key.priv
       # I am not using the root account to run setup.sh. my user has SSH keys. Root doesn't.
       become: false
-      when: r_installer_package is changed or
-            r_controller_info.status != 200
+

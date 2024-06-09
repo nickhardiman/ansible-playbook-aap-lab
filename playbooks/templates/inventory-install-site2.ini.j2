@@ -243,19 +243,19 @@ automationhub_main_url=https://automationhub.site2.example.com
 # Automation EDA Controller Configuration
 #
 
-automationedacontroller_admin_password=''
+automationedacontroller_admin_password='{{ default_password }}'
 
-automationedacontroller_pg_host=''
+automationedacontroller_pg_host=database.site2.example.com
 automationedacontroller_pg_port=5432
 
 automationedacontroller_pg_database='automationedacontroller'
 automationedacontroller_pg_username='automationedacontroller'
-automationedacontroller_pg_password=''
+automationedacontroller_pg_password='{{ default_password }}'
 automationedacontroller_pg_sslmode='prefer'
 
 # Certificate and key to install in Automation EDa Controller 
-# automationedacontroller_ssl_cert=/path/to/automationedacontroller.cert
-# automationedacontroller_ssl_key=/path/to/automationedacontroller.key
+automationedacontroller_ssl_cert=/opt/ansible-automation-platform/installer/automationedacontroller.site2.example.com.pem
+automationedacontroller_ssl_key=/opt/ansible-automation-platform/installer/automationedacontroller.site2.example.com.key
 
 # The full routeable URL used by EDA to connect to a controller host.
 # This URL is required if there is no Automation Controller configured
@@ -263,7 +263,7 @@ automationedacontroller_pg_sslmode='prefer'
 #
 # Format example: automation_controller_main_url='https://<hostname>'
 #
-# automation_controller_main_url = '' 
+automation_controller_main_url = https://controlplane.site2.example.com
 
 # Boolean flag used to verify Automation Controller's
 # web certificates when making calls from Automation EDA Controller.
