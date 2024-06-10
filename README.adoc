@@ -186,7 +186,7 @@ A duplicate of site 1.
 . *controlplane-1*, a control plane node in the Automation Controller cluster
 . *controlplane-2*
 . *controlplane-3*
-. *database*, a Postgres database for the Automation Controller !!! change to "rdbms", one central postgresql server
+. *database*, a Postgres database for the Automation Controller
 . *automationhub-1*, a hub node in the Private Automation Hub cluster. This mounts an NFS share from gateway.
 . *automationhub-2*
 . *automationhub-3*

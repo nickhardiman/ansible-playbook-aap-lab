@@ -9,13 +9,17 @@
   #     role: nick.platform.libvirt_image_facts
   tasks:
 
-    - name: Identify VM group
+    - name: Find the name of the VM group
       ansible.builtin.set_fact:
-        my_vms: "{{ hostvars[inventory_hostname]['vm_group'] }}"
+        f_vm_group_name: "{{ hostvars[inventory_hostname]['vm_group'] }}"
+
+    - name: List VMs to start and remove gateway public names
+      ansible.builtin.set_fact:
+        my_vms: "{{ groups[f_vm_group_name] | difference(groups['gateway_home']) }}"
 
     - name: Display VM group content
       ansible.builtin.debug:
-        var: groups[my_vms]
+        var: my_vms
         verbosity: 1
 
     # gateway routing isn't sorted yet so it can't respond to a ping.
@@ -24,7 +28,7 @@
         name: nick.platform.libvirt_machine_start
       vars:
         wait_for_ping: false
-      loop: "{{ groups[my_vms] }}"
+      loop: "{{ my_vms }}"
       loop_control:
         loop_var: fqdn
 
@@ -32,6 +36,6 @@
       community.libvirt.virt:
         name: "{{ fqdn }}"
         autostart: yes
-      loop: "{{ groups[hostvars[inventory_hostname]['vm_group']] }}"
+      loop: "{{ my_vms }}"
       loop_control:
         loop_var: fqdn

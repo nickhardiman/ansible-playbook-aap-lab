@@ -1,5 +1,5 @@
 ---
-# virt-install
+# Most of these variables are for virt-install and OS kickstart.
 # These values override defaults.
 # default variables and their values are listed here. 
 #   https://github.com/nickhardiman/libvirt-guest/blob/main/defaults/main.yml

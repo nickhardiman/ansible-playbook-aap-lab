@@ -4,6 +4,7 @@
 # sudo watch virsh list --all
 
 for GUEST in \
+  satellite.site3.example.com \
     gateway.site3.example.com 
 do 
   sudo virsh shutdown $GUEST

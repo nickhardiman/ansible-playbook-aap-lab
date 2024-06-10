@@ -1,9 +1,9 @@
 ---
 # group vars for gateway
 
-# virt-install
+# Most of these variables are for virt-install and OS kickstart.
 # These values override defaults.
-# default variables and their values are listed here. 
+# Default variables and their values are listed here.
 #   https://github.com/nickhardiman/ansible-collection-platform/blob/main/roles/libvirt_machine_kickstart/defaults/main.yml
 
 # compute 
