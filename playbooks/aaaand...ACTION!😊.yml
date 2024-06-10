@@ -105,8 +105,10 @@
 - ansible.builtin.import_playbook: aap-hub-execution-environments.yml
 - ansible.builtin.import_playbook: aap-controller-execution-environments.yml
 
-# install and configure OS and application layers on site3
 
+# more apps
+# site3
+#
 # !!! Red Hat Satellite
 # https://github.com/nickhardiman/ansible-playbook-build/blob/main/satellite-install.yml
 # 
