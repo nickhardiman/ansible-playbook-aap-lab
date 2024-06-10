@@ -30,6 +30,9 @@
 # https://misc-rhel8.site1.example.com/
 # https://automationedacontroller.site1.example.com/login
 
+# !!! reinstall hit bug
+#   Why is my installation failing at [ansible.automation_platform_installer.certificate_authority : Get AAP CA certificate info]
+#   https://access.redhat.com/solutions/7070151
 
 - name: Check access
   hosts: install_host:automationcontroller:automationhub:execution_node

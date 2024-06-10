@@ -1,5 +1,9 @@
+---
+# copy /etc/hosts to all VMs, except for 
+# * the install host (the source of the file)
+# * private interfaces of the gateways (use the public interfaces instead)
 - name: Distribute /etc/hosts file from install host to all hosts
-  hosts: all:!install_host
+  hosts: all:!install_host:!gateway_lab
   become: true
   gather_facts: false
   vars_files:

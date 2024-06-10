@@ -26,6 +26,11 @@
         password: "{{ rhsm_password }}"
         path: "{{ work_dir }}/aap2-manifest.zip"
 
+    - name: Display
+      ansible.builtin.debug:
+        msg: "Upload manifest from {{ work_dir }}/aap2-manifest.zip to {{ controller_hostname }}"
+
+    # https://docs.ansible.com/ansible/latest/collections/awx/awx/license_module.html
     # !!! Update to use "manifest_download is changed" in when once working
     # https://github.com/theforeman/foreman-ansible-modules/issues/1473
     # !!! or swap to 
@@ -36,3 +41,4 @@
         controller_username: "{{ controller_username }}"
         controller_password: "{{ controller_password }}"
         manifest: "{{ work_dir }}/aap2-manifest.zip"
+        # force: true

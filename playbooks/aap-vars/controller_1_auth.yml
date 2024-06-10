@@ -1,12 +1,13 @@
 ---
 # vars file for AAP Controller
 
+lab_domain: site1.example.com
+
 # Ansible Automation Controller is accessible using either a home network URL like this:
-#    https://controlplane-site2.home/
+#    https://controlplane-site1.home/
 # or a home lab URL like this:
-#    https://controlplane.site2.example.com/
-controller_hostname: controlplane-site2.home
-# controller_hostname: controlplane.site2.example.com
+#    https://controlplane.site1.example.com/
+controller_hostname: controlplane.site1.example.com
 controller_username: admin
 controller_password: '{{ default_password }}'
 

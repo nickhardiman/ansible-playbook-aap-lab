@@ -1,15 +1,18 @@
 ---
 # vars file for AAP Private Automation Hub
 
-# Ansible Private Automation Hub is accessible using either a home network URL like this:
+# Ansible Private Automation Hub is accessible using either a home network load balancer URL like this:
 #    https://automationhub-site1.home/
-# or a home lab URL like this:
+# or a home lab load balancer URL like this:
 #    https://automationhub.site1.example.com/
-# local login is available at 
+# or a home lab server URL like this:
+#    https://automationhub-1.site1.example.com/
+# Local login is available at 
 #    https://automationhub-site1.home/ui/login/
 # SSO login is available at 
-#    https://automationhub-site1.home/ui/extlogin/ ??? > https://misc-rhel8.site1.example.com:8443/ ???
-ah_host: automationhub.site1.example.com
+#    https://automationhub-site1.home/ui/extlogin/ 
+# which redirects to https://misc-rhel8.site1.example.com:8443/ !!! should be .home
+ah_host: automationhub-site1.home
 ah_username: admin
 ah_password: '{{ default_password }}'
 
