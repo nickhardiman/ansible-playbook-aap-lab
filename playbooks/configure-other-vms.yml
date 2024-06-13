@@ -26,4 +26,5 @@
     - role: nick.platform.server_cert
     - role: nick.platform.smtp_client
     - role: nick.platform.cockpit_server
-    - role: nick.platform.register_insights
+    # - role: nick.platform.register_insights
+    - role: nick.platform.register_rhc
