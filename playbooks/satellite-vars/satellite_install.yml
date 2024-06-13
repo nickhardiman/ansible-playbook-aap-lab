@@ -1,0 +1,16 @@
+# https://github.com/sscheib/ansible_satellite/blob/main/host_vars/satellite.office.int.scheib.me/00b_register_satellite.yml
+
+rhc_repositories:
+  - name: 'rhel-8-for-x86_64-baseos-rpms'
+    state: 'enabled'
+  - name: 'rhel-8-for-x86_64-appstream-rpms'
+    state: 'enabled'
+  - name: 'satellite-6.15-for-rhel-8-x86_64-rpms'
+    state: 'enabled'
+  - name: 'satellite-maintenance-6.15-for-rhel-8-x86_64-rpms'
+    state: 'enabled'
+  - name: 'satellite-utils-6.15-for-rhel-8-x86_64-rpms'
+    state: 'enabled'
+
+# RHEL release to set in subscription-manager
+rhc_release: 8

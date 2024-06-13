@@ -16,36 +16,22 @@
   gather_facts: true  # required for the role redhat.satellite_operations.installer
   become: true  # required for the role redhat.satellite_operations.installer
   roles:
+    # https://access.redhat.com/articles/rhc
     # https://console.redhat.com/ansible/automation-hub/repo/published/redhat/rhel_system_roles/docs/
     - role: redhat.rhel_system_roles.rhc
-      vars: 
-        rhc_repositories:
-        - name: 'rhel-8-for-x86_64-baseos-rpms'
-          state: 'enabled'
-        - name: 'rhel-8-for-x86_64-appstream-rpms'
-          state: 'enabled'
-        - name: 'satellite-6.15-for-rhel-8-x86_64-rpms'
-          state: 'enabled'
-        - name: 'satellite-maintenance-6.15-for-rhel-8-x86_64-rpms'
-          state: 'enabled'
-        - name: 'satellite-utils-6.15-for-rhel-8-x86_64-rpms'
-          state: 'enabled'
-# !!! add 
-# rhc_release: 8
-# serve# https://github.com/sscheib/ansible_satellite/blob/main/host_vars/satellite.office.int.scheib.me/00b_register_satellite.yml#L24
 
   tasks:
 
-  # !!! fixed in 6.14?
-    # modularity name and stream (no profile)
-    - name: Install the Postgresql modularity stream with defined stream
-      ansible.builtin.dnf:
-        name: '@postgresql:12'
-        state: present
-    - name: Install the Ruby modularity stream with defined stream
-      ansible.builtin.dnf:
-        name: '@ruby:2.7'
-        state: present
+  # # !!! fixed in 6.14?
+  #   # modularity name and stream (no profile)
+  #   - name: Install the Postgresql modularity stream with defined stream
+  #     ansible.builtin.dnf:
+  #       name: '@postgresql:12'
+  #       state: present
+  #   - name: Install the Ruby modularity stream with defined stream
+  #     ansible.builtin.dnf:
+  #       name: '@ruby:2.7'
+  #       state: present
 
 # !!! try
 # https://github.com/ansible/ansible/issues/64852#issuecomment-760454213

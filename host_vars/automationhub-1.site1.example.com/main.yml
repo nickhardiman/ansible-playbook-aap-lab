@@ -36,7 +36,7 @@ fqdn: "{{ host }}.{{ lab_domain }}"
 RPMs: []
 #
 # RHSM registration. see
-# https://github.com/nickhardiman/ansible-collection-aap2-refarch/blob/main/roles/cdn_repo_consumer/tasks/main.yml
+# https://github.com/nickhardiman/ansible-collection-aap2-refarch/blob/main/roles/register_rhsm/tasks/main.yml
 server_proxy_hostname: "gateway.{{ lab_domain }}"
 server_proxy_port: 3128
 

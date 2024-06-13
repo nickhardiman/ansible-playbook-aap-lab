@@ -21,9 +21,9 @@
     - role: nick.platform.managed_node
     - role: nick.platform.hosts_file
     - role: nick.platform.dns_client_of_gateway
-    - role: nick.platform.cdn_repo_consumer
+    - role: nick.platform.register_rhsm
     - role: nick.platform.latest_packages
     - role: nick.platform.server_cert
     - role: nick.platform.smtp_client
     - role: nick.platform.cockpit_server
-    - role: nick.platform.insights_client
+    - role: nick.platform.register_insights
