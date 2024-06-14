@@ -26,7 +26,7 @@ lv_var: 245760
 
 
 # network
-last_octet: 21
+last_octet: 5
 nics:
   -
     name: enp1s0

@@ -1,0 +1,71 @@
+---
+
+# a simpler version of the far superior 
+# https://github.com/sscheib/ansible_satellite
+# reference
+# https://access.redhat.com/documentation/en-us/red_hat_satellite/6.14/html-single/installing_satellite_server_in_a_connected_network_environment/index#configuring-repositories_satellite
+
+# !!! maybe simplify with
+# https://docs.ansible.com/ansible/latest/collections/community/general/rhsm_repository_module.html
+
+
+- name: Satellite repos and installer
+  hosts: satellite.site3.example.com
+  gather_facts: true  # required for the role redhat.satellite_operations.installer
+  become: true        # required for the role redhat.satellite_operations.installer
+
+  pre_tasks:
+
+    - name: Include vars from controller_configs directory
+      ansible.builtin.include_vars:
+        dir: satellite-vars
+        ignore_files: [controller_config.yml.template]
+        extensions: ["yml"]
+
+  roles:
+
+    # https://access.redhat.com/articles/rhc
+    # https://console.redhat.com/ansible/automation-hub/repo/published/redhat/rhel_system_roles/docs/
+    - name: Use rhc to enable satellite repos
+      role: redhat.rhel_system_roles.rhc
+
+  tasks:
+
+  # # !!! fixed in 6.14?
+  #   # modularity name and stream (no profile)
+  #   - name: Install the Postgresql modularity stream with defined stream
+  #     ansible.builtin.dnf:
+  #       name: '@postgresql:12'
+  #       state: present
+  #   - name: Install the Ruby modularity stream with defined stream
+  #     ansible.builtin.dnf:
+  #       name: '@ruby:2.7'
+  #       state: present
+
+# !!! try
+# https://github.com/ansible/ansible/issues/64852#issuecomment-760454213
+      # ansible.builtin.dnf can't enable a modularity stream, only install it. 
+      #name: '@satellite:el8'
+      # enables satellite and satellite-maintenance, not satellite-utils
+    - name: Enable the satellite modularity stream
+      ansible.builtin.shell:
+        cmd: 'dnf module enable satellite:el8 -y'
+      changed_when: true
+      register: r_module
+
+    - name: Display result with -v
+      ansible.builtin.debug:
+        verbosity: 1
+        var: r_module
+
+      # provide the satellite-installer command
+    - name: Install Satellite package
+      ansible.builtin.dnf:
+        name: satellite
+        update_cache: true
+      register: r_rpm
+
+    - name: Display result with -v
+      ansible.builtin.debug:
+        verbosity: 1
+        var: r_rpm

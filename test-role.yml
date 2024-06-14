@@ -1,0 +1,9 @@
+- name: Test one role
+  hosts: all
+  gather_facts: true
+  become: true
+  vars_files:
+    - ~/vault-credentials.yml
+  roles:
+    - role: nick.platform.server_cert
+

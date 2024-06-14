@@ -22,7 +22,8 @@
     - name: "check for existing images"
       role: nick.platform.libvirt_image_facts
 
-# If there already is an image file, don't trash it. 
+# !!! If there already is an image file, don't trash it. 
+
 - name: Kickstart a new machine
   hosts: hypervisor
   become: true
@@ -37,5 +38,3 @@
       loop: "{{ groups[hostvars[inventory_hostname]['vm_group']] }}"
       loop_control:
         loop_var: fqdn
-
-
