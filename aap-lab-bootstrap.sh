@@ -60,8 +60,8 @@
 #    I used the first host as the installer host. ssh nick@host.site1.example.com
 # Download this file and the config file from Github to your home directory.
 #    curl -O https://raw.githubusercontent.com/nickhardiman/ansible-playbook-aap2-refarch/main/aap-bootstrap.sh
-#    curl -O https://raw.githubusercontent.com/nickhardiman/ansible-playbook-aap2-refarch/main/aap-bootstrap.cfg
-# Edit aap-bootstrap.cfg and change my details to yours.
+#    curl -O https://raw.githubusercontent.com/nickhardiman/ansible-playbook-aap2-refarch/main/aap-lab-bootstrap.cfg
+# Edit aap-lab-bootstrap.cfg and change my details to yours.
 #     Find out what IP addresses your ISP's router assigned to the hosts.
 #     Add the IP adresses.
 # Run the script. Password prompts appear. 

@@ -13,18 +13,18 @@
   vars_files:
     - ~/vault-credentials.yml
   environment:
-    http_proxy: "http://gateway.{{ lab_domain }}:3128"
-    HTTPS_PROXY: "http://gateway.{{ lab_domain }}:3128"
+    http_proxy:  "http://{{ server_proxy_hostname }}:{{ server_proxy_port }}"
+    HTTPS_PROXY: "http://{{ server_proxy_hostname }}:{{ server_proxy_port }}"
     no_proxy: localhost,127.0.0.1,example.com
   #
   roles:
-    - role: nick.platform.managed_node
-    - role: nick.platform.hosts_file
-    - role: nick.platform.dns_client_of_gateway
-    - role: nick.platform.register_rhsm
-    - role: nick.platform.latest_packages
-    - role: nick.platform.server_cert
-    - role: nick.platform.smtp_client
-    - role: nick.platform.cockpit_server
-    # - role: nick.platform.register_insights
+    # - role: nick.platform.managed_node
+    # - role: nick.platform.hosts_file
+    # - role: nick.platform.dns_client_of_gateway
+    # - role: nick.platform.register_rhsm
+    # - role: nick.platform.latest_packages
+    # - role: nick.platform.server_cert
+    # - role: nick.platform.smtp_client
+    # - role: nick.platform.cockpit_server
+    # # - role: nick.platform.register_insights
     - role: nick.platform.register_rhc

@@ -15,7 +15,7 @@
 #-------------------------
 # Variables
 #
-source ./aap-bootstrap.cfg
+source ./aap-lab-bootstrap.cfg
 #
 #-------------------------
 # functions

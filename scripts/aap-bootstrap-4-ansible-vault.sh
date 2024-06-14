@@ -13,7 +13,7 @@
 #-------------------------
 # Variables
 #
-source ./aap-bootstrap.cfg
+source ./aap-lab-bootstrap.cfg
 VAULT_PASSWORD_FILE=~/my-vault-pass
 VAULT_FILE=~/vault-credentials.yml
 #
