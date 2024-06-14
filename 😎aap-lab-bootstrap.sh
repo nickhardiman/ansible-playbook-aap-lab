@@ -2,6 +2,7 @@
 #-------------------------
 # Set up each hypervisor.
 #
+# This bash script runs, then more bash scripts, then the AAP lab playbook.
 #-------------------------
 # Prerequisites
 # 

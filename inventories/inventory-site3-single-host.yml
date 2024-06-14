@@ -58,6 +58,8 @@ all:
               pv_size: 28672
               ram: 8192
               relayhost: message.site3.example.com
+              server_proxy_hostname: gateway.{{ lab_domain }}
+              server_proxy_port: 3128
               vm_group: vm_site3
         vm_site3:
           hosts:

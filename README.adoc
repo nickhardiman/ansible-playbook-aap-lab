@@ -218,8 +218,8 @@ The https://github.com/nickhardiman/ansible-playbook-aap2-refarch/blob/main/grou
 
 This ansible-inventory command is handy for collecting the many variables for each host in one file.
 ----
-ansible-inventory --inventory ./inventory-site2-single-host.ini  --list --yaml --output ./inventory-site2-single-host.yml
-vim ./inventory-site2-single-host.yml
+ansible-inventory --inventory inventories/inventory-site2-single-host.ini  --list --yaml --output inventories/inventory-site2-single-host.yml
+vim inventories/inventory-site2-single-host.yml
 ----
 
 == cheatsheet 

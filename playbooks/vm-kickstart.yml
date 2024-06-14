@@ -8,7 +8,7 @@
 # ansible-playbook       \
 #  --vault-pass-file ~/my-vault-pass  \
 #  -v \
-#  --inventory ./inventory-single-host.yml \
+#  --inventory inventories/inventory-single-host.yml \
 #  --extra-vars='install_iso=/var/lib/libvirt/images/rhel-8.10-x86_64-dvd.iso'  \
 #  --extra-vars='os_variant=rhel8.10'  \
 #  playbooks/vm-kickstart.yml
