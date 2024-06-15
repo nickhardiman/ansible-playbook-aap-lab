@@ -8,7 +8,7 @@
 - name: Install Red Hat Satellite
   hosts: satellite.site3.example.com
   gather_facts: true  # required for the role redhat.satellite_operations.installer
-  become: true  # required for the role redhat.satellite_operations.installer
+  become: true        # required for the role redhat.satellite_operations.installer
   vars_files:
     - ~/vault-credentials.yml
 
