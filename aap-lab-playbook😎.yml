@@ -63,7 +63,8 @@
 - ansible.builtin.import_playbook: playbooks/etc-hosts-load-balancers.yml
 
 # virtual machine OS layer
-- ansible.builtin.import_playbook: playbooks/configure-gateways.yml
+- ansible.builtin.import_playbook: playbooks/configure-gateway-network.yml
+- ansible.builtin.import_playbook: playbooks/configure-gateway-roles.yml
 - ansible.builtin.import_playbook: playbooks/configure-other-vms.yml
 - ansible.builtin.import_playbook: playbooks/configure-hub.yml
 

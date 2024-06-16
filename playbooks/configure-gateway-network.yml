@@ -1,0 +1,164 @@
+---
+# The "gateway" machine has two interfaces, one on the home network and one on the new libvirt network.
+# First nic gets an IPv4 address from DHCP.
+# Second interface is assigned a static IP address.
+# reference
+# https://console.redhat.com/ansible/automation-hub/repo/published/redhat/rhel_system_roles/content/role/network/
+# lab hosts are listed in
+#   https://github.com/nickhardiman/ansible-playbook-aap2-refarch/blob/main/inventory.ini
+
+# Messy routing
+# from home network to gateways
+# external interface only
+# from hypervisor hosts to gateways
+# external interface only, except for the hypervisor that the gateway is on
+# !!! figure out private route problem
+# from gateways to VMs in other sites
+# something like this for gateway-site2 should reach VMs on sites 1 and 3
+# 192.168.21.0/24 via 192.168.23.1 dev enp2s0 proto static metric 101
+# 192.168.23.0/24 dev enp2s0 proto kernel scope link src 192.168.23.3 metric 101 
+# 192.168.25.0/24 via 192.168.23.1 dev enp2s0 proto static metric 101 
+
+# !!! One play per hypervisor
+# !!! hardcoded addresses
+# add gateway hosts files, or site1_ip, site2_ip and site3_ip to vars_file
+# replace gateway with site1_ip, site2_ip and site3_ip from vars_file
+# replace network with hostvars['host.site1.example.com']['lab_net_prefix'] from group_vars files
+
+- name: Configure routing for gateway site1
+  hosts: gateway-site1.home
+  become: true
+  gather_facts: true
+  roles:
+    - role: rhel-system-roles.network
+      vars:
+        network_connections:
+          - name: enp2s0  # nmcli connection name
+            state: up
+            type: ethernet
+            interface_name: enp2s0  # device name
+            # interface_name defaults to the connection name
+            ip:
+              address:
+                - 192.168.21.3/24
+              route:
+                # gateway --> site1 VMs
+                # - network: 192.168.21.0
+                #   prefix: 24
+                #   gateway: 192.168.21.1
+                # gateway --> site2 VMs
+                - network: 192.168.23.0
+                  prefix: 24
+                  gateway: 192.168.21.1
+                # gateway --> site3 VMs
+                - network: 192.168.25.0
+                  prefix: 24
+                  gateway: 192.168.21.1
+
+  tasks:
+
+    # check
+    # still connected to Internet?
+    - name: Run shell commands to check routing
+      ansible.builtin.shell:
+        cmd: "{{ item }}"
+      loop:
+        - ip route list
+        - dig @localhost www.google.com
+        - curl --fail https://www.redhat.com/
+      register: r_route_check
+
+    - name: Display results
+      ansible.builtin.debug:
+        var: r_route_check
+
+
+- name: Configure routing for gateway site2
+  hosts: gateway-site2.home
+  become: true
+  gather_facts: true
+  roles:
+    - role: rhel-system-roles.network
+      vars:
+        network_connections:
+          - name: enp2s0  # nmcli connection name
+            state: up
+            type: ethernet
+            interface_name: enp2s0  # device name
+            # interface_name defaults to the connection name
+            ip:
+              address:
+                - 192.168.23.3/24
+              route:
+                - network: 192.168.21.0
+                  prefix: 24
+                  gateway: 192.168.23.1
+                # - network: 192.168.23.0
+                #   prefix: 24
+                #   gateway: 192.168.23.1
+                - network: 192.168.25.0
+                  prefix: 24
+                  gateway: 192.168.23.1
+
+  tasks:
+
+    # check
+    # still connected to Internet?
+    - name: Run shell commands to check routing
+      ansible.builtin.shell:
+        cmd: "{{ item }}"
+      loop:
+        - ip route list
+        - dig @localhost www.google.com
+        - curl --fail https://www.redhat.com/
+      register: r_route_check
+
+    - name: Display results
+      ansible.builtin.debug:
+        var: r_route_check
+
+
+
+- name: Configure routing for gateway site2
+  hosts: gateway-site3.home
+  become: true
+  gather_facts: true
+  roles:
+    - role: rhel-system-roles.network
+      vars:
+        network_connections:
+          - name: enp2s0  # nmcli connection name
+            state: up
+            type: ethernet
+            interface_name: enp2s0  # device name
+            # interface_name defaults to the connection name
+            ip:
+              address:
+                - 192.168.25.3/24
+              route:
+                - network: 192.168.21.0
+                  prefix: 24
+                  gateway: 192.168.25.1
+                - network: 192.168.23.0
+                  prefix: 24
+                  gateway: 192.168.25.1
+                # - network: 192.168.25.0
+                #   prefix: 24
+                #   gateway: 192.168.25.1
+
+  tasks:
+
+    # check
+    # still connected to Internet?
+    - name: Run shell commands to check routing
+      ansible.builtin.shell:
+        cmd: "{{ item }}"
+      loop:
+        - ip route list
+        - dig @localhost www.google.com
+        - curl --fail https://www.redhat.com/
+      register: r_route_check
+
+    - name: Display results
+      ansible.builtin.debug:
+        var: r_route_check

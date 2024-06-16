@@ -1,9 +1,14 @@
 - name: Test one role
-  hosts: all
+  # hosts: all
+  hosts: gateway_home
   gather_facts: true
   become: true
   vars_files:
     - ~/vault-credentials.yml
   roles:
-    - role: nick.platform.server_cert
+    - role: nick.platform.haproxy
+      vars:
+        haproxy_config_file_template: haproxy-sni-tcp-aap-refarch.cfg.j2
+
+    #- role: nick.platform.server_cert
 
