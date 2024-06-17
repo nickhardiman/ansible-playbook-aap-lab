@@ -49,6 +49,7 @@ satellite_installer_options:
   - '--foreman-proxy-tftp           true'  # Satellite should provide TFTP
   - '--foreman-proxy-tftp-managed   true'
   - '--foreman-proxy-tftp-listen-on both'  # We want to serve both HTTP and HTTPS
+  - '--foreman-proxy-tftp-servername "{{ lab_net_prefix }}.5"'
   - '--foreman-proxy-templates      true'  # Enable the builtin Template Capsule
   - '--enable-foreman-plugin-discovery'  # Whether to enable Satellite discovery
   - '--enable-foreman-proxy-plugin-discovery'  # Whether to enable Satellite discovery
