@@ -2,23 +2,21 @@
 # https://github.com/sscheib/ansible_satellite
 # https://blog.scheib.me/2023/07/09/automating-satellite.html
 
-sat_organization: Default Organization
-sat_location: Default Location
-satellite_organization: "{{ sat_organization }}"
+satellite_location: Default Location
+satellite_organization: Default Organization
 
-satellite_settings:
-  - name: content_default_http_proxy
-    value: gateway
-
+# 4
+# https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/role/manifest/
+satellite_manifest_uuid: "db350766-32e5-4713-8789-d40dfbe9c969"
 satellite_manifest_path: "~/manifest.zip"
 satellite_manifest_download: true
 satellite_rhsm_username: "{{ rhsm_user }}"
 satellite_rhsm_password: "{{ rhsm_password }}"
-satellite_manifest_uuid: "db350766-32e5-4713-8789-d40dfbe9c969"
 
-
-  # copy paste from 
-  # https://github.com/sscheib/ansible_satellite/blob/main/host_vars/satellite.office.int.scheib.me/06a_products.yml
+# 6
+# https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/role/repositories/
+# copy paste from 
+# https://github.com/sscheib/ansible_satellite/blob/main/host_vars/satellite.office.int.scheib.me/06a_products.yml
 # redhat.satellite.repositories
 satellite_products:
   - name: 'Red Hat Enterprise Linux for x86_64'
@@ -74,16 +72,21 @@ satellite_products:
         releasever: 7Server
 
 
-sat_lifecycle_environments:
+# https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/role/lifecycle_environments/
+# 08
+# https://github.com/sscheib/ansible_satellite/blob/main/host_vars/satellite.office.int.scheib.me/08_lifecycle_environments.yml
+satellite_lifecycle_environments:
   - name: 'lce-build'
     prior: 'Library'
   - name: 'lce-deploy'
     prior: 'lce-build'
 
 
-sat_content_views:
+# https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/role/content_views/
+# 12  
+satellite_content_views:
   - name: 'cv-rhcdn-base-rhel-8'
-    lifecycle_environments: "{{ sat_lifecycle_environments | map(attribute='name') }}"
+    lifecycle_environments: "{{ satellite_lifecycle_environments | map(attribute='name') }}"
     repositories:
         # no lifecycle_environments list - publish to all lifecycle envs
       - name: 'Red Hat Enterprise Linux 8 for x86_64 - BaseOS RPMs 8'
@@ -99,7 +102,7 @@ sat_content_views:
         product: 'Red Hat Enterprise Linux for x86_64'
 
   - name: 'cv-rhcdn-base-rhel-9'
-    lifecycle_environments: "{{ sat_lifecycle_environments | map(attribute='name') }}"
+    lifecycle_environments: "{{ satellite_lifecycle_environments | map(attribute='name') }}"
     repositories:
       - name: 'Red Hat Enterprise Linux 9 for x86_64 - BaseOS RPMs 9'
         product: 'Red Hat Enterprise Linux for x86_64'
@@ -137,7 +140,8 @@ sat_content_views:
 
 
 sat_activation_keys:
-  - name: 'ak-build-rhel-8'
+  - 
+    name: 'ak-build-rhel-8'
     description: "All hosts which don't have a specialized host group"
     lifecycle_environment: 'lce-build'
     content_view: 'cv-rhcdn-base-rhel-8'
@@ -149,8 +153,8 @@ sat_activation_keys:
     content_overrides:
       - label: 'satellite-client-6-for-rhel-8-x86_64-rpms'
         override: 'enabled'
-
-  - name: 'ak-build-rhel-9'
+  - 
+    name: 'ak-build-rhel-9'
     description: "All hosts which don't have a specialized host group"
     lifecycle_environment: 'lce-build'
     content_view: 'cv-rhcdn-base-rhel-9'

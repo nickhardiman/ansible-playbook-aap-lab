@@ -1,0 +1,79 @@
+---
+
+# a simpler version of the far superior 
+# https://github.com/sscheib/ansible_satellite
+# numbers below correspond to numbers in Steffen's doc.
+# https://blog.scheib.me/2023/07/09/automating-satellite.html#create-lifecycle-environments
+#
+# manually created subscription allocation
+# https://access.redhat.com/management/subscription_allocations/db350766-32e5-4713-8789-d40dfbe9c969
+# subscription allocation can be created using API
+# https://access.redhat.com/solutions/6981907
+# How to create subscription allocation using the RHSM API?
+
+# reference
+# https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/docs/
+
+- name: Configure satellite
+  hosts: satellite.site3.example.com
+  gather_facts: true
+  become: true
+  vars_files:
+    - ~/vault-credentials.yml
+  environment:
+    http_proxy:  "http://{{ server_proxy_hostname }}:{{ server_proxy_port }}"
+    HTTPS_PROXY: "http://{{ server_proxy_hostname }}:{{ server_proxy_port }}"
+    no_proxy: localhost,127.0.0.1,example.com
+
+  pre_tasks:
+
+    - name: Include vars from controller_configs directory
+      ansible.builtin.include_vars:
+        dir: satellite-vars
+        ignore_files: [controller_config.yml.template]
+        extensions: ["yml"]
+
+  roles:
+
+      # 4
+    - role: redhat.satellite.manifest
+      # 6
+    - role: redhat.satellite.repositories
+      # 8
+    - role: redhat.satellite.lifecycle_environments
+      # 12
+    - role: redhat.satellite.content_views
+
+
+  tasks:
+
+      # 7
+    # https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/module/repository_sync/
+    # better to wait or to do as async background job?
+    # https://github.com/sscheib/ansible_satellite/blob/main/07_satellite_sync_repositories.yml
+    - name: "Sync all repositories in each product"
+      redhat.satellite.repository_sync:
+        server_url:   "{{ satellite_server_url }}"
+        username:     "{{ satellite_username }}"
+        password:     "{{ satellite_password }}"
+        organization: "{{ satellite_organization }}"
+        product: "{{ item }}"
+      loop: "{{ satellite_products | map(attribute='name') | unique }}"
+
+      # 8
+      # https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/module/sync_plan/
+      # usng a dynamically set date (relative to now) means this is always changed, never OK (unchanged). 
+    - name: "Create daily sync plan for all products"
+      redhat.satellite.sync_plan:
+        server_url:   "{{ satellite_server_url }}"
+        username:     "{{ satellite_username }}"
+        password:     "{{ satellite_password }}"
+        organization: "{{ satellite_organization }}"
+        name: "Daily Sync"
+        interval: "daily"    #  hourly, daily, weekly, custom cron
+        enabled: true
+        # sync_date: "{{ lookup('ansible.builtin.pipe', 'date +\"%Y-%m-%d %H:%M:%S %Z\"') }}"  # now
+        # sync_date: "2017-01-01 00:00:00 UTC" # fixed date
+        sync_date: "{{ lookup('ansible.builtin.pipe', 'date +\"%Y-%m-%d 10:00:00 %Z\" -d \"+1 day\"') }}"  # 10am tomorrow
+        products: "{{ satellite_products | map(attribute='name') | list }}"
+        state: present

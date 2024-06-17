@@ -1,14 +1,21 @@
 ---
+# Add administration config to Red Hat Satellite.
+# In the web UI, this is located in the the 'Administer' section of Satellite.
 
 # a simpler version of the far superior 
 # https://github.com/sscheib/ansible_satellite
+
+# Products cannot be enabled without proxy to Red Hat's Content Delivery Network.
+# When the manifest is imported, products appear.
+# Satellite is behind a proxy.
+# Without proxy settings, no repos will appear and cannot be enabled.
 
 - name: Define satellite's proxy to the internet 
   hosts: satellite.site3.example.com
   gather_facts: true  # required for the role redhat.satellite_operations.installer
   become: true        # required for the role redhat.satellite_operations.installer
-  # vars_files:
-  #   - ~/vault-credentials.yml
+  vars_files:
+    - ~/vault-credentials.yml
   # environment:
   #   http_proxy:  "http://{{ server_proxy_hostname }}:{{ server_proxy_port }}"
   #   HTTPS_PROXY: "http://{{ server_proxy_hostname }}:{{ server_proxy_port }}"
@@ -22,17 +29,17 @@
         ignore_files: [controller_config.yml.template]
         extensions: ["yml"]
 
-    - name: Create proxy 'gateway'
+    - name: "Create proxy config 'gateway' for http://{{ server_proxy_hostname }}:{{ server_proxy_port }}"
       redhat.satellite.http_proxy:
-        server_url: "{{ sat_server_url }}"
-        username: "{{ sat_admin_user }}"
-        password: "{{ sat_admin_pass }}"
         name: gateway
         url: "http://{{ server_proxy_hostname }}:{{ server_proxy_port }}"
-        locations:
-          - "{{ sat_location }}"
+        server_url:   "{{ satellite_server_url }}"
+        username:     "{{ satellite_username }}"
+        password:     "{{ satellite_password }}"
         organizations:
-          - "{{ sat_organization }}"
+          - "{{ satellite_organization }}"
+        locations:
+          - "{{ satellite_location }}"
         state: present
 
   roles:

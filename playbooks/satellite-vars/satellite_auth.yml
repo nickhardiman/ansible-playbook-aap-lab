@@ -2,11 +2,12 @@
 # https://github.com/sscheib/ansible_satellite
 # https://blog.scheib.me/2023/07/09/automating-satellite.html
 
-# credentials and more
-sat_server_url: "https://satellite.{{ lab_domain }}"
+# facts for redhat.satellite roles
+
+satellite_server_url: "https://satellite.{{ lab_domain }}"
+# admin account
 sat_admin_user: "admin"
 sat_admin_pass: "{{ default_password }}"
-# facts for redhat.satellite roles
-satellite_server_url: "{{ sat_server_url }}"
+# credentials for API access
 satellite_username: "{{ sat_admin_user }}"
 satellite_password: "{{ sat_admin_pass }}"

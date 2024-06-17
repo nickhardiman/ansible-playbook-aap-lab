@@ -61,12 +61,13 @@
 - ansible.builtin.import_playbook: playbooks/etc-hosts-gateways.yml
 - ansible.builtin.import_playbook: playbooks/etc-hosts-other-vms.yml
 - ansible.builtin.import_playbook: playbooks/etc-hosts-load-balancers.yml
+# - ansible.builtin.import_playbook: playbooks/etc-hosts-distribute.yml
 
 # virtual machine OS layer
-- ansible.builtin.import_playbook: playbooks/configure-gateway-network.yml
-- ansible.builtin.import_playbook: playbooks/configure-gateway-roles.yml
-- ansible.builtin.import_playbook: playbooks/configure-other-vms.yml
-- ansible.builtin.import_playbook: playbooks/configure-hub.yml
+- ansible.builtin.import_playbook: playbooks/gateway-network-add.yml
+- ansible.builtin.import_playbook: playbooks/gateway-roles-add.yml
+- ansible.builtin.import_playbook: playbooks/other-vms-configure.yml
+- ansible.builtin.import_playbook: playbooks/hub-configure.yml
 
 # virtual machine application layer
 
@@ -118,6 +119,6 @@
 # !!! add third party repo 
 # https://repos.fedorapeople.org/pulp/pulp/demo_repos/zoo/
 - ansible.builtin.import_playbook: playbooks/satellite-proxy.yml
-- ansible.builtin.import_playbook: playbooks/satellite-content.yml
-- ansible.builtin.import_playbook: playbooks/satellite-lifecycle.yml
+- ansible.builtin.import_playbook: playbooks/satellite-content-add.yml
+- ansible.builtin.import_playbook: playbooks/satellite-lifecycle-add.yml
 - ansible.builtin.import_playbook: playbooks/satellite-provision.yml
