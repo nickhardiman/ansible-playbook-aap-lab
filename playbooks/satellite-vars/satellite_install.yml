@@ -1,4 +1,10 @@
+---
+# CaC
 # https://github.com/sscheib/ansible_satellite/blob/main/host_vars/satellite.office.int.scheib.me/00b_register_satellite.yml
+# satellite installer
+# https://access.redhat.com/documentation/en-us/red_hat_satellite/6.15/html-single/installing_satellite_server_in_a_connected_network_environment/index
+# X509 server certificate
+# https://access.redhat.com/documentation/en-us/red_hat_satellite/6.15/html-single/installing_satellite_server_in_a_connected_network_environment/index#creating-a-custom-ssl-certificate_satellite
 
 rhc_repositories:
   - name: 'rhel-8-for-x86_64-baseos-rpms'
@@ -26,16 +32,24 @@ satellite_installer_options:
   - '--certs-server-key     /etc/pki/tls/private/{{ fqdn }}.key'  # Satellite private key to use
   - '--certs-server-ca-cert /etc/pki/ca-trust/source/anchors/ca.example.com-cert.pem'  # CA bundle to use
   - '--puppet-runmode none'  # No Puppet, please
-  - '--foreman-proxy-dhcp         true'  # Satellite should manage the DHCP
-  - '--foreman-proxy-dhcp-managed true '
-  - '--foreman-proxy-dhcp-gateway "{{ lab_net_prefix }}.1" '
-  - '--foreman-proxy-dhcp-nameservers "{{ lab_net_prefix }}.4" '
-  - '--foreman-proxy-dhcp-range "{{ lab_net_prefix }}.100 {{ lab_net_prefix }}.199" '
-  - '--foreman-proxy-dhcp-server "{{ lab_net_prefix }}.5" '
-  - '--foreman-proxy-dns  false'  # Satellite should not manage the DNS
-  - '--foreman-proxy-tftp         true'  # Satellite should provide TFTP
-  - '--foreman-proxy-tftp-managed true'
+  - '--foreman-proxy-dhcp           true'  # Satellite should manage the DHCP
+  - '--foreman-proxy-dhcp-managed   true '
+  - '--foreman-proxy-dhcp-gateway   "{{ lab_net_prefix }}.1" '
+  - '--foreman-proxy-dhcp-nameservers "{{ lab_net_prefix }}.5" '
+  - '--foreman-proxy-dhcp-range     "{{ lab_net_prefix }}.100 {{ lab_net_prefix }}.199" '
+  - '--foreman-proxy-dhcp-server    "{{ lab_net_prefix }}.5" '
+  - '--foreman-proxy-dns            true'
+  - '--foreman-proxy-dns-managed    true'
+  - '--foreman-proxy-dns-zone       "{{ lab_domain }}"'
+  - '--foreman-proxy-dns-reverse    "{{ lab_domain_reverse }}"'
+  - '--foreman-proxy-dns-forwarders "8.8.8.8; 8.8.4.4"'
+  - '--foreman-proxy-dns-server     "127.0.0.1"'
+  - '--foreman-proxy-http           true'     # UEFI HTTP boot provisioning
+  - '--foreman-proxy-httpboot       true'
+  - '--foreman-proxy-tftp           true'  # Satellite should provide TFTP
+  - '--foreman-proxy-tftp-managed   true'
   - '--foreman-proxy-tftp-listen-on both'  # We want to serve both HTTP and HTTPS
+  - '--foreman-proxy-templates      true'  # Enable the builtin Template Capsule
   - '--enable-foreman-plugin-discovery'  # Whether to enable Satellite discovery
   - '--enable-foreman-proxy-plugin-discovery'  # Whether to enable Satellite discovery
   - '--enable-foreman-plugin-remote-execution-cockpit'  # web console on provisioned hosts
@@ -67,18 +81,27 @@ satellite_installer_options:
 #   --certs-server-cert    /etc/pki/tls/certs/satellite.site3.example.com.pem  \
 #   --certs-server-key     /etc/pki/tls/private/satellite.site3.example.com.key  \
 #   --certs-server-ca-cert /etc/pki/ca-trust/source/anchors/ca.example.com-cert.pem  \
-#   --puppet-runmode none  \
-#   --foreman-proxy-dhcp         true  \
-#   --foreman-proxy-dhcp-managed true  \
-#   --foreman-proxy-dhcp-gateway "192.168.25.1"   \
-#   --foreman-proxy-dhcp-nameservers "192.168.25.4"   \
-#   --foreman-proxy-dhcp-range "192.168.25.100 192.168.25.199"   \
-#   --foreman-proxy-dhcp-server "192.168.25.5"   \
-#   --foreman-proxy-dns  false  \
-#   --foreman-proxy-tftp         true  \
-#   --foreman-proxy-tftp-managed true  \
+#   --puppet-runmode               none  \
+#   --foreman-proxy-dhcp           true  \
+#   --foreman-proxy-dhcp-managed   true  \
+#   --foreman-proxy-dhcp-gateway   "192.168.25.1"   \
+#   --foreman-proxy-dhcp-nameservers "192.168.25.5"   \
+#   --foreman-proxy-dhcp-range     "192.168.25.100 192.168.25.199"   \
+#   --foreman-proxy-dhcp-server    "192.168.25.5"   \
+#   --foreman-proxy-dns            true     \
+#   --foreman-proxy-dns-managed    true     \
+#   --foreman-proxy-dns-zone       site3.example.com     \
+#   --foreman-proxy-dns-reverse    "25.168.192.in-addr.arpa"     \
+#   --foreman-proxy-dns-forwarders "8.8.8.8; 8.8.4.4"     \
+#   --foreman-proxy-dns-server     "127.0.0.1"     \
+#   --foreman-proxy-http           true     \
+#   --foreman-proxy-httpboot       true     \
+#   --foreman-proxy-tftp           true  \
+#   --foreman-proxy-tftp-managed   true  \
 #   --foreman-proxy-tftp-listen-on both  \
+#   --foreman-proxy-templates      true     \
 #   --enable-foreman-plugin-discovery  \
 #   --enable-foreman-proxy-plugin-discovery  \
 #   --enable-foreman-plugin-remote-execution-cockpit
+
 

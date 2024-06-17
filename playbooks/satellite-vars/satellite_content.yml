@@ -1,3 +1,4 @@
+---
 # a simpler version of the far superior 
 # https://github.com/sscheib/ansible_satellite
 # https://blog.scheib.me/2023/07/09/automating-satellite.html
@@ -5,14 +6,18 @@
 satellite_location: Default Location
 satellite_organization: Default Organization
 
+# https://satellite/ > Content > Subscriptions > Manage Manifest
 # 4
 # https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/role/manifest/
-satellite_manifest_uuid: "db350766-32e5-4713-8789-d40dfbe9c969"
+# satellite_manifest_uuid from vault
 satellite_manifest_path: "~/manifest.zip"
 satellite_manifest_download: true
 satellite_rhsm_username: "{{ rhsm_user }}"
 satellite_rhsm_password: "{{ rhsm_password }}"
 
+# https://satellite/ > Content > Red Hat Repositories > Enabled Repositories
+# Products is populated from the repo list.
+# https://satellite/ > Content > Products
 # 6
 # https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/role/repositories/
 # copy paste from 
@@ -28,24 +33,24 @@ satellite_products:
         releasever: 9
         download_policy: 'on_demand'
       - name: 'Red Hat Enterprise Linux 9 for x86_64 - BaseOS (Kickstart)'
-        releasever: 9.2
+        releasever: 9.4
         download_policy: 'immediate'
       - name: 'Red Hat Enterprise Linux 9 for x86_64 - AppStream (Kickstart)'
-        releasever: 9.2
+        releasever: 9.4
         download_policy: 'immediate'
       - name: 'Red Hat Satellite Client 6 for RHEL 9 x86_64 (RPMs)'
         download_policy: 'on_demand'
       - name: 'Red Hat Enterprise Linux 8 for x86_64 - BaseOS (RPMs)'
-        releasever: 8
+        releasever: "8.8"
         download_policy: 'on_demand'
       - name: 'Red Hat Enterprise Linux 8 for x86_64 - AppStream (RPMs)'
-        releasever: 8
+        releasever: "8.8"
         download_policy: 'on_demand'
       - name: 'Red Hat Enterprise Linux 8 for x86_64 - BaseOS (Kickstart)'
-        releasever: 8.8
+        releasever: "8.8"
         download_policy: 'immediate'
       - name: 'Red Hat Enterprise Linux 8 for x86_64 - AppStream (Kickstart)'
-        releasever: 8.8
+        releasever: "8.8"
         download_policy: 'immediate'
       - name: 'Red Hat Satellite Client 6 for RHEL 8 x86_64 (RPMs)'
         download_policy: 'on_demand'
@@ -72,6 +77,12 @@ satellite_products:
         releasever: 7Server
 
 
+
+# https://satellite/ > Content > Content Credentials
+# https://satellite/ > Content > Alternate Content Sources
+# https://satellite/ > Content > Sync Plans
+
+# https://satellite/ > Content > Lifecycle > Lifecycle Environments
 # https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/role/lifecycle_environments/
 # 08
 # https://github.com/sscheib/ansible_satellite/blob/main/host_vars/satellite.office.int.scheib.me/08_lifecycle_environments.yml
@@ -81,9 +92,11 @@ satellite_lifecycle_environments:
   - name: 'lce-deploy'
     prior: 'lce-build'
 
-
+# https://satellite/ > Content > Lifecycle > Content Views
 # https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/role/content_views/
-# 12  
+# 12
+# https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/role/content_view_publish/
+# 13
 satellite_content_views:
   - name: 'cv-rhcdn-base-rhel-8'
     lifecycle_environments: "{{ satellite_lifecycle_environments | map(attribute='name') }}"
@@ -110,10 +123,10 @@ satellite_content_views:
       - name: 'Red Hat Enterprise Linux 9 for x86_64 - AppStream RPMs 9'
         product: 'Red Hat Enterprise Linux for x86_64'
 
-      - name: 'Red Hat Enterprise Linux 9 for x86_64 - BaseOS Kickstart 9.2'
+      - name: 'Red Hat Enterprise Linux 9 for x86_64 - BaseOS Kickstart 9.4'
         product: 'Red Hat Enterprise Linux for x86_64'
 
-      - name: 'Red Hat Enterprise Linux 9 for x86_64 - AppStream Kickstart 9.2'
+      - name: 'Red Hat Enterprise Linux 9 for x86_64 - AppStream Kickstart 9.4'
         product: 'Red Hat Enterprise Linux for x86_64'
 
   - name: 'cv-rhcdn-satellite_6_client-rhel-8'
@@ -139,7 +152,11 @@ satellite_content_views:
         product: 'Red Hat Ansible Automation Platform'
 
 
-sat_activation_keys:
+# https://satellite/ > Content > Lifecycle > Activation Keys
+# https://access.redhat.com/documentation/en-us/red_hat_satellite/6.13/html/managing_content/managing_activation_keys_content-management
+# https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/role/activation_keys/
+# 17
+satellite_activation_keys:
   - 
     name: 'ak-build-rhel-8'
     description: "All hosts which don't have a specialized host group"

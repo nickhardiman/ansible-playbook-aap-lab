@@ -1,0 +1,42 @@
+---
+# a simpler version of the far superior 
+# https://github.com/sscheib/ansible_satellite
+# https://blog.scheib.me/2023/07/09/automating-satellite.html
+# part of "provisioning hosts"
+# https://access.redhat.com/documentation/en-us/red_hat_satellite/6.15/html-single/provisioning_hosts/index
+
+# https://satellite/ > Infrastructure > Subnets
+# https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/role/domains/
+# 10
+satellite_domains:
+  - name: "{{ lab_domain }}"
+    description: "Build Domain"
+    organizations:
+      - "{{ satellite_organization }}"
+    locations:
+      - "{{ satellite_location }}"
+
+# https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/role/subnets/
+# 11
+satellite_subnets:
+  - name: 'sn-site3-subnet'
+    network: "{{ lab_net_prefix }}.0"
+    mask: '255.255.255.0'
+    gateway: "{{ lab_net_prefix }}.1"
+    ipam: 'DHCP'
+    boot_mode: "DHCP"
+    from_ip: "{{ lab_net_prefix }}.100"
+    to_ip: "{{ lab_net_prefix }}.199"
+    dhcp_proxy: '{{ inventory_hostname }}'
+    tftp_proxy: '{{ inventory_hostname }}'
+    template_proxy: '{{ inventory_hostname }}'
+    discovery_proxy: '{{ inventory_hostname }}'
+    remote_execution_proxies:
+      - '{{ inventory_hostname }}'
+    dns_primary: "{{ lab_net_prefix }}.5"
+    domains:
+      - "{{ lab_domain }}"
+    organizations:
+      - "{{ satellite_organization }}"
+    locations:
+      - "{{ satellite_location }}"

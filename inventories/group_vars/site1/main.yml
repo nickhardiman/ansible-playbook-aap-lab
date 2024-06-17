@@ -34,7 +34,9 @@ lab_bridge_ip_cidr:    "{{ lab_net_prefix }}.1/24"
 lab_domain:            "{{ lab_net_short_name }}.example.com"
 # DNS Zone names in IPA Server
 lab_domain_forward:    "{{ lab_net_short_name }}.example.com"
-lab_domain_reverse:    "21.168.192.in-addr.arpa."
+# Satellite does not handle the trailing full stop/period/dot ".".
+# lab_domain_reverse:    "21.168.192.in-addr.arpa."
+lab_domain_reverse:    "21.168.192.in-addr.arpa"
 
 # proxy
 # useful for

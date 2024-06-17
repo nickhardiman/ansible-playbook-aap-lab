@@ -1,0 +1,30 @@
+---
+# a simpler version of the far superior 
+# https://github.com/sscheib/ansible_satellite
+# https://blog.scheib.me/2023/07/09/automating-satellite.html
+
+
+- name: Satellite config for the Configure section of the web UI
+  hosts: satellite.site3.example.com
+  gather_facts: true  # required for the role redhat.satellite_operations.installer
+  become: true  # required for the role redhat.satellite_operations.installer
+  vars_files:
+    - ~/vault-credentials.yml
+  # environment:
+  #   http_proxy: "http://gateway.{{ lab_domain }}:3128"
+  #   HTTPS_PROXY: "http://gateway.{{ lab_domain }}:3128"
+  #   no_proxy: localhost,127.0.0.1,example.com
+
+  pre_tasks:
+
+    - name: Include vars from controller_configs directory
+      ansible.builtin.include_vars:
+        dir: satellite-vars
+        ignore_files: [controller_config.yml.template]
+        extensions: ["yml"]
+
+  roles:
+
+      # 18
+      # hostgroups
+    - role: redhat.satellite.hostgroups

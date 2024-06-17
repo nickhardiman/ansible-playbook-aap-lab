@@ -76,6 +76,11 @@ $CA_PRIVATE_KEY_INDENTED
 site1_ip: "$SITE1_IP"
 site2_ip: "$SITE2_IP"
 site3_ip: "$SITE3_IP"
+#
+# manifests
+aap_manifest_uuid: "$AAP_MANIFEST_UUID"
+satellite_manifest_uuid: "$SATELLITE_MANIFEST_UUID"
+
 EOF
      # Encrypt the new file. 
      echo 'my vault password' >  ~/my-vault-pass

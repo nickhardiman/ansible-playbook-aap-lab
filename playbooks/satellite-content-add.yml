@@ -20,6 +20,7 @@
   become: true
   vars_files:
     - ~/vault-credentials.yml
+  # required to fetch the manifest from Red Hat's cloud service
   environment:
     http_proxy:  "http://{{ server_proxy_hostname }}:{{ server_proxy_port }}"
     HTTPS_PROXY: "http://{{ server_proxy_hostname }}:{{ server_proxy_port }}"
@@ -43,6 +44,10 @@
     - role: redhat.satellite.lifecycle_environments
       # 12
     - role: redhat.satellite.content_views
+      # 13
+    - role: redhat.satellite.content_view_publish
+      # 17
+    - role: redhat.satellite.activation_keys
 
 
   tasks:

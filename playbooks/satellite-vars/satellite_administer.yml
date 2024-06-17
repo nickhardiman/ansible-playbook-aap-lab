@@ -2,6 +2,7 @@
 # https://github.com/sscheib/ansible_satellite
 # https://blog.scheib.me/2023/07/09/automating-satellite.html
 
+# https://satellite/ > Administer > Settings > Content > Default HTTP Proxy
 # https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/role/settings/
 satellite_settings:
   - name: content_default_http_proxy

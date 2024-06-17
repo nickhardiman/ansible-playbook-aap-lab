@@ -1,0 +1,56 @@
+---
+
+# https://satellite/ > Configure > Host Groups > Create Host Group > Host Group
+# https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/role/hostgroups/
+# web UI https://satellite/hostgroups
+satellite_hostgroups:
+  - 
+    name: "hg-rhel-8"
+    organization: '{{ satellite_organization }}'
+    description: "RHEL 8 hostgroup"
+    lifecycle_environment: 'lce-build'
+    content_view: 'cv-rhcdn-base-rhel-8'
+    content_source: '{{ inventory_hostname }}'
+    openscap_proxy: '{{ inventory_hostname }}'
+    # console > Configure > Host Groups > Create Host Group > Network
+    domain: 'site3.example.com'
+    subnet: 'sn-site3-subnet'
+    # console > Configure > Host Groups > Create Host Group > Operating System
+    architecture: "x86_64"
+    operatingsystem: "RedHat 8.8"
+    kickstart_repository: 'Red Hat Enterprise Linux 8 for x86_64 - BaseOS Kickstart 8.8'
+    ptable: "Kickstart default"
+    pxe_loader: 'PXELinux BIOS'
+    root_pass: 'Password;1'
+    # console > Configure > Host Groups > Create Host Group > Locations, Organizations, Activation Keys
+    organizations:
+      - "{{ satellite_organization }}"
+    locations:
+      - "{{ satellite_location }}"
+    activation_keys: 
+      - 'ak-build-rhel-8'
+  -
+    name: "hg-rhel-9"
+    organization: '{{ satellite_organization }}'
+    description: "RHEL 9 hostgroup"
+    lifecycle_environment: 'lce-build'
+    content_view: 'cv-rhcdn-base-rhel-9'
+    content_source: '{{ inventory_hostname }}'
+    openscap_proxy: '{{ inventory_hostname }}'
+    # console > Configure > Host Groups > Create Host Group > Network
+    domain: 'site3.example.com'
+    subnet: 'sn-site3-subnet'
+    # console > Configure > Host Groups > Create Host Group > Operating System
+    architecture: "x86_64"
+    operatingsystem: "RedHat 9.4"
+    kickstart_repository: 'Red Hat Enterprise Linux 9 for x86_64 - BaseOS Kickstart 9.4'
+    ptable: "Kickstart default"
+    pxe_loader: 'PXELinux BIOS'
+    root_pass: 'Password;1'
+    # console > Configure > Host Groups > Create Host Group > Locations, Organizations, Activation Keys
+    locations:
+      - '{{ satellite_location }}'
+    organizations:
+      - '{{ satellite_organization }}'
+    activation_keys: 
+      - 'ak-build-rhel-9'

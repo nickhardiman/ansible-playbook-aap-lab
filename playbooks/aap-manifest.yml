@@ -6,8 +6,6 @@
   hosts: install_host
   gather_facts: true
   become: true
-  vars:
-    manifest_uuid: "eb6a627a-4ebc-4cd0-9abd-754621d54535"
   vars_files:
     - ~/vault-credentials.yml
 
@@ -21,7 +19,7 @@
 
     - name: Get manifest from Red Hat Customer Portal
       redhat.satellite.redhat_manifest:
-        uuid: "{{ manifest_uuid }}"
+        uuid: "{{ aap_manifest_uuid }}"
         username: "{{ rhsm_user }}"
         password: "{{ rhsm_password }}"
         path: "{{ work_dir }}/aap2-manifest.zip"

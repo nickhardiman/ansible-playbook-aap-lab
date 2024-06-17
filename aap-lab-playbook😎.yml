@@ -118,7 +118,7 @@
 - ansible.builtin.import_playbook: playbooks/satellite-installer-run.yml
 # !!! add third party repo 
 # https://repos.fedorapeople.org/pulp/pulp/demo_repos/zoo/
-- ansible.builtin.import_playbook: playbooks/satellite-proxy.yml
+- ansible.builtin.import_playbook: playbooks/satellite-administer-add.yml
 - ansible.builtin.import_playbook: playbooks/satellite-content-add.yml
-- ansible.builtin.import_playbook: playbooks/satellite-lifecycle-add.yml
-- ansible.builtin.import_playbook: playbooks/satellite-provision.yml
+- ansible.builtin.import_playbook: playbooks/satellite-infrastructure-add.yml
+- ansible.builtin.import_playbook: playbooks/satellite-configure-add.yml
