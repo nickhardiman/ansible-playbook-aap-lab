@@ -28,6 +28,7 @@ satellite_subnets:
     from_ip: "{{ lab_net_prefix }}.100"
     to_ip: "{{ lab_net_prefix }}.199"
     dhcp_proxy: '{{ inventory_hostname }}'
+    dns_proxy: '{{ inventory_hostname }}'
     tftp_proxy: '{{ inventory_hostname }}'
     template_proxy: '{{ inventory_hostname }}'
     discovery_proxy: '{{ inventory_hostname }}'
