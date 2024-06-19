@@ -42,7 +42,7 @@ satellite_installer_options:
   - '--foreman-proxy-dns-managed    true'
   - '--foreman-proxy-dns-zone       "{{ lab_domain }}"'
   - '--foreman-proxy-dns-reverse    "{{ lab_domain_reverse }}"'
-  - '--foreman-proxy-dns-forwarders "8.8.8.8; 8.8.4.4"'
+  - '--foreman-proxy-dns-forwarders "192.168.25.3"'  # gateway.site3.example.com
   - '--foreman-proxy-dns-server     "127.0.0.1"'
   - '--foreman-proxy-http           true'     # UEFI HTTP boot provisioning
   - '--foreman-proxy-httpboot       true'
@@ -93,7 +93,7 @@ satellite_installer_options:
 #   --foreman-proxy-dns-managed    true     \
 #   --foreman-proxy-dns-zone       site3.example.com     \
 #   --foreman-proxy-dns-reverse    "25.168.192.in-addr.arpa"     \
-#   --foreman-proxy-dns-forwarders "8.8.8.8; 8.8.4.4"     \
+#   --foreman-proxy-dns-forwarders "192.168.25.3"     \
 #   --foreman-proxy-dns-server     "127.0.0.1"     \
 #   --foreman-proxy-http           true     \
 #   --foreman-proxy-httpboot       true     \
