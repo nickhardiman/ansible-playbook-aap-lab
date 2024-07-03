@@ -1,0 +1,41 @@
+- name: Provision a host
+  hosts: satellite.site3.example.com
+  # gather_facts: true  # required for the role redhat.satellite_operations.installer
+  # become: true        # required for the role redhat.satellite_operations.installer
+  vars_files:
+    - ~/vault-credentials.yml
+
+  tasks:
+
+    - name: Include vars from controller_configs directory
+      ansible.builtin.include_vars:
+        dir: satellite-vars
+        ignore_files: [controller_config.yml.template]
+        extensions: ["yml"]
+
+    - name: "Create a host"
+      redhat.satellite.host:
+        username: "{{ satellite_username }}"
+        password: "{{ satellite_password }}"
+        server_url: "{{ satellite_server_url }}"
+        name: test-network.site3.example.com
+        organization: Default Organization
+        location: Default Location
+        hostgroup: hg-rhel-9
+        # provision_method: build
+        build: true
+        interfaces_attributes:
+          - 
+        # !!! ignored
+            mac: "52:54:00:00:12:34"
+        compute_attributes:
+          start: "1"
+          cpus: 2
+        # !!! ignored
+          memory_mb: 4096
+        state: present
+      register: r_host
+
+    - name: Display result
+      ansible.builtin.debug:
+        var: r_host

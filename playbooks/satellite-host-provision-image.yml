@@ -1,0 +1,69 @@
+---
+# reference 
+# memory size
+# 3 gigabytes is 1024 bytes * 1024 kilobytes * 1024 megabytes * 4 gigabytes which is 4294967296 bytes
+# download rhel-9.4-x86_64-kvm.qcow2
+# https://access.redhat.com/downloads/content/rhel
+# instructions
+# https://docs.redhat.com/en/documentation/red_hat_satellite/6.15/html/provisioning_hosts/provisioning_virtual_machines_on_kvm_kvm-provisioning. 
+# equivalent hammer CLI command
+#  hammer host create \
+#     --compute-attributes="cpus=2,memory=4294967296,start=1" \
+#     --compute-resource "cr-libvirt-site3" \
+#     --enabled true \
+#     --hostgroup "hg-rhel-9" \
+#     --image "img-rhel94-kvm" \
+#     --location "Default Location" \
+#     --managed true \
+#     --name "vm-rhel94kvm.site3.example.com" \
+#     --organization "Default Organization" \
+#     --provision-method "image" \
+#     --volume="pool_name=images,capacity=20G,format_type=qcow2"
+
+# !!! playbook fails with errors 
+# "Failed to login via SSH to vm-rhel94kvm.site3.example.com: ERF42-1994 [Foreman::Exception]: Unable to find proper authentication method"
+# "Error while performing create on hosts: 422 Client Error: Unprocessable Content for url: https://satellite.site3.example.com/api/hosts"
+# Does not wait for machine to boot
+# machine is created but not configured.
+
+# !!! do we need cloud-init?
+# https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html-single/configuring_and_managing_cloud-init_for_rhel_9/index#introduction-to-cloud-init_cloud-content
+
+
+- name: Provision a host
+  hosts: satellite.site3.example.com
+  vars_files:
+    - ~/vault-credentials.yml
+
+  tasks:
+
+    - name: Include vars from controller_configs directory
+      ansible.builtin.include_vars:
+        dir: satellite-vars
+        # ignore_files: [controller_config.yml.template]
+        extensions: ["yml"]
+
+    - name: "Create a host"
+      redhat.satellite.host:
+        username: "{{ satellite_username }}"
+        password: "{{ satellite_password }}"
+        server_url: "{{ satellite_server_url }}"
+        name: vm-rhel94kvm.site3.example.com
+        organization: Default Organization
+        location: Default Location
+        hostgroup: hg-rhel-9
+        provision_method: image
+        image: img-rhel94	
+        compute_resource: cr-libvirt-site3
+        build: false
+        compute_attributes:
+          cpus: 2
+          memory: 4294967296
+          start: "1"
+        state: present
+      register: r_host
+      ignore_errors: true
+
+    - name: Display result
+      ansible.builtin.debug:
+        var: r_host
