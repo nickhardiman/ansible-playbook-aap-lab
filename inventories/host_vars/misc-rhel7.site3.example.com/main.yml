@@ -8,7 +8,7 @@
 last_octet: 23
 nics:
   -
-    name: enp1s0
+    name: eth0
     mac: "{{ lab_mac_prefix }}:00:{{ last_octet }}"
     net: "{{ lab_libvirt_name }}"
     # !!! get rid of this?
