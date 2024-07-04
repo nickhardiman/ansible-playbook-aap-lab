@@ -1,0 +1,37 @@
+---
+# a simpler version of the far superior 
+# https://github.com/sscheib/ansible_satellite
+# https://blog.scheib.me/2023/07/09/automating-satellite.html
+
+# https://github.com/sscheib/ansible_satellite/blob/main/host_vars/satellite.office.int.scheib.me/14_activation_keys.yml
+# https://satellite/ > Content > Lifecycle > Activation Keys
+# https://access.redhat.com/documentation/en-us/red_hat_satellite/6.13/html/managing_content/managing_activation_keys_content-management
+# https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/role/activation_keys/
+# 17
+satellite_activation_keys:
+  - 
+    name: 'ak-build-rhel-8'
+    description: "All hosts which don't have a specialized host group"
+    lifecycle_environment: 'lce-build'
+    content_view: 'ccv-default-rhel-9'
+    release_version: 8
+    unlimited_hosts: true
+    service_level: 'Self-Support'
+    purpose_usage: 'Development/Test'
+    purpose_role: 'Red Hat Enterprise Linux Server'
+    content_overrides:
+      - label: 'satellite-client-6-for-rhel-8-x86_64-rpms'
+        override: 'enabled'
+  - 
+    name: 'ak-build-rhel-9'
+    description: "All hosts which don't have a specialized host group"
+    lifecycle_environment: 'lce-build'
+    content_view: 'ccv-default-rhel-9'
+    release_version: 9
+    unlimited_hosts: true
+    service_level: 'Self-Support'
+    purpose_usage: 'Development/Test'
+    purpose_role: 'Red Hat Enterprise Linux Server'
+    content_overrides:
+      - label: 'satellite-client-6-for-rhel-9-x86_64-rpms'
+        override: 'enabled'

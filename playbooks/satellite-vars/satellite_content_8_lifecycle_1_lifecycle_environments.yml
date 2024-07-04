@@ -1,0 +1,20 @@
+---
+# a simpler version of the far superior 
+# https://github.com/sscheib/ansible_satellite
+# https://blog.scheib.me/2023/07/09/automating-satellite.html
+# https://github.com/sscheib/ansible_satellite/blob/main/host_vars/satellite.office.int.scheib.me/08_lifecycle_environments.yml
+
+# https://satellite/ > Content > Content Credentials
+# https://satellite/ > Content > Alternate Content Sources
+# https://satellite/ > Content > Sync Plans
+
+# https://satellite/ > Content > Lifecycle > Lifecycle Environments
+# https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/role/lifecycle_environments/
+# 08
+# https://github.com/sscheib/ansible_satellite/blob/main/host_vars/satellite.office.int.scheib.me/08_lifecycle_environments.yml
+satellite_lifecycle_environments:
+  - name: 'lce-build'
+    prior: 'Library'
+  - name: 'lce-deploy'
+    prior: 'lce-build'
+

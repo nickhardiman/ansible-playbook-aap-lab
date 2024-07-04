@@ -203,7 +203,7 @@ automationhub-1,  enp1s0,    52:54:00:23:00:17, 192.168.23.17,   site2.example.c
 automationhub-2,  enp1s0,    52:54:00:23:00:18, 192.168.23.18,   site2.example.com
 automationhub-3,  enp1s0,    52:54:00:23:00:19, 192.168.23.19,   site2.example.com
 automationedacontroller, enp1s0,    52:54:00:23:00:20, 192.168.23.20,   site2.example.com
-misc-rhel8      , enp1s0,    52:54:00:23:00:23, 192.168.23.23,   site2.example.com
+misc-rhel8      , enp1s0,    52:54:00:23:00:21, 192.168.23.21,   site2.example.com
 |===
 
 
@@ -237,6 +237,9 @@ message,          enp1s0,    52:54:00:25:00:07, 192.168.25.7,   site3.example.co
 monitor,          enp1s0,    52:54:00:25:00:08, 192.168.25.8,   site3.example.com
 secret,           enp1s0,    52:54:00:25:00:09, 192.168.25.9,   site3.example.com
 dev,              enp1s0,    52:54:00:25:00:10, 192.168.25.10,  site3.example.com
+misc-rhel8      , enp1s0,    52:54:00:25:00:21, 192.168.25.21,  site3.example.com
+misc-rhel9      , enp1s0,    52:54:00:25:00:22, 192.168.25.22,  site3.example.com
+misc-rhel7      , enp1s0,    52:54:00:25:00:23, 192.168.25.23,  site3.example.com
 |===
 
 

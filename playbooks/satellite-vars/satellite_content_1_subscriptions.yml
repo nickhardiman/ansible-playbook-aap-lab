@@ -1,0 +1,29 @@
+---
+# a simpler version of the far superior 
+# https://github.com/sscheib/ansible_satellite
+# https://blog.scheib.me/2023/07/09/automating-satellite.html
+
+# https://github.com/sscheib/ansible_satellite/blob/main/host_vars/satellite.office.int.scheib.me/02_general.yml
+satellite_location: Default Location
+satellite_organization: Default Organization
+
+# https://satellite/ > Content > Subscriptions > Manage Manifest
+# 4
+# https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/role/manifest/
+# satellite_manifest_uuid from vault
+satellite_manifest_path: "~/manifest.zip"
+satellite_manifest_download: true
+satellite_rhsm_username: "{{ rhsm_user }}"
+satellite_rhsm_password: "{{ rhsm_password }}"
+
+# numbering follows items in web UI left navbar.
+# Breadcrumb path of the first item is this.
+#   https://satellite/ > Content > Subscriptions
+# Matching CaC file is this.
+#   satellite_content_1_subscriptions.yml
+# Subscriptions is the first item in the Content section of the navbar.
+# Some Content items are not configured here, like these.
+#   https://satellite/ > Content > Content Credentials
+#   https://satellite/ > Content > Alternate Content Sources
+#   https://satellite/ > Content > Sync Plans
+# There are no files named satellite_content_4, 5 or 6.

@@ -8,6 +8,12 @@
 # !!! maybe simplify with
 # https://docs.ansible.com/ansible/latest/collections/community/general/rhsm_repository_module.html
 
+# !!! error seen in satellite /var/log/messages
+# Jul  3 21:18:31 satellite setroubleshoot[25357]: SELinux is preventing /usr/bin/python3.11 from name_connect access on the tcp_socket port 3128.
+# this is the port of the gateway proxy.
+# may require 
+# setsebool -P httpd_can_network_connect 1
+
 
 - name: Satellite repos and installer
   hosts: satellite.site3.example.com

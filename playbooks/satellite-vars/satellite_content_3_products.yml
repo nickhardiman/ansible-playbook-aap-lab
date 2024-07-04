@@ -1,0 +1,118 @@
+---
+# a simpler version of the far superior 
+# https://github.com/sscheib/ansible_satellite
+# https://blog.scheib.me/2023/07/09/automating-satellite.html
+
+
+# https://github.com/sscheib/ansible_satellite/blob/main/host_vars/satellite.office.int.scheib.me/06a_products.yml
+# https://satellite/ > Content > Red Hat Repositories > Enabled Repositories
+# Products is populated from the repo list.
+# https://satellite/ > Content > Products
+# 6
+# https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/role/repositories/
+# copy paste from 
+# https://github.com/sscheib/ansible_satellite/blob/main/host_vars/satellite.office.int.scheib.me/06a_products.yml
+# redhat.satellite.repositories
+sat_products:
+  - name: 'Red Hat Enterprise Linux for x86_64'
+    repository_sets:
+  # RHEL 9
+      - name: 'Red Hat Enterprise Linux 9 for x86_64 - BaseOS (RPMs)'
+        releasever: 9
+        download_policy: 'on_demand'
+      - name: 'Red Hat Enterprise Linux 9 for x86_64 - AppStream (RPMs)'
+        releasever: 9
+        download_policy: 'on_demand'
+      - name: 'Red Hat Enterprise Linux 9 for x86_64 - BaseOS (Kickstart)'
+        releasever: 9.4
+        download_policy: 'immediate'
+      - name: 'Red Hat Enterprise Linux 9 for x86_64 - AppStream (Kickstart)'
+        releasever: 9.4
+        download_policy: 'immediate'
+      - name: 'Red Hat Satellite Client 6 for RHEL 9 x86_64 (RPMs)'
+        download_policy: 'on_demand'
+  # RHEL 8
+      - name: 'Red Hat Enterprise Linux 8 for x86_64 - BaseOS (RPMs)'
+        releasever: "8"
+        download_policy: 'on_demand'
+      - name: 'Red Hat Enterprise Linux 8 for x86_64 - AppStream (RPMs)'
+        releasever: "8"
+        download_policy: 'on_demand'
+      - name: 'Red Hat Enterprise Linux 8 for x86_64 - BaseOS (Kickstart)'
+        releasever: "8.8"
+        download_policy: 'immediate'
+      - name: 'Red Hat Enterprise Linux 8 for x86_64 - AppStream (Kickstart)'
+        releasever: "8.8"
+        download_policy: 'immediate'
+      - name: 'Red Hat Satellite Client 6 for RHEL 8 x86_64 (RPMs)'
+        download_policy: 'on_demand'
+
+  - name: 'Red Hat Ansible Automation Platform'
+    repository_sets:
+      - name: 'Red Hat Ansible Automation Platform 2.4 for RHEL 8 x86_64 (RPMs)'
+        download_policy: 'on_demand'
+      - name: 'Red Hat Ansible Automation Platform 2.4 for RHEL 9 x86_64 (RPMs)'
+        download_policy: 'on_demand'
+
+  # copy paste from 
+  # https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/content/role/repositories/
+  # RHEL 7
+  - name: Red Hat Enterprise Linux Server
+    repository_sets:
+      - name: Red Hat Enterprise Linux 7 Server (RPMs)
+        basearch: x86_64
+        releasever: 7Server
+      - name: Red Hat Enterprise Linux 7 Server - Extras (RPMs)
+        basearch: x86_64
+      - name: Red Hat Enterprise Linux 7 Server - Optional (RPMs)
+        basearch: x86_64
+        releasever: 7Server
+  # RHEL 6
+      - name: Red Hat Enterprise Linux 6 Server (RPMs)
+        basearch: x86_64
+        releasever: 6Server
+      - name: Red Hat Enterprise Linux 6 Server - Extras (RPMs)
+        basearch: x86_64
+        releasever: 6Server
+
+
+
+# custom products
+# https://github.com/sscheib/ansible_satellite/blob/main/host_vars/satellite.office.int.scheib.me/06b_custom_products.yml
+sat_custom_products:
+  - name: 'prd-elastic-elastic'
+    repositories:
+      - name: 'repo-elastic-elastic-8-el-8'
+        url: 'https://artifacts.elastic.co/packages/8.x/yum'
+        gpg_key: 'gpg-elastic-elastic-el-8'
+        content_type: 'yum'
+        download_policy: 'immediate'
+        mirroring_policy: 'mirror_complete'
+        arch: 'x86_64'
+        auto_enabled: false
+        ignorable_content: []
+
+  - name: 'prd-zabbix-zabbix'
+    repositories:
+      - name: 'repo-zabbix-zabbix-6_0-rhel-8'
+        url: 'https://repo.zabbix.com/zabbix/6.0/rhel/8/x86_64'
+        gpg_key: 'gpg-zabbix-zabbix-rhel-8'
+        content_type: 'yum'
+        download_policy: 'immediate'
+        mirroring_policy: 'mirror_complete'
+        auto_enabled: false
+        ignorable_content: []
+
+      - name: 'repo-zabbix-zabbix-6_0-rhel-9'
+        url: 'https://repo.zabbix.com/zabbix/6.0/rhel/9/x86_64'
+        gpg_key: 'gpg-zabbix-zabbix-rhel-9'
+        content_type: 'yum'
+        download_policy: 'immediate'
+        mirroring_policy: 'mirror_complete'
+        auto_enabled: false
+        ignorable_content: []
+
+
+# https://github.com/sscheib/ansible_satellite/blob/main/host_vars/satellite.office.int.scheib.me/06c_combined_products.yml
+# Combine Red Hat and custom Products
+satellite_products: '{{ sat_products + sat_custom_products }}'  
