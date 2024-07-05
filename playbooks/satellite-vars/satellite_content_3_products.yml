@@ -74,6 +74,9 @@ sat_products:
       - name: Red Hat Enterprise Linux 6 Server - Extras (RPMs)
         basearch: x86_64
         releasever: 6Server
+      - name: Red Hat Software Collections RPMs for Red Hat Enterprise Linux 6 Server x86_64 6Server
+        basearch: x86_64
+        releasever: 6Server
 
 
 

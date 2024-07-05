@@ -10,6 +10,30 @@
 # 17
 satellite_activation_keys:
   - 
+    name: ak-build-rhel-6
+    description: "All hosts which don't have a specialized host group"
+    lifecycle_environment: lce-build
+    content_view: cv-default-rhel-6
+    release_version: 6
+    unlimited_hosts: true
+    service_level: 'Self-Support'
+    purpose_usage: 'Development/Test'
+    purpose_role: 'Red Hat Enterprise Linux Server'
+    # content_overrides:
+    #   - label: 'Red_Hat_Enterprise_Linux_6_Server_-_Extras_RPMs_x86_64'
+    #   - label: 'rhel-6-server-extras-rpms'
+    #     override: 'enabled'
+  - 
+    name: ak-build-rhel-7
+    description: "All hosts which don't have a specialized host group"
+    lifecycle_environment: 'lce-build'
+    content_view: 'cv-default-rhel-7'
+    release_version: 7
+    unlimited_hosts: true
+    service_level: 'Self-Support'
+    purpose_usage: 'Development/Test'
+    purpose_role: 'Red Hat Enterprise Linux Server'
+  - 
     name: 'ak-build-rhel-8'
     description: "All hosts which don't have a specialized host group"
     lifecycle_environment: 'lce-build'

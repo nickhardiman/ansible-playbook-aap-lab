@@ -5,10 +5,10 @@
 #   https://github.com/nickhardiman/libvirt-guest/blob/main/defaults/main.yml
 
 # network
-last_octet: 23
+last_octet: 24
 nics:
   -
-    name: eth0
+    name: eth1
     mac: "{{ lab_mac_prefix }}:00:{{ last_octet }}"
     net: "{{ lab_libvirt_name }}"
     # !!! get rid of this?
@@ -23,12 +23,12 @@ net_services:
 
 
 # OS
-host: misc-rhel7
+host: misc-rhel6
 fqdn: "{{ host }}.{{ lab_domain }}"
-install_iso: /var/lib/libvirt/images/rhel-server-7.9-x86_64-dvd.iso
+install_iso: /var/lib/libvirt/images/rhel-server-6.10-x86_64-dvd.iso
 # Use this command to get the list of accepted OS variants.
 #  virt-install --osinfo list
-os_variant: rhel7.9
+os_variant: rhel6.10
 # extra RPM packages to add to the install list in
 # https://github.com/nickhardiman/ansible-collection-aap2-refarch/blob/main/roles/libvirt_machine_kickstart/templates/kvm-guest-nic-static.ks.j2
 RPMs: []
