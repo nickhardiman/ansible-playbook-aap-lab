@@ -29,3 +29,6 @@
     # !!! rhc installs insights on RHEL 7 onwards. 6? 
     # - role: nick.platform.register_insights
     - role: nick.platform.register_rhc
+# !!! add role security scan
+# dnf install scap-security-guide, openscap-scanner, openscap
+# oscap xccdf eval --profile cis --remediate /usr/share/xml/scap/ssg/content/ssg-rhel8-ds-1.2.xml
