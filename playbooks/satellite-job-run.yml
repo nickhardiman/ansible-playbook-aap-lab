@@ -6,45 +6,30 @@
 # I put commands in vars, get something working, comment out the vars, add more vars, re-run, etc.
 
 # reference
-# Youtube: "InPlace Upgrade using leapp via Satellite webUI - rhel7 to rhel8", by the mighty Waldirio Pinheiro
-# https://www.youtube.com/watch?v=9ZA3JyJHL8s
-# product documentation: Leapp upgrade from RHEL 7 to 8
-# https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html-single/upgrading_from_rhel_7_to_rhel_8/index
-# search operators
-# https://docs.redhat.com/en/documentation/red_hat_satellite/6.15/html-single/administering_red_hat_satellite/index#Supported_Operators_for_Granular_Search_admin
-# redhat.satellite collection
-# https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/docs/ 
-# API examples
-# https://gist.github.com/ares/5262ef082ec846c26a4764e24f2ca11e
-# resources for resource_info
-# activation_keys, alternate_content_sources, alternate_content_sources_bulk_actions, 
-# ansible_collections, ansible_inventories, ansible_override_values, ansible_playbooks, 
-# ansible_roles, ansible_variables, architectures, arf_reports, audits, 
-# auth_source_externals, auth_source_internals, auth_source_ldaps, auth_sources, 
-# autosign, bookmarks, candlepin_dynflow_proxy, candlepin_proxies, capsule_content, 
-# capsules, common_parameters, compute_attributes, compute_profiles, compute_resources, 
-# config_reports, configs, content_credentials, content_export_incrementals, 
-# content_exports, content_imports, content_uploads, content_view_components, 
-# content_view_filter_rules, content_view_filters, content_view_histories, 
-# content_view_versions, content_views, dashboard, debs, discovered_hosts, 
-# discovery_rules, disks, docker_manifest_lists, docker_manifests, docker_tags, 
-# domains, errata, external_usergroups, fact_values, file_units, filters, 
-# foreign_input_sets, foreman_tasks, generic_content_units, home, host_collections, 
-# host_debs, host_errata, host_module_streams, host_packages, host_statuses, 
-# host_subscriptions, host_tracer, hostgroups, hosts, hosts_bulk_actions, http_proxies, 
-# images, instance_hosts, interfaces, inventory, job_invocations, job_templates, 
-# lifecycle_environments, locations, mail_notifications, media, models, module_streams, 
-# operatingsystems, organizations, os_default_templates, oval_contents, oval_policies, 
-# oval_reports, package_groups, packages, parameters, permissions, 
-# personal_access_tokens, ping, plugins, policies, preupgrade_reports, products, 
-# products_bulk_actions, provisioning_templates, ptables, realms, recurring_logics, 
-# registration, registration_commands, remote_execution_features, report_templates, 
-# repositories, repositories_bulk_actions, repository_sets, roles, scap_content_profiles, 
-# scap_contents, settings, simple_content_access, smart_proxies, smart_proxy_hosts, 
-# srpms, ssh_keys, subnet_disks, subnets, subscriptions, sync, sync_plans, 
-# table_preferences, tailoring_files, tasks, template_combinations, template_inputs, 
-# template_invocations, template_kinds, templates, upstream_subscriptions, usergroups, 
-# users, webhook_templates, webhooks
+# Youtube: "InPlace Upgrade using leapp via Satellite webUI - rhel7 to rhel8"
+#   by the mighty Waldirio Pinheiro
+#   https://www.youtube.com/watch?v=9ZA3JyJHL8s
+# Leapp product documentation: Leapp upgrade from RHEL 7 to 8
+#   https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html-single/upgrading_from_rhel_7_to_rhel_8/index
+# Leapp developer documentation
+#   https://leapp.readthedocs.io/en/latest/
+# Satellite API examples
+#   https://gist.github.com/ares/5262ef082ec846c26a4764e24f2ca11e
+# Satellite search operators
+#   https://docs.redhat.com/en/documentation/red_hat_satellite/6.15/html-single/administering_red_hat_satellite/index#Supported_Operators_for_Granular_Search_admin
+# "infra.leapp" ansible content collection
+#   Ansible roles you can use to perform RHEL in-place upgrades using the Leapp framework
+#   https://github.com/redhat-cop/infra.leapp
+# "redhat.satellite" ansible content collection
+#   https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/docs/ 
+#   resources for module "redhat.satellite.resource_info"
+#     activation_keys, alternate_content_sources, alternate_content_sources_bulk_actions, 
+#     ansible_collections, ansible_inventories, ansible_override_values, ansible_playbooks, 
+#     ansible_roles, ansible_variables, architectures, arf_reports, audits, 
+#     ...dozens more, use "resource: doesnotexist" for the full list...
+#     table_preferences, tailoring_files, tasks, template_combinations, template_inputs, 
+#     template_invocations, template_kinds, templates, upstream_subscriptions, usergroups, 
+#     users, webhook_templates, webhooks
 
 
 - name: Run in-place-upgrade jobs on a RHEL 7 box via Satellite
@@ -59,12 +44,17 @@
     # https://satellite-site3.home/job_templates/199-Install%20errata%20by%20search%20query%20-%20Katello%20Script%20Default/edit
     
     # 1 Prepare for the upgrade
-    # There are a host of little things to do before the process starts.
+    # This job updates RPMs and reboots.
+    # There are many more things to do before the process starts.
     # Environment jobs include: set up a RHEL 7 machine in a lab, take a snapshot
     # Satellite jobs include: sync RHEL 7 and 8.10 repos, make a content view
     # RHEL 7 OS jobs include: unset release, remove proxy settings (they confuse Leapp), update to the latest RHEL 7, check disk space
     # RHEL 7 application jobs include: check app works
-    # This job updates RPMs and reboots.
+    # Lots of Red Hat solutions for special cases eg. 
+    #   https://access.redhat.com/solutions/897483
+    #   How to resize the /boot partition?
+    #   https://access.redhat.com/solutions/6971434
+    #   leapp preupgrade fails on system registered with Red Hat CDN with "Message: Unable to install RHEL 8 userspace packages."
     #
     # job_template_to_run: "Install errata by search query - Katello Script Default"
     # host_search_query: "name ~ prov-img-rhel7"
@@ -113,10 +103,12 @@
     # host_search_query: "name ~ prov-img-rhel"
 
     # 8 Perform the upgrade, with Leapp
-    # upgrade works through several phases.
-    # It takes a while - ten minutes, then reboot, then ten minutes.
-    # This runs a playbook which runs the command "leapp upgrade" then reboots.
-    # After reboot, OS upgrades about 1000 packages. Yo can't SSH during this phase.
+    # This job runs a playbook which runs the command "leapp upgrade" then reboots.
+    # The upgrade works through several phases.
+    # Upgrading a minimal OS takes about twenty minutes: ten minutes, then reboot, then ten minutes.
+    # After reboot, a special kernel runs and upgrades about 1000 packages. 
+    # You can't SSH during this phase, but you can see the action by watching the RHEL 7 machine's console.
+    # SELinux is changed from enforcing to permissive in /etc/selinux/config.
     #
     # job_template_to_run: "Run upgrade via Leapp"
     # host_search_query: "name ~ prov-img-rhel7.site3.example.com"
