@@ -1,0 +1,143 @@
+---
+# reference
+# search operators
+# https://docs.redhat.com/en/documentation/red_hat_satellite/6.15/html-single/administering_red_hat_satellite/index#Supported_Operators_for_Granular_Search_admin
+# redhat.satellite collection
+# https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/docs/
+# resources for resource_info
+# activation_keys, alternate_content_sources, alternate_content_sources_bulk_actions, 
+# ansible_collections, ansible_inventories, ansible_override_values, ansible_playbooks, 
+# ansible_roles, ansible_variables, architectures, arf_reports, audits, 
+# auth_source_externals, auth_source_internals, auth_source_ldaps, auth_sources, 
+# autosign, bookmarks, candlepin_dynflow_proxy, candlepin_proxies, capsule_content, 
+# capsules, common_parameters, compute_attributes, compute_profiles, compute_resources, 
+# config_reports, configs, content_credentials, content_export_incrementals, 
+# content_exports, content_imports, content_uploads, content_view_components, 
+# content_view_filter_rules, content_view_filters, content_view_histories, 
+# content_view_versions, content_views, dashboard, debs, discovered_hosts, 
+# discovery_rules, disks, docker_manifest_lists, docker_manifests, docker_tags, 
+# domains, errata, external_usergroups, fact_values, file_units, filters, 
+# foreign_input_sets, foreman_tasks, generic_content_units, home, host_collections, 
+# host_debs, host_errata, host_module_streams, host_packages, host_statuses, 
+# host_subscriptions, host_tracer, hostgroups, hosts, hosts_bulk_actions, http_proxies, 
+# images, instance_hosts, interfaces, inventory, job_invocations, job_templates, 
+# lifecycle_environments, locations, mail_notifications, media, models, module_streams, 
+# operatingsystems, organizations, os_default_templates, oval_contents, oval_policies, 
+# oval_reports, package_groups, packages, parameters, permissions, 
+# personal_access_tokens, ping, plugins, policies, preupgrade_reports, products, 
+# products_bulk_actions, provisioning_templates, ptables, realms, recurring_logics, 
+# registration, registration_commands, remote_execution_features, report_templates, 
+# repositories, repositories_bulk_actions, repository_sets, roles, scap_content_profiles, 
+# scap_contents, settings, simple_content_access, smart_proxies, smart_proxy_hosts, 
+# srpms, ssh_keys, subnet_disks, subnets, subscriptions, sync, sync_plans, 
+# table_preferences, tailoring_files, tasks, template_combinations, template_inputs, 
+# template_invocations, template_kinds, templates, upstream_subscriptions, usergroups, 
+# users, webhook_templates, webhooks
+
+
+- name: Run a job on a host
+  hosts: satellite.site3.example.com
+  gather_facts: false
+  vars_files:
+    - ~/vault-credentials.yml
+  vars:
+    job_template_to_run: "Run Command - Script Default"
+    command_to_run: 'whoami;id;pwd'
+    host_search_query: "name ~ misc-rhel"
+    my_desc_format: my temporary description suffix
+  tasks:
+
+    - name: Include vars from controller_configs directory
+      ansible.builtin.include_vars:
+        dir: satellite-vars
+        ignore_files: [controller_config.yml.template]
+        extensions: ["yml"]
+
+    - name: Schedule job
+      redhat.satellite.job_invocation:
+        username: "{{ satellite_username }}"
+        password: "{{ satellite_password }}"
+        server_url: "{{ satellite_server_url }}"
+        search_query: "{{ host_search_query }}"
+        command: "{{ command_to_run }}"
+        description_format: "{{ my_desc_format }}"
+        job_template: "{{ job_template_to_run }}"
+      register: r_job
+
+# The rest of the tasks find out what happened with this job.
+
+    - name: Display job
+      ansible.builtin.debug:
+        var: r_job
+
+    - name: Find job ID
+      ansible.builtin.set_fact:
+        sat_job_id: "{{ r_job['entity']['job_invocations'][0]['id'] }}"
+
+    - name: Find job task ID
+      ansible.builtin.set_fact:
+        sat_job_task_id: "{{ r_job['entity']['job_invocations'][0]['task']['id'] }}"
+
+    - name: Use the API for more information
+      ansible.builtin.debug:
+        msg: 
+          - "Show job invocation: https://satellite.site3.example.com/api/v2/job_invocations/{{ sat_job_id }}"
+          - "List template invocations belonging to job invocation: https://satellite.site3.example.com/api/v2/job_invocations/{{ sat_job_id }}/template_invocations"
+          - "Get outputs of hosts in a job: https://satellite.site3.example.com/api/v2/job_invocations/{{ sat_job_id }}/outputs"
+          - "sat_job_task_id: {{ r_job['entity']['job_invocations'][0]['task']['id'] }}"
+
+    - name: Wait for task 
+      redhat.satellite.wait_for_task:
+        username: "{{ satellite_username }}"
+        password: "{{ satellite_password }}"
+        server_url: "{{ satellite_server_url }}"
+        task: "{{ sat_job_task_id }}"
+        timeout: 20 
+      register: r_task_desc
+
+    - name: Display task result
+      ansible.builtin.debug:
+        var: r_task_desc
+
+    - name: "Find job invocation resource info by matching job ID"
+      redhat.satellite.resource_info:
+        username: "{{ satellite_username }}"
+        password: "{{ satellite_password }}"
+        server_url: "{{ satellite_server_url }}"
+        resource: job_invocations
+        params:
+          id: "{{ sat_job_id }}"
+      register: r_job_resource_info
+
+    - name: Display job resource result
+      ansible.builtin.debug:
+        var: r_job_resource_info
+
+
+    - name: "Find job invocation resource info by searching for my description format"
+      redhat.satellite.resource_info:
+        username: "{{ satellite_username }}"
+        password: "{{ satellite_password }}"
+        server_url: "{{ satellite_server_url }}"
+        resource: foreman_tasks
+        search: '(label = Actions::RemoteExecution::RunHostsJob and action = "Run hosts job: {{ my_desc_format }}" )'
+      register: r_template_resource_info
+
+    - name: Display template resource result
+      ansible.builtin.debug:
+        var: r_template_resource_info
+
+
+    - name: Get outputs of hosts in a job
+      ansible.builtin.uri:
+        url: "https://satellite.site3.example.com/api/v2/job_invocations/{{ sat_job_id }}/outputs"
+        url_username: "{{ satellite_username }}"
+        url_password: "{{ satellite_password }}"
+        force_basic_auth: true
+        return_content: true
+      register: r_outputs
+     
+    - name: Display outputs of hosts
+      ansible.builtin.debug:
+        var: r_outputs['json']['outputs']
+
