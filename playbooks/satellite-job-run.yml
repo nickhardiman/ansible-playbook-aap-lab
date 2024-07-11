@@ -1,9 +1,21 @@
 ---
+# Run in-place-upgrade jobs on a RHEL 7 box via Satellite
+# This is not a practical way of orchestrating the many phases of an upgrade, 
+# but that's not the point. 
+# Point is to play with an in-place upgrade, chaining ansible, satellite, rhel 7 OS, and leapp together.
+# I put commands in vars, get something working, comment out the vars, add more vars, re-run, etc.
+
 # reference
+# Youtube: "InPlace Upgrade using leapp via Satellite webUI - rhel7 to rhel8", by the mighty Waldirio Pinheiro
+# https://www.youtube.com/watch?v=9ZA3JyJHL8s
+# product documentation: Leapp upgrade from RHEL 7 to 8
+# https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html-single/upgrading_from_rhel_7_to_rhel_8/index
 # search operators
 # https://docs.redhat.com/en/documentation/red_hat_satellite/6.15/html-single/administering_red_hat_satellite/index#Supported_Operators_for_Granular_Search_admin
 # redhat.satellite collection
-# https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/docs/
+# https://console.redhat.com/ansible/automation-hub/repo/published/redhat/satellite/docs/ 
+# API examples
+# https://gist.github.com/ares/5262ef082ec846c26a4764e24f2ca11e
 # resources for resource_info
 # activation_keys, alternate_content_sources, alternate_content_sources_bulk_actions, 
 # ansible_collections, ansible_inventories, ansible_override_values, ansible_playbooks, 
@@ -35,16 +47,115 @@
 # users, webhook_templates, webhooks
 
 
-- name: Run a job on a host
+- name: Run in-place-upgrade jobs on a RHEL 7 box via Satellite
   hosts: satellite.site3.example.com
   gather_facts: false
   vars_files:
     - ~/vault-credentials.yml
   vars:
+
+    # Job templates can be found in the web UI at https://satellite-site3.home/job_templates
+    # eg.
+    # https://satellite-site3.home/job_templates/199-Install%20errata%20by%20search%20query%20-%20Katello%20Script%20Default/edit
+    
+    # 1 Prepare for the upgrade
+    # There are a host of little things to do before the process starts.
+    # Environment jobs include: set up a RHEL 7 machine in a lab, take a snapshot
+    # Satellite jobs include: sync RHEL 7 and 8.10 repos, make a content view
+    # RHEL 7 OS jobs include: unset release, remove proxy settings (they confuse Leapp), update to the latest RHEL 7, check disk space
+    # RHEL 7 application jobs include: check app works
+    # This job updates RPMs and reboots.
+    #
+    # job_template_to_run: "Install errata by search query - Katello Script Default"
+    # host_search_query: "name ~ prov-img-rhel7"
+    # job_inputs: 
+    #   post_script: /usr/sbin/shutdown --reboot +1
+
+    # 2 install Leapp  
+    #
+    # job_template_to_run: "Install Leapp"
+    # host_search_query: "name ~ prov-img-rhel7"
+    # error, tries to use RHEL 7 repos on RHEL 8 box
+    # host_search_query: "name ~ prov-img-rhel7.site3.example.com | name ~ prov-img-rhel8.site3.example.com"
+  
+    # 3 produce a Leapp pre-upgrade report
+    # preupgrade report takes five minutes.
+    # This job installs a temporary RHEL 8 environment.
+    #
+    # job_template_to_run: "Run preupgrade via Leapp"
+    # host_search_query: "name ~ prov-img-rhel7.site3.example.com"
+  
+    # 4 fix Leapp inhibitors
+    # The usual inhibitor on a RHEL 7 machine is PAM module pam_pkcs11 is no longer available in RHEL-8 since it was replaced by SSSD.
+    # This command
+    #   leapp answer --section remove_pam_pkcs11_module_check.confirm=True  
+    # edits this file.
+    #   /var/log/leapp/answerfile
+    #   [remove_pam_pkcs11_module_check]
+    #   confirm = True
+    # !!! how do you find the right remediation_id?
+    #
+    # job_template_to_run: "Run remediation plan via Leapp"
+    # host_search_query: "name ~ prov-img-rhel7.site3.example.com"
+    # job_inputs: 
+    #   remediation_ids:	25
+    #   run_preupgrade:	true
+  
+    # 5 jobs for the post-report phase
+    # run a CLI command
+    # This custom description is optional. 
+    # Job descriptions are listed on page https://satellite-site3.home/job_invocations
+    # The default Description Template for running a command is "Run %{command}"
+    #
+    # my_desc_format: post-report phase
+    # job_template_to_run: "Run Command - Script Default"
+    # command_to_run: 'ls -l /var/log/leapp/leapp-report.txt'
+    # host_search_query: "name ~ prov-img-rhel"
+
+    # 8 Perform the upgrade, with Leapp
+    # upgrade works through several phases.
+    # It takes a while - ten minutes, then reboot, then ten minutes.
+    # This runs a playbook which runs the command "leapp upgrade" then reboots.
+    # After reboot, OS upgrades about 1000 packages. Yo can't SSH during this phase.
+    #
+    # job_template_to_run: "Run upgrade via Leapp"
+    # host_search_query: "name ~ prov-img-rhel7.site3.example.com"
+    # job_inputs: 
+    #   Reboot:	"true"
+
+    # 9 Verify post-upgrade state
+    # plenty listed at 
+    # https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html-single/upgrading_from_rhel_7_to_rhel_8/index#verifying-the-post-upgrade-state-of-the-rhel-8-system_upgrading-from-rhel-7-to-rhel-8
+    # and plenty more will become apparent (why is the network broken?)
+    #
+    # my_desc_format: Verify post-upgrade state
+    # job_template_to_run: "Run Command - Script Default"
+    # command_to_run: 'cat /etc/redhat-release; uname -r'
+    # host_search_query: "name ~ prov-img-rhel7"
+
+    # 10 Perform post-upgrade tasks
+    # plenty listed at
+    # https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html-single/upgrading_from_rhel_7_to_rhel_8/index#performing-post-upgrade-tasks-rhel-7-to-rhel-8_upgrading-from-rhel-7-to-rhel-8
+    # First one is run here.
+    #
+    # my_desc_format: Perform post-upgrade tasks
+    # job_template_to_run: "Run Command - Script Default"
+    # command_to_run: "yum config-manager --save --setopt exclude=''"
+    # host_search_query: "name ~ prov-img-rhel7"
+
+    # 11 Apply security policies
+    # On my system, I saw many denied messages.
+    # avc:  denied  { write } for  pid=1723 comm="leapp3" name="migration-results" dev="dm-0"
+    # https://issues.redhat.com/browse/RHEL-1771
+    # says its harmless. unfixed since 2021.
+    # ausearch exits with 1 if there are no matches.
+    #
+    my_desc_format: Apply security policies
     job_template_to_run: "Run Command - Script Default"
-    command_to_run: 'whoami;id;pwd'
-    host_search_query: "name ~ misc-rhel"
-    my_desc_format: my temporary description suffix
+    command_to_run: "hostnamectl; ausearch -m AVC,USER_AVC -ts boot || true"
+    host_search_query: "name ~ prov-img-rhel7"
+
+
   tasks:
 
     - name: Include vars from controller_configs directory
@@ -59,15 +170,17 @@
         password: "{{ satellite_password }}"
         server_url: "{{ satellite_server_url }}"
         search_query: "{{ host_search_query }}"
-        command: "{{ command_to_run }}"
-        description_format: "{{ my_desc_format }}"
+        command: "{{ command_to_run | default(omit) }}"
+        description_format: "{{ my_desc_format | default(omit) }}"
         job_template: "{{ job_template_to_run }}"
+        inputs: "{{ job_inputs | default(omit) }}"
       register: r_job
 
 # The rest of the tasks find out what happened with this job.
 
     - name: Display job
       ansible.builtin.debug:
+        verbosity: 1
         var: r_job
 
     - name: Find job ID
@@ -92,13 +205,18 @@
         password: "{{ satellite_password }}"
         server_url: "{{ satellite_server_url }}"
         task: "{{ sat_job_task_id }}"
-        timeout: 20 
+        timeout: 900 
       register: r_task_desc
 
     - name: Display task result
       ansible.builtin.debug:
+        verbosity: 1
         var: r_task_desc
 
+
+# These "resource_info" tasks are optional.
+# They don't add much value to running the job and displaying results.
+# They show two ways of searching for more info about the "job_invocation" task.
     - name: "Find job invocation resource info by matching job ID"
       redhat.satellite.resource_info:
         username: "{{ satellite_username }}"
@@ -111,8 +229,8 @@
 
     - name: Display job resource result
       ansible.builtin.debug:
+        verbosity: 1
         var: r_job_resource_info
-
 
     - name: "Find job invocation resource info by searching for my description format"
       redhat.satellite.resource_info:
@@ -121,13 +239,23 @@
         server_url: "{{ satellite_server_url }}"
         resource: foreman_tasks
         search: '(label = Actions::RemoteExecution::RunHostsJob and action = "Run hosts job: {{ my_desc_format }}" )'
+      when: my_desc_format is defined
       register: r_template_resource_info
 
     - name: Display template resource result
       ansible.builtin.debug:
+        verbosity: 1
         var: r_template_resource_info
 
 
+    # command run results
+    # for a better description of what went in to each host and what came out 
+    # get results list from 
+    # https://satellite-site3.home/api/v2/job_invocations/{{ sat_job_id }}/template_invocations
+    # copy UUIDs from the results[*]['run_host_job_task_id'] fields
+    # get each results page.
+    # https://satellite-site3.home/foreman_tasks/api/tasks/{{ UUID }}
+    #
     - name: Get outputs of hosts in a job
       ansible.builtin.uri:
         url: "https://satellite.site3.example.com/api/v2/job_invocations/{{ sat_job_id }}/outputs"
