@@ -13,7 +13,7 @@
 # Create virtual machine template
 # checks 
 # virsh vol-list images
-# see TASK [nick.platform.libvirt_machine_image : list libvirt's volumes]
+# see TASK [nick.platform.libvirt_machine_to_image : list libvirt's volumes]
 # create $FQDN-base.qcow2 image and $FQDN.xml config.
 # if the $FQDN-base.qcow2 file already exists, this role does not change anything.
  
@@ -29,7 +29,7 @@
     # gateway routing isn't sorted yet so it can't respond to a ping.
     - name: Run machine (it stops after install)
       ansible.builtin.include_role:
-        name: nick.platform.libvirt_machine_image
+        name: nick.platform.libvirt_machine_to_image
       vars:
         wait_for_ping: false
       loop: "{{ groups[my_vms] }}"

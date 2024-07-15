@@ -11,7 +11,7 @@
   serial: 1
   roles:
   - name: "Create a new instance"
-    role: nick.platform.libvirt_machine_instance
+    role: nick.platform.libvirt_machine_from_image
     delegate_to: "{{ groups['hypervisor'][0] }}"
 
   tasks:
