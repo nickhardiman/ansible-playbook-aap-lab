@@ -67,11 +67,18 @@ sat_products:
       - name: Red Hat Enterprise Linux 7 Server - Optional (RPMs)
         basearch: x86_64
         releasever: 7Server
+  #
   # RHEL 6
+  # Extras and Optional required for upgrade to 7
+  # https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/7/html-single/upgrading_from_rhel_6_to_rhel_7/index#preparing-a-rhel-6-system-for-the-upgrade_upgrading-from-rhel-6-to-rhel-7
+  #
       - name: Red Hat Enterprise Linux 6 Server (RPMs)
         basearch: x86_64
         releasever: 6Server
       - name: Red Hat Enterprise Linux 6 Server - Extras (RPMs)
+        basearch: x86_64
+        releasever: 6Server
+      - name: Red Hat Enterprise Linux 6 Server - Optional (RPMs)
         basearch: x86_64
         releasever: 6Server
       - name: Red Hat Software Collections RPMs for Red Hat Enterprise Linux 6 Server x86_64 6Server
