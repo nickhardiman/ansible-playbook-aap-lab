@@ -29,9 +29,8 @@
 
     - name: "On hypervisor {{ inventory_hostname }}"
       ansible.builtin.include_role: 
-        name: nick.platform.libvirt_machine_from_image
+        name: nickhardiman.hypervisor.libvirt_machine_from_image
       vars:
         fqdn: "{{ item }}"
-        config_template: rhel-6-from-cockpit.xml
-        osinfo: rhel6.10
+        osinfo: "{{ hostvars[item]['osinfo'] | default('rhel7.9') }}"
       loop: "{{ hosts_to_build }}"
