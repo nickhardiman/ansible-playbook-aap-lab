@@ -42,23 +42,50 @@ Each PC emulates a geographical site.
 
 Three networks are involved in making this home lab work.
 
-* home lab
-* home network
 * Internet
+* home network
+* home lab network
+
+=== Internet
+
+This network is somebody else's problem
+(whichever Internet Service Provider takes your money and supplies kit).
+The ISP router provides access to the Internet, so the home network can connect to Red Hat's central services.
+For instance, RPM packages are downloaded from the Red Hat CDN.
+
+=== home network
 
 Three PCs provide the physical platform for my home lab, and are connected to my home network. 
 The home network is an ordinary domestic network managed by the magic box my ISP provided.
 The home network is the collection of router, WiFI antennas, TV, mobile phone and other devices.
-The ISP router provides access to the Internet, so this AAP installation can connect to Red Hat's central services.
-For instance, RPM packages are downloaded from the Red Hat CDN.
-The home lab has its own networks.
 
-Each home lab machine contains two virtual networks. 
+Usually the ISP router dishes out IPv4 addresses to all the devoces that connect. 
+The home lab asks for six IP addresses. 
+
+* Each PC (three physical machines) asks for an IP address.
+* Each gateway (three virtual machines) asks for an IP address.
+
+It's a good idea to fix these so they don't change. 
+If these IP addresses change, the home lab networks have to be reconfigured.
+And that's fiddly and annoying.
+
+
+=== home lab networks
+
+Each home lab PC contains two virtual networks - a public one with access to the home network, and a private one with no Internet access.
+There are six in all (3 PCs x 2 networks each).
+Instead of  cables connected to a switch, or  WiFi connections to an access point, each VM is connected to a bridge.
+
+* each PC has a bridge for the gateway VMs. This allows the three gateways to connect to the home lab and indirectly to the Internet.
+* each PC has another bridge for all the other VMs. These can connect to each other, but have to go through the gateways to download files from the Internet. 
+
 One is for public access. This connects to the home lab, and via there to the Internet.
 The other network is private, with all the VMs connected to it. 
 Access is restricted. 
 These VMs can only get to the Internet via a proxy running on the gateway.
-I connect to web services on these VMs via a reverse proxy running on the gateway.
+Home lab clients can connect to web services on these VMs via a reverse proxy running on the gateway.
+
+
 
 
 == OS (Operating System)
